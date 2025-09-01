@@ -17,6 +17,13 @@ import {
   HomepageAdjust,
   // ListIcon,
   PageIcon,
+  Archive,
+  Comment,
+  Management,
+  ManageUsers,
+  Buoy,
+  Chat,
+  Alert,
   // PieChartIcon,
   // PlugInIcon,
   // TableIcon,
@@ -43,7 +50,7 @@ const navItems: NavItem[] = [
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    path: "/admin-dashboard",
+    path: "/admin/dashboard",
   },
   {
     icon: <GridIcon />,
@@ -60,6 +67,31 @@ const navItems: NavItem[] = [
     name: "Tsunami Monitoring",
     path: "/TsunamiDashboard",
   },
+
+
+   {
+    name: "Management",
+    icon: <Management />,
+    subItems: [
+      { name: "Manage users", 
+        path: "/admin/manage-users",
+        icon: <ManageUsers />, 
+        pro: false },
+      { name: "Buoy Deployment",
+        path: "/admin/manage-buoys",
+        icon: <Buoy />, 
+        pro: false },
+        { name: "Chat Support",
+        path: "/admin/chat-support",
+        icon: <Chat />, 
+        pro: false },
+        { name: "Alert System",
+        path: "/admin/alert-system",
+        icon: <Alert />, 
+        pro: false },
+    ],
+  },
+
 
   {
     name: "Pages",
@@ -104,37 +136,104 @@ const othersItems: NavItem[] = [
     subItems: [
       {
         name: "Slider",
-        path: "/admin/customization-slider",
+        path: "/admin/customization/sliders",
         icon: <HomepageSliderShow />,
         pro: false,
       },
       {
         name: "About us",
-        path: "/admin/customization-about",
+        path: "/admin/customization/about-us",
         icon: <HomepageAbout />,
         pro: false,
       },
       {
         name: "Prototype",
-        path: "/admin/customization-prototype",
+        path: "/admin/customization/prototype",
         icon: <HomepagePrototype />,
         pro: false,
       },
       {
         name: "Team",
-        path: "/admin/customization-team",
+        path: "/admin/customization/teams",
         icon: <HomepageTeam />,
         pro: false,
       },
       {
         name: "FAQs",
-        path: "/admin/customization-faqs",
+        path: "/admin/customization/faqs",
         icon: <HomepageFAQs />,
         pro: false,
       },
       {
+        name: "Feedback",
+        path: "/admin/customization/feedbacks",
+        icon: <Comment />,
+        pro: false,
+      },
+      {
         name: "Footer",
-        path: "/admin/customization-footer",
+        path: "/admin/customization/footer",
+        icon: <HomepageFooter />,
+        pro: false,
+      },
+    ],
+  },
+
+  {
+    icon: <Archive />,
+    name: "Archive",
+    subItems: [
+     {
+        name: "Users",
+        path: "/admin/archive/users",
+        icon: <ManageUsers />,
+        pro: false,
+      },
+      {
+        name: "Buoys",
+        path: "/admin/archive/buoys",
+        icon: <Buoy />,
+        pro: false,
+      },
+      {
+        name: "Slider",
+        path: "/admin/archive/sliders",
+        icon: <HomepageSliderShow />,
+        pro: false,
+      },
+      {
+        name: "About us",
+        path: "/admin/archive/about-us",
+        icon: <HomepageAbout />,
+        pro: false,
+      },
+      {
+        name: "Prototype",
+        path: "/admin/archive/prototype",
+        icon: <HomepagePrototype />,
+        pro: false,
+      },
+      {
+        name: "Team",
+        path: "/admin/archive/teams",
+        icon: <HomepageTeam />,
+        pro: false,
+      },
+      {
+        name: "FAQs",
+        path: "/admin/archive/faqs",
+        icon: <HomepageFAQs />,
+        pro: false,
+      },
+      {
+        name: "Feedback",
+        path: "/admin/archive/feedbacks",
+        icon: <Comment />,
+        pro: false,
+      },
+      {
+        name: "Footer",
+        path: "/admin/archive/footer",
         icon: <HomepageFooter />,
         pro: false,
       },

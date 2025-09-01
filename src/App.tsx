@@ -1,4 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router";
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+
+
+import {  Routes, Route } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -21,11 +25,48 @@ import Home from "./pages/Dashboard/Home";
 import TsunamiDashboard from "./pages/Dashboard/TsunamiDashboard";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import StormSurge from "./pages/Dashboard/storm_surge";
+import ManageUsers from "./pages/Management/ManageUsers";
+import BuoyDeployment from "./pages/Management/BuoyDeployment";
+import ChatSupport from "./pages/Management/ChatSupport";
+import AlertSystem from "./pages/Management/AlertSystem";
+import CustomSlider from "./pages/Customization/CustomSlider";
+import CustomAboutUs from "./pages/Customization/CustomAboutUs";
+import CustomPrototype from "./pages/Customization/CustomPrototype";
+import CustomTeam from "./pages/Customization/CustomTeam";
+import CustomFAQs from "./pages/Customization/CustomFAQs";
+import CustomFeedback from "./pages/Customization/CustomFeedback";
+import CustomFooter from "./pages/Customization/CustomFooter";
+import ArchiveSlider from "./pages/Archive/ArchiveSlider";
+import ArchiveAboutUs from "./pages/Archive/ArchiveAboutUs";
+import ArchivePrototype from "./pages/Archive/ArchivePrototype";
+import ArchiveTeam from "./pages/Archive/ArchiveTeam";
+import ArchiveFAQs from "./pages/Archive/ArchiveFAQs";
+import ArchiveFeeback from "./pages/Archive/ArchiveFeeback";
+import ArchiveFooter from "./pages/Archive/ArchiveFooter";
+import ArchiveUsers from "./pages/Archive/ArchiveUsers";
+import ArchiveBuoys from "./pages/Archive/ArchiveBuoys";
+import Loader from './common/Loader';
 
 export default function App() {
-  return (
+  
+  const [loading, setLoading] = useState<boolean>(true);
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 2000);
+  }, []);
+  
+  
+  return loading ? (
+    <Loader 
+    title="Coastella Admin" 
+    description="Please wait while loading..."  />
+  ) :(
     <>
-      <Router>
         <ScrollToTop />
         <Routes>
           {/* Dashboard Layout */}
@@ -39,6 +80,38 @@ export default function App() {
             />
             <Route index path="/dashboard" element={<Dashboard />} />
             <Route index path="/storm-surge" element={<StormSurge />} />
+            <Route index element={<Home />} />
+
+            <Route index path="/admin/dashboard" element={<Home />} />
+            
+            {/* Management */}
+            <Route path="/admin/manage-users" element={<ManageUsers />} />
+            <Route path="/admin/manage-buoys" element={<BuoyDeployment />} />
+            <Route path="/admin/chat-support" element={<ChatSupport />} />
+            <Route path="/admin/alert-system" element={<AlertSystem />} />
+
+            {/* Customization */}
+            <Route path="/admin/customization/sliders" element={<CustomSlider />} />
+            <Route path="/admin/customization/about-us" element={<CustomAboutUs />} />
+            <Route path="/admin/customization/prototype" element={<CustomPrototype />} />
+            <Route path="/admin/customization/teams" element={<CustomTeam />} />
+            <Route path="/admin/customization/faqs" element={<CustomFAQs />} />
+            <Route path="/admin/customization/feedbacks" element={<CustomFeedback />} />
+            <Route path="/admin/customization/footer" element={<CustomFooter />} />
+
+            {/* Archive */}
+            <Route path="/admin/archive/users" element={<ArchiveUsers />} />
+            <Route path="/admin/archive/buoys" element={<ArchiveBuoys />} />
+            <Route path="/admin/archive/sliders" element={<ArchiveSlider />} />
+            <Route path="/admin/archive/about-us" element={<ArchiveAboutUs />} />
+            <Route path="/admin/archive/prototype" element={<ArchivePrototype />} />
+            <Route path="/admin/archive/teams" element={<ArchiveTeam />} />
+            <Route path="/admin/archive/faqs" element={<ArchiveFAQs />} />
+            <Route path="/admin/archive/feedbacks" element={<ArchiveFeeback />} />
+            <Route path="/admin/archive/feedbacks" element={<ArchiveFeeback />} />
+            <Route path="/admin/archive/footer" element={<ArchiveFooter />} />
+            
+
 
             {/* Others Page */}
             <Route path="/admin-profile" element={<UserProfiles />} />
@@ -71,7 +144,6 @@ export default function App() {
           {/* Fallback Route */}
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </Router>
     </>
   );
 }

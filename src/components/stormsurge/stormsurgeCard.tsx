@@ -4,7 +4,7 @@ const tropicalCard = () => {
       <div className="w-[1480px] h-[407px] bg-white shadow rounded-xl border border-gray-300 p-4">
         <div className="w-full px-4 pt-4 text-left mt-2">
           <h1 className="text-lg font-semibold mb-3">
-            TROPICAL CYCLONE MONITORING TABLE
+            STORM SURGE MONITORING TABLE
           </h1>
         </div>
         <hr className="w-full border-t border-gray-300" />

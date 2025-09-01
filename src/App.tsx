@@ -18,6 +18,9 @@ import Blank from "./pages/Blank";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
+import TsunamiDashboard from "./pages/Dashboard/TsunamiDashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import StormSurge from "./pages/Dashboard/storm_surge";
 
 export default function App() {
   return (
@@ -28,6 +31,14 @@ export default function App() {
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
             <Route index path="/admin-dashboard" element={<Home />} />
+
+            <Route
+              index
+              path="/TsunamiDashboard"
+              element={<TsunamiDashboard />}
+            />
+            <Route index path="/dashboard" element={<Dashboard />} />
+            <Route index path="/storm-surge" element={<StormSurge />} />
 
             {/* Others Page */}
             <Route path="/admin-profile" element={<UserProfiles />} />

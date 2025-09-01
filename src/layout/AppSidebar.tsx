@@ -45,6 +45,21 @@ const navItems: NavItem[] = [
     name: "Dashboard",
     path: "/admin-dashboard",
   },
+  {
+    icon: <GridIcon />,
+    name: "Dashboard",
+    path: "/dashboard",
+  },
+  {
+    icon: <GridIcon />,
+    name: "Storm Surge",
+    path: "/storm-surge",
+  },
+    {
+    icon: <GridIcon />,
+    name: "Tsunami Monitoring",
+    path: "/TsunamiDashboard",
+  },
 
   {
     name: "Pages",

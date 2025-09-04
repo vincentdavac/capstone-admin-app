@@ -97,7 +97,7 @@ const navItems: NavItem[] = [
     name: "Pages",
     icon: <PageIcon />,
     subItems: [
-      { name: "Blank Page", path: "/blank", pro: false },
+      { name: "Slider", path: "/slider", pro: false },
       { name: "404 Error", path: "/error-404", pro: false },
       { name: "Calendar", path: "/calendar", pro: false },
       { name: "User Profile", path: "/admin-profile", pro: false },
@@ -209,13 +209,13 @@ const othersItems: NavItem[] = [
       },
       {
         name: "Prototype",
-        path: "/admin/archive/prototype",
+        path: "/admin/customization-prototype",
         icon: <HomepagePrototype />,
         pro: false,
       },
       {
         name: "Team",
-        path: "/admin/archive/teams",
+        path: "/admin/customization-team",
         icon: <HomepageTeam />,
         pro: false,
       },
@@ -226,14 +226,20 @@ const othersItems: NavItem[] = [
         pro: false,
       },
       {
-        name: "Feedback",
-        path: "/admin/archive/feedbacks",
-        icon: <Comment />,
-        pro: false,
-      },
-      {
         name: "Footer",
         path: "/admin/archive/footer",
+        icon: <HomepageFooter />,
+        pro: false,
+      },
+           {
+        name: "Feedbacks",
+        path: "/admin/customization-feedbacks",
+        icon: <HomepageFooter />,
+        pro: false,
+      },
+           {
+        name: "Archive",
+        path: "/admin/customization-archive",
         icon: <HomepageFooter />,
         pro: false,
       },

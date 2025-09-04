@@ -18,7 +18,7 @@ import BarChart from "./pages/Charts/BarChart";
 import Calendar from "./pages/Calendar";
 import BasicTables from "./pages/Tables/BasicTables";
 import FormElements from "./pages/Forms/FormElements";
-import Blank from "./pages/Blank";
+import Slider from "./pages/Slider";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
@@ -46,6 +46,17 @@ import ArchiveFooter from "./pages/Archive/ArchiveFooter";
 import ArchiveUsers from "./pages/Archive/ArchiveUsers";
 import ArchiveBuoys from "./pages/Archive/ArchiveBuoys";
 import Loader from './common/Loader';
+
+// Add these imports for your customization components
+import CustomizationSlider from "./components/admin/customization-slider";
+import CustomizationAbout from "./components/admin/customization-about";
+import CustomizationPrototype from "./components/admin/customization-prototype";
+import CustomizationFaqs from "./components/admin/customization-faqs";
+import CustomizationTeam from "./components/admin/customization-team";
+import CustomizationFooter from "./components/admin/customization-footer";
+import CustomizationFeedbacks from "./components/admin/customization-feedbacks";
+import CustomizationArchive from "./components/admin/customization-archive";
+
 
 export default function App() {
   
@@ -116,7 +127,18 @@ export default function App() {
             {/* Others Page */}
             <Route path="/admin-profile" element={<UserProfiles />} />
             <Route path="/calendar" element={<Calendar />} />
-            <Route path="/blank" element={<Blank />} />
+            <Route path="/slider" element={<Slider />} />
+
+            {/* Customization Routes - ADD THESE */}
+            <Route path="/admin/customization-slider" element={<CustomizationSlider />} />
+            <Route path="/admin/customization-about" element={<CustomizationAbout />} />
+            <Route path="/admin/customization-prototype" element={<CustomizationPrototype />} />
+            <Route path="/admin/customization-faqs" element={<CustomizationFaqs />} />
+            <Route path="/admin/customization-team" element={<CustomizationTeam />} />
+            <Route path="/admin/customization-footer" element={<CustomizationFooter />} />
+            <Route path="/admin/customization-feedbacks" element={<CustomizationFeedbacks />} />
+            <Route path="/admin/customization-archive" element={<CustomizationArchive />} />
+            
 
             {/* Forms */}
             <Route path="/form-elements" element={<FormElements />} />

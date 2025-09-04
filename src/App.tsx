@@ -119,7 +119,7 @@ export default function App() {
             <Route path="/admin/archive/teams" element={<ArchiveTeam />} />
             <Route path="/admin/archive/faqs" element={<ArchiveFAQs />} />
             <Route path="/admin/archive/feedbacks" element={<ArchiveFeeback />} />
-            <Route path="/admin/archive/feedbacks" element={<ArchiveFeeback />} />
+            <Route path="/admin/archive/archive" element={<ArchiveFeeback />} />
             <Route path="/admin/archive/footer" element={<ArchiveFooter />} />
             
 

@@ -62,6 +62,11 @@ const navItems: NavItem[] = [
     name: "Storm Surge",
     path: "/storm-surge",
   },
+  {
+    icon: <GridIcon />,
+    name: "Tropical Cyclone",
+    path: "/tropical-cyclone",
+  },
     {
     icon: <GridIcon />,
     name: "Tsunami Monitoring",

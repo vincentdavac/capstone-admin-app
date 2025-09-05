@@ -46,6 +46,7 @@ import ArchiveFooter from "./pages/Archive/ArchiveFooter";
 import ArchiveUsers from "./pages/Archive/ArchiveUsers";
 import ArchiveBuoys from "./pages/Archive/ArchiveBuoys";
 import Loader from './common/Loader';
+import TropicalCycone from "./pages/Dashboard/tropical_cyclone";
 
 export default function App() {
   
@@ -77,6 +78,11 @@ export default function App() {
               index
               path="/TsunamiDashboard"
               element={<TsunamiDashboard />}
+            />
+            <Route
+              index
+              path="/tropical-cyclone"
+              element={<TropicalCycone />}
             />
             <Route index path="/dashboard" element={<Dashboard />} />
             <Route index path="/storm-surge" element={<StormSurge />} />

@@ -1,20 +1,20 @@
-import { useState} from "react";
-import chart from "../../components/stormsurge/chart";
+// import { useState} from "react";
+// import chart from "../../components/stormsurge/chart";
 
-interface Graph {
-  [key: string]: string;
-}
+// interface Graph {
+//   [key: string]: string;
+// }
 
-const aboutGraph: Graph = {
-  SST: "Sea Surface Temperature (SST) indicates ocean warming trends; sustained highs can lead to coral bleaching. \n Unit: °C \n Normal (tropics): 26-30 °C\nWatch: ≥ 32 °C (heat stress)",
-  waterLevel:
-    "Water Level tracks sea/river height. Peaks align with high tides, storm surges, or heavy rain runoff. \nUnit: meters (m)\nNormal: 0.8-2.0 m\nWatch: > 2.5 m (possible flooding)",
-};
+// const aboutGraph: Graph = {
+//   SST: "Sea Surface Temperature (SST) indicates ocean warming trends; sustained highs can lead to coral bleaching. \n Unit: °C \n Normal (tropics): 26-30 °C\nWatch: ≥ 32 °C (heat stress)",
+//   waterLevel:
+//     "Water Level tracks sea/river height. Peaks align with high tides, storm surges, or heavy rain runoff. \nUnit: meters (m)\nNormal: 0.8-2.0 m\nWatch: > 2.5 m (possible flooding)",
+// };
 
 export default function HistoricalCards() {
-  const [current, setData] = useState("waterLevel");
-  const currentData = aboutGraph[current];
-  const CurrentChart = chart[current];
+//   const [current, setData] = useState("waterLevel");
+//   const currentData = aboutGraph[current];
+//   const CurrentChart = chart[current];
   return (
     <div className="lg:col-span-2 flex flex-col">
       <div className="border-2 border-[#D9D9D9] w-[1480px] h-[616px] mt-8 rounded md:rounded-xl">
@@ -26,14 +26,14 @@ export default function HistoricalCards() {
           <div className="flex flex-wrap gap-4">
             <button
               className="px-4 py-2 bg-blue-500 text-white hover:bg-blue-700 rounded-full"
-              onClick={() => setData("waterLevel")}
+            //   onClick={() => setData("waterLevel")}
             >
               Water Level
             </button>
 
             <button
               className="px-4 py-2 bg-white text-black  rounded-full border border-blue-700"
-              onClick={() => setData("SST")}
+            //   onClick={() => setData("SST")}
             >
               Sea Surface Temp
             </button>
@@ -74,14 +74,14 @@ export default function HistoricalCards() {
 
           <div className="flex gap-4 mt-4">
             <div className="border-2 border-[#D9D9D9] rounded-sm h-[250px] flex-1">
-              <CurrentChart />
+              {/* <CurrentChart /> */}
             </div>
 
             <div className="w-[300px] bg-[#E2F1FF] border border-gray-200 shadow rounded-lg p-4">
               <h1 className="text-base font-semibold text-gray-700 mb-2">
                 About this Graph
               </h1>
-              <p className="text-sm text-gray-600">{currentData}</p>
+              {/* <p className="text-sm text-gray-600">{currentData}</p> */}
             </div>
           </div>
         </div>

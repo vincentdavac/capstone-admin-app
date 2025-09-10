@@ -7,28 +7,26 @@ export default function MapsWithHazard() {
   const gaugeRef = useRef<HTMLDivElement>(null);
   const waveRef = useRef<HTMLDivElement>(null);
   const windSpeed = useRef<HTMLDivElement>(null);
-    useEffect(() => { 
-      // Initialize map
-      //14.653700482338781, 120.99474052545784
-      const map = L.map("map").setView([14.653700482338781,120.99474052545784], 12);
-  
-      // Add OpenStreetMap tile layer
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
-  
-      // Add a marker in Manila
-      L.marker([14.653700482338781, 120.99474052545784])
-        .addTo(map)
-        .bindPopup("<b>Caloocan</b><br />Philippines")
-        .openPopup();
-  
-      // Cleanup on unmount
-      return () => {
-        map.remove();
-      };
-    }, []);
+  useEffect(() => {
+    //  14.642250839841605, 120.93873906253934
+    const map = L.map("map").setView(
+      [14.642250839841605, 120.93873906253934],
+      12
+    );
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    L.marker([14.642250839841605, 120.93873906253934])
+      .addTo(map)
+      .bindPopup("<b>Coastal</b>")
+      .openPopup();
+    return () => {
+      map.remove();
+    };
+  }, []);
   useEffect(() => {
     const charts: echarts.ECharts[] = [];
     if (windSpeed.current) {
@@ -267,7 +265,15 @@ export default function MapsWithHazard() {
           <hr className="w-full border-t border-gray-300" />
           <div className="px-4 py-4">
             <p className=" text-[#6C757D] ">
-            The Tropical Cyclone map tracks each storm by its name, location (longitude and latitude), category, wind speed, pressure, direction, and last update. For instance, Cyclone Alpha at 125.5°E, 14.2°N is a Category 3 storm with 150 km/h winds and 965 hPa pressure, moving NW, last updated at 08:00. Cyclone Beta at 130.1°E, 16.8°N is Category 2 with 120 km/h winds and 980 hPa pressure, heading W, updated at 09:00. Cyclone Gamma at 128.3°E, 12.5°N is Category 1 with 90 km/h winds and 995 hPa pressure, moving NE, last recorded at 07:30.
+              The Tropical Cyclone map tracks each storm by its name, location
+              (longitude and latitude), category, wind speed, pressure,
+              direction, and last update. For instance, Cyclone Alpha at
+              125.5°E, 14.2°N is a Category 3 storm with 150 km/h winds and 965
+              hPa pressure, moving NW, last updated at 08:00. Cyclone Beta at
+              130.1°E, 16.8°N is Category 2 with 120 km/h winds and 980 hPa
+              pressure, heading W, updated at 09:00. Cyclone Gamma at 128.3°E,
+              12.5°N is Category 1 with 90 km/h winds and 995 hPa pressure,
+              moving NE, last recorded at 07:30.
             </p>
           </div>
         </div>
@@ -300,7 +306,7 @@ export default function MapsWithHazard() {
         <div className="flex-shrink-0">
           <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[217px] flex flex-col items-center justify-center">
             <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-             Wind Speed (km/h)
+              Wind Speed (km/h)
             </p>
             <div ref={windSpeed} className="w-full h-full" />
           </div>

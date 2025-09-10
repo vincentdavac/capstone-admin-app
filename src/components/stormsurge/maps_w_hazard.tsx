@@ -2,31 +2,28 @@ import { useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import Map from "../../components/dashboard_content/map";
 
 export default function MapsWithHazard() {
-    useEffect(() => { 
-      // Initialize map
-      //14.653700482338781, 120.99474052545784
-      const map = L.map("map").setView([14.653700482338781,120.99474052545784], 12);
-  
-      // Add OpenStreetMap tile layer
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
-  
-      // Add a marker in Manila
-      L.marker([14.653700482338781, 120.99474052545784])
-        .addTo(map)
-        .bindPopup("<b>Caloocan</b><br />Philippines")
-        .openPopup();
-  
-      // Cleanup on unmount
-      return () => {
-        map.remove();
-      };
-    }, []);
+  useEffect(() => {
+    //  14.642250839841605, 120.93873906253934
+    const map = L.map("map").setView(
+      [14.642250839841605, 120.93873906253934],
+      12
+    );
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    L.marker([14.642250839841605, 120.93873906253934])
+      .addTo(map)
+      .bindPopup("<b>Coastal</b>")
+      .openPopup();
+    return () => {
+      map.remove();
+    };
+  }, []);
   const gaugeRef = useRef<HTMLDivElement>(null);
   const waveRef = useRef<HTMLDivElement>(null);
   const windSpeed = useRef<HTMLDivElement>(null);
@@ -35,7 +32,6 @@ export default function MapsWithHazard() {
     if (windSpeed.current) {
       const windSpeedGauge = echarts.init(windSpeed.current);
       windSpeedGauge.setOption({
-        
         series: [
           {
             type: "gauge",
@@ -271,7 +267,15 @@ export default function MapsWithHazard() {
           <hr className="w-full border-t border-gray-300" />
           <div className="px-4 py-4">
             <p className=" text-[#6C757D] ">
-             The Storm Surge map tracks coastal water rise caused by storms, showing water level, wave height, atmospheric pressure, wind speed, and last update. For example, a strong surge may raise water levels to 2.5 meters with waves of 1.2 meters, atmospheric pressure at 960 hPa, and winds reaching 140 km/h, last recorded at 08:00. Moderate surges might produce 0.8-meter water rise with smaller waves of 0.5 meters, pressure around 980 hPa, and winds at 100 km/h, updated at 09:30. This data helps communities assess risk and take timely protective actions.
+              The Storm Surge map tracks coastal water rise caused by storms,
+              showing water level, wave height, atmospheric pressure, wind
+              speed, and last update. For example, a strong surge may raise
+              water levels to 2.5 meters with waves of 1.2 meters, atmospheric
+              pressure at 960 hPa, and winds reaching 140 km/h, last recorded at
+              08:00. Moderate surges might produce 0.8-meter water rise with
+              smaller waves of 0.5 meters, pressure around 980 hPa, and winds at
+              100 km/h, updated at 09:30. This data helps communities assess
+              risk and take timely protective actions.
             </p>
           </div>
         </div>
@@ -304,7 +308,7 @@ export default function MapsWithHazard() {
         <div className="flex-shrink-0">
           <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[217px] flex flex-col items-center justify-center">
             <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-             Wind Speed (km/h)
+              Wind Speed (km/h)
             </p>
             <div ref={windSpeed} className="w-full h-full" />
           </div>

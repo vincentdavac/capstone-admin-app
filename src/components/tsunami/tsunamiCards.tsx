@@ -21,28 +21,26 @@ const Cards = () => {
   const CurrentChart = chart[current];
   const waveRef = useRef<HTMLDivElement>(null);
   const WaveHeight = useRef<HTMLDivElement>(null);
-    useEffect(() => { 
-      // Initialize map
-      //14.653700482338781, 120.99474052545784
-      const map = L.map("map").setView([14.653700482338781,120.99474052545784], 12);
-  
-      // Add OpenStreetMap tile layer
-      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      }).addTo(map);
-  
-      // Add a marker in Manila
-      L.marker([14.653700482338781, 120.99474052545784])
-        .addTo(map)
-        .bindPopup("<b>Caloocan</b><br />Philippines")
-        .openPopup();
-  
-      // Cleanup on unmount
-      return () => {
-        map.remove();
-      };
-    }, []);
+  useEffect(() => {
+    //  14.642250839841605, 120.93873906253934
+    const map = L.map("map").setView(
+      [14.642250839841605, 120.93873906253934],
+      12
+    );
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map);
+
+    L.marker([14.642250839841605, 120.93873906253934])
+      .addTo(map)
+      .bindPopup("<b>Coastal</b>")
+      .openPopup();
+    return () => {
+      map.remove();
+    };
+  }, []);
   useEffect(() => {
     const charts: echarts.ECharts[] = [];
     if (WaveHeight.current) {

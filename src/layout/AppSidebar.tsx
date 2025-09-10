@@ -67,36 +67,42 @@ const navItems: NavItem[] = [
     name: "Tropical Cyclone",
     path: "/tropical-cyclone",
   },
-    {
+  {
     icon: <GridIcon />,
     name: "Tsunami Monitoring",
     path: "/TsunamiDashboard",
   },
 
-
-   {
+  {
     name: "Management",
     icon: <Management />,
     subItems: [
-      { name: "Manage users", 
+      {
+        name: "Manage users",
         path: "/admin/manage-users",
-        icon: <ManageUsers />, 
-        pro: false },
-      { name: "Buoy Deployment",
+        icon: <ManageUsers />,
+        pro: false,
+      },
+      {
+        name: "Buoy Deployment",
         path: "/admin/manage-buoys",
-        icon: <Buoy />, 
-        pro: false },
-        { name: "Chat Support",
+        icon: <Buoy />,
+        pro: false,
+      },
+      {
+        name: "Chat Support",
         path: "/admin/chat-support",
-        icon: <Chat />, 
-        pro: false },
-        { name: "Alert System",
+        icon: <Chat />,
+        pro: false,
+      },
+      {
+        name: "Alert System",
         path: "/admin/alert-system",
-        icon: <Alert />, 
-        pro: false },
+        icon: <Alert />,
+        pro: false,
+      },
     ],
   },
-
 
   {
     name: "Pages",
@@ -188,7 +194,7 @@ const othersItems: NavItem[] = [
     icon: <Archive />,
     name: "Archive",
     subItems: [
-     {
+      {
         name: "Users",
         path: "/admin/archive/users",
         icon: <ManageUsers />,
@@ -236,13 +242,13 @@ const othersItems: NavItem[] = [
         icon: <HomepageFooter />,
         pro: false,
       },
-           {
+      {
         name: "Feedbacks",
         path: "/admin/archive/feedbacks",
         icon: <HomepageFooter />,
         pro: false,
       },
-           {
+      {
         name: "Archive",
         path: "//admin/archive/archive",
         icon: <HomepageFooter />,
@@ -469,23 +475,19 @@ const AppSidebar: React.FC = () => {
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <img
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
+                src="/logo/forblackbg.svg"
                 alt="Logo"
-                width={150}
-                height={40}
+                className="dark:hidden"
               />
               <img
                 className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
+                src="/logo/forblackbg.svg"
                 alt="Logo"
-                width={150}
-                height={40}
               />
             </>
           ) : (
             <img
-              src="/images/logo/logo-icon.svg"
+              src="/logo/forwhitebg.svg"
               alt="Logo"
               width={32}
               height={32}

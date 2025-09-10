@@ -1,7 +1,32 @@
 import { useEffect, useRef } from "react";
 import * as echarts from "echarts";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import Map from "../../components/dashboard_content/map";
 
 export default function MapsWithHazard() {
+    useEffect(() => { 
+      // Initialize map
+      //14.653700482338781, 120.99474052545784
+      const map = L.map("map").setView([14.653700482338781,120.99474052545784], 12);
+  
+      // Add OpenStreetMap tile layer
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+  
+      // Add a marker in Manila
+      L.marker([14.653700482338781, 120.99474052545784])
+        .addTo(map)
+        .bindPopup("<b>Caloocan</b><br />Philippines")
+        .openPopup();
+  
+      // Cleanup on unmount
+      return () => {
+        map.remove();
+      };
+    }, []);
   const gaugeRef = useRef<HTMLDivElement>(null);
   const waveRef = useRef<HTMLDivElement>(null);
   const windSpeed = useRef<HTMLDivElement>(null);
@@ -10,6 +35,7 @@ export default function MapsWithHazard() {
     if (windSpeed.current) {
       const windSpeedGauge = echarts.init(windSpeed.current);
       windSpeedGauge.setOption({
+        
         series: [
           {
             type: "gauge",
@@ -236,7 +262,7 @@ export default function MapsWithHazard() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-2 flex flex-col gap-4">
         <div className="border-2 border-[#D9D9D9] rounded-sm h-64 sm:h-80 lg:h-[580px] w-[946px]">
-          
+          <div id="map" className="w-full h-full rounded-xl" />
         </div>
         <div className="border-2 border-[#D9D9D9] mb-4 h-48 sm:h-56 lg:h-[250px] w-[946px] rounded md:rounded-xl">
           <div className="w-full px-4 flex items-center h-16">

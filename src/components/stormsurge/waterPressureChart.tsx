@@ -1,15 +1,15 @@
 import { useEffect, useRef } from "react";
 import * as echarts from "echarts";
-export default function WaterLevelChart() {
-  const waterLevel = useRef<HTMLDivElement>(null);
+export default function waterPressures() {
+  const waterPressure = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const charts: echarts.ECharts[] = [];
-    if (waterLevel.current) {
-      const waveChart = echarts.init(waterLevel.current);
+    if (waterPressure.current) {
+      const waterpressureChart = echarts.init(waterPressure.current);
 
-      waveChart.setOption({
+      waterpressureChart.setOption({
         title: {
-          text: "test",
+          text: "Water Pressure (kPA)",
           textStyle: {
             fontSize: 10,
             fontWeight: "normal",
@@ -21,7 +21,7 @@ export default function WaterLevelChart() {
         xAxis: {
           type: "category",
           boundaryGap: false,
-          data: ["Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept"],
+          data: ["Mar", "Apr", "May", "Jun", "Jul", "Aug"],
           axisLabel: {
             fontSize: 8,
             color: "#6b7280",
@@ -29,9 +29,6 @@ export default function WaterLevelChart() {
         },
         yAxis: {
           type: "value",
-          min: 0,
-          max: 2.4,
-          interval: 0.5,
           axisLabel: {
             fontSize: 8,
             formatter: "{value}m",
@@ -40,7 +37,7 @@ export default function WaterLevelChart() {
         },
         series: [
           {
-            data: [1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4],
+            data: [1003,1005,1007,1009,1011],
             type: "line",
             areaStyle: {
               color: "rgba(59, 130, 246, 0.3)",
@@ -60,7 +57,7 @@ export default function WaterLevelChart() {
           bottom: 20,
         },
       });
-      charts.push(waveChart);
+      charts.push(waterpressureChart);
     }
 
     const handleResize = () => {
@@ -74,5 +71,5 @@ export default function WaterLevelChart() {
       charts.forEach((chart) => chart.dispose());
     };
   }, []);
-  return <div ref={waterLevel} className="w-full h-full" />;
+  return <div ref={waterPressure} className="w-full h-full" />;
 }

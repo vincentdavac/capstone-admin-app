@@ -245,7 +245,7 @@ export default function MapsWithHazard() {
           <hr className="w-full border-t border-gray-300" />
           <div className="px-4 py-4">
             <p className=" text-[#6C757D] ">
-             The Storm Surge map tracks coastal water rise caused by storms, showing water level, wave height, atmospheric pressure, wind speed, and last update. For example, a strong surge may raise water levels to 2.5 meters with waves of 1.2 meters, atmospheric pressure at 960 hPa, and winds reaching 140 km/h, last recorded at 08:00. Moderate surges might produce 0.8-meter water rise with smaller waves of 0.5 meters, pressure around 980 hPa, and winds at 100 km/h, updated at 09:30. This data helps communities assess risk and take timely protective actions.
+            The Tropical Cyclone map tracks each storm by its name, location (longitude and latitude), category, wind speed, pressure, direction, and last update. For instance, Cyclone Alpha at 125.5°E, 14.2°N is a Category 3 storm with 150 km/h winds and 965 hPa pressure, moving NW, last updated at 08:00. Cyclone Beta at 130.1°E, 16.8°N is Category 2 with 120 km/h winds and 980 hPa pressure, heading W, updated at 09:00. Cyclone Gamma at 128.3°E, 12.5°N is Category 1 with 90 km/h winds and 995 hPa pressure, moving NE, last recorded at 07:30.
             </p>
           </div>
         </div>

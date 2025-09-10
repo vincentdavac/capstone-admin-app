@@ -83,7 +83,7 @@ export default function App() {
         <Routes>
           {/* Dashboard Layout */}
           <Route element={<AppLayout />}>
-            <Route index path="/admin-dashboard" element={<Home />} />
+            {/* <Route index path="/admin-dashboard" element={<Home />} /> */}
 
             <Route
               index
@@ -97,9 +97,9 @@ export default function App() {
             />
             <Route index path="/dashboard" element={<Dashboard />} />
             <Route index path="/storm-surge" element={<StormSurge />} />
-            <Route index element={<Home />} />
+            <Route index element={<Dashboard />} />
 
-            <Route index path="/admin/dashboard" element={<Home />} />
+            {/* <Route index path="/admin/dashboard" element={<Home />} /> */}
             
             {/* Management */}
             <Route path="/admin/manage-users" element={<ManageUsers />} />

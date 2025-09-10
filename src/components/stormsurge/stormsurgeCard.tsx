@@ -34,11 +34,13 @@ const tropicalCard = () => {
                 <td className="px-4 py-2">test</td>
                 <td className="px-4 py-2">test</td>
                 <td className="px-4 py-2">test</td>
+                <td className="px-4 py-2">test</td>
                 <td className="px-4 py-2">
                   <span className="w-4 h-4 aspect-square rounded-full inline-block bg-blue-400"></span>
                 </td>
               </tr>
               <tr className="border-t">
+                <td className="px-4 py-2">test</td>
                 <td className="px-4 py-2">test</td>
                 <td className="px-4 py-2">test</td>
                 <td className="px-4 py-2">test</td>

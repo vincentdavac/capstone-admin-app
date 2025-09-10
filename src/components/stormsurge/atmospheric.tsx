@@ -1,15 +1,15 @@
 import { useEffect, useRef } from "react";
 import * as echarts from "echarts";
-export default function WaterLevelChart() {
-  const waterLevel = useRef<HTMLDivElement>(null);
+export default function atmospheric() {
+  const atmospheric = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const charts: echarts.ECharts[] = [];
-    if (waterLevel.current) {
-      const waveChart = echarts.init(waterLevel.current);
+    if (atmospheric.current) {
+      const atmosphericChart = echarts.init(atmospheric.current);
 
-      waveChart.setOption({
+      atmosphericChart.setOption({
         title: {
-          text: "test",
+          text: "Atmospheric Pressure (kPa)",
           textStyle: {
             fontSize: 10,
             fontWeight: "normal",
@@ -29,9 +29,6 @@ export default function WaterLevelChart() {
         },
         yAxis: {
           type: "value",
-          min: 0,
-          max: 2.4,
-          interval: 0.5,
           axisLabel: {
             fontSize: 8,
             formatter: "{value}m",
@@ -40,7 +37,7 @@ export default function WaterLevelChart() {
         },
         series: [
           {
-            data: [1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.4],
+            data: [118, 120, 122, 124, 126, 128, 130, 132],
             type: "line",
             areaStyle: {
               color: "rgba(59, 130, 246, 0.3)",
@@ -60,7 +57,7 @@ export default function WaterLevelChart() {
           bottom: 20,
         },
       });
-      charts.push(waveChart);
+      charts.push(atmosphericChart);
     }
 
     const handleResize = () => {
@@ -68,11 +65,10 @@ export default function WaterLevelChart() {
     };
 
     window.addEventListener("resize", handleResize);
-
     return () => {
       window.removeEventListener("resize", handleResize);
       charts.forEach((chart) => chart.dispose());
     };
   }, []);
-  return <div ref={waterLevel} className="w-full h-full" />;
+  return <div ref={atmospheric} className="w-full h-full" />;
 }

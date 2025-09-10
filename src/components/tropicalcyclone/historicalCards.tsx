@@ -78,8 +78,6 @@ export default function HistoricalCards() {
               <p className="text-sm text-gray-600 mb-2">
                 {currentData.split("\n")[0]}
               </p>
-
-              {/* The rest as bullet list */}
               <ul className="list-disc list-inside text-sm text-gray-600">
                 {currentData
                   .split("\n")

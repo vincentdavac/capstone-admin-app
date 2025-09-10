@@ -116,12 +116,10 @@ export default function HistoricalCards() {
               <h1 className="text-base font-semibold text-gray-700 mb-2">
                 About this Graph
               </h1>
-              {/*Firs*/ }
               <p className="text-sm text-gray-600 mb-2">
                 {currentData.split("\n")[0]}
               </p>
 
-              {/* The rest as bullet list */}
               <ul className="list-disc list-inside text-sm text-gray-600">
                 {currentData
                   .split("\n")

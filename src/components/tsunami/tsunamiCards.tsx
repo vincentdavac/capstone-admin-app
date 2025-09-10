@@ -1,13 +1,50 @@
 import { useEffect, useRef } from "react";
 import * as echarts from "echarts";
 import Icons from "../../components/dashboard_content/icons";
+import { useState } from "react";
+import chart from "../../components/tsunami/chart";
+import L from "leaflet";
+import "leaflet/dist/leaflet.css";
+
+interface Graph {
+  [key: string]: string;
+}
+
+const aboutGraph: Graph = {
+  magnitude:
+    "Magnitude (Mw) shows earthquake strength. Peaks indicate stronger seismic events. \nUnit: Mw \nLow: 1-3 Mw \nModerate: 4-6 Mw \nStrong: > 6 Mw",
+};
 
 const Cards = () => {
+  const [current, setData] = useState("magnitude");
+  const currentData = aboutGraph[current];
+  const CurrentChart = chart[current];
   const waveRef = useRef<HTMLDivElement>(null);
   const WaveHeight = useRef<HTMLDivElement>(null);
+    useEffect(() => { 
+      // Initialize map
+      //14.653700482338781, 120.99474052545784
+      const map = L.map("map").setView([14.653700482338781,120.99474052545784], 12);
+  
+      // Add OpenStreetMap tile layer
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      }).addTo(map);
+  
+      // Add a marker in Manila
+      L.marker([14.653700482338781, 120.99474052545784])
+        .addTo(map)
+        .bindPopup("<b>Caloocan</b><br />Philippines")
+        .openPopup();
+  
+      // Cleanup on unmount
+      return () => {
+        map.remove();
+      };
+    }, []);
   useEffect(() => {
     const charts: echarts.ECharts[] = [];
-    
     if (WaveHeight.current) {
       const WaveHeightChart = echarts.init(WaveHeight.current);
 
@@ -149,7 +186,9 @@ const Cards = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div className="lg:col-span-2 flex flex-col gap-4">
-          <div className="border-2 border-[#D9D9D9] rounded-sm h-64 sm:h-80 lg:h-[580px] w-[946px]"></div>
+          <div className="border-2 border-[#D9D9D9] rounded-sm h-64 sm:h-80 lg:h-[580px] w-[946px]">
+            <div id="map" className="w-full h-full rounded-xl" />
+          </div>
           <div className="border-2 border-[#D9D9D9] mb-4 h-48 sm:h-56 lg:h-[250px] w-[946px] rounded md:rounded-xl">
             <div className="w-full px-4 flex items-center h-16">
               <h1 className="text-lg font-semibold">DATA REGARDING THE MAP</h1>
@@ -157,7 +196,16 @@ const Cards = () => {
             <hr className="w-full border-t border-gray-300" />
             <div className="px-4 py-4">
               <p className=" text-[#6C757D] ">
-                The Tsunami map displays each event with its magnitude, estimated wave height, central pressure, water pressure, and last update. For example, a magnitude 7.0 earthquake generates an estimated wave height of 1.95 meters, with central pressure at 100.5 hPa and water pressure of 41.99 hPa, last recorded at 08:00. A smaller magnitude 5.0 event produces a 0.90-meter wave, central pressure of 100.5 hPa, and water pressure of 9.05 hPa, updated at 09:15. Larger events like magnitude 8.0 can cause waves up to 9.05 meters, illustrating the critical need for real-time monitoring and early alerts.
+                The Tsunami map displays each event with its magnitude,
+                estimated wave height, central pressure, water pressure, and
+                last update. For example, a magnitude 7.0 earthquake generates
+                an estimated wave height of 1.95 meters, with central pressure
+                at 100.5 hPa and water pressure of 41.99 hPa, last recorded at
+                08:00. A smaller magnitude 5.0 event produces a 0.90-meter wave,
+                central pressure of 100.5 hPa, and water pressure of 9.05 hPa,
+                updated at 09:15. Larger events like magnitude 8.0 can cause
+                waves up to 9.05 meters, illustrating the critical need for
+                real-time monitoring and early alerts.
               </p>
             </div>
           </div>
@@ -168,7 +216,7 @@ const Cards = () => {
               <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
                 Water Level
               </p>
-              <div ref={waveRef}  className="w-full h-full" />
+              <div ref={waveRef} className="w-full h-full" />
             </div>
             <div className="w-full text-center mt-2 text-sm text-gray-600 p-4">
               Sample Sentence
@@ -178,7 +226,7 @@ const Cards = () => {
           <div className="flex-shrink-0">
             <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[217px] flex flex-col items-center justify-center">
               <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-               Wave Height (meters / feet)
+                Wave Height (meters / feet)
               </p>
               <div ref={WaveHeight} className="w-full h-full" />
             </div>
@@ -276,13 +324,12 @@ const Cards = () => {
           </div>
           <hr className="w-full border-t border-gray-300" />
           <div className="flex justify-self-start pt-5 ml-10">
-
             <div className="flex flex-wrap gap-4">
               <button
                 className="px-4 py-2 bg-blue-500 text-white hover:bg-blue-700 rounded-full"
-                //   onClick={() => setData("waterLevel")}
+                onClick={() => setData("magnitude")}
               >
-               Magnitude
+                Magnitude
               </button>
 
               <button
@@ -292,10 +339,10 @@ const Cards = () => {
                 Time
               </button>
               <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
-               Water Level
+                Water Level
               </button>
               <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
-               Wave Axis
+                Wave Axis
               </button>
               <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
                 Wave Height
@@ -303,9 +350,7 @@ const Cards = () => {
               <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
                 Danger Level
               </button>
-
             </div>
-
           </div>
           <div className="w-[1410px] h-[400px] bg-white shadow rounded-xl border border-gray-300 p-4 mx-auto mt-6">
             <div className="flex items-center space-x-2 justify-between">
@@ -320,15 +365,26 @@ const Cards = () => {
             </div>
 
             <div className="flex gap-4 mt-4">
-              <div className="border-2 border-[#D9D9D9] rounded-sm h-[250px] flex-1">
-                {/* <CurrentChart /> */}
+              <div className="border-2 border-[#D9D9D9] rounded-sm h-[300px] flex-1">
+                <CurrentChart />
               </div>
 
-              <div className="w-[300px] bg-[#E2F1FF] border border-gray-200 shadow rounded-lg p-4">
+              <div className="w-[300px] h-[300px] bg-[#E2F1FF] border border-gray-200 shadow rounded-lg p-4">
                 <h1 className="text-base font-semibold text-gray-700 mb-2">
                   About this Graph
                 </h1>
-                {/* <p className="text-sm text-gray-600">{currentData}</p> */}
+                <p className="text-sm text-gray-600 mb-2">
+                  {currentData.split("\n")[0]}
+                </p>
+
+                <ul className="list-disc list-inside text-sm text-gray-600">
+                  {currentData
+                    .split("\n")
+                    .slice(1)
+                    .map((line, i) => (
+                      <li key={i}>{line}</li>
+                    ))}
+                </ul>
               </div>
             </div>
           </div>

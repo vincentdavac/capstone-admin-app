@@ -1,6 +1,7 @@
 import React, { useState, Fragment } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import Feedback from "../../preview/Feedback";
 
 // 1. Define the interfaces for the table items
 interface TableItem {
@@ -238,13 +239,12 @@ const CustomizationFeedbacks: React.FC = () => {
           Homepage Feedbacks Preview
         </h1>
       </div>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <div className="flex justify-center">
-          <img
-            src="/images/preview/feedback-preview.png"
-            alt="Homepage Feedbacks Preview"
-            className="rounded-lg border dark:border-gray-700 w-full max-w-2xl"
-          />
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-2 mb-6">
+        <div className="flex justify-center w-full">
+          {/* I-wrap ang Slider component at bigyan ng fixed size */}
+          <div className="w-full max-w-10xl">
+            <Feedback />
+          </div>
         </div>
       </div>
 

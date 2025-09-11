@@ -1,6 +1,7 @@
 import React, { useState, Fragment} from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import FAQ from "../../preview/FAQs";
 
 // 1. Define the interface for the table items
 interface TableItem {
@@ -232,14 +233,14 @@ const CustomizationFaqs: React.FC = () => {
         </h1>
       </div>
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <div className="flex justify-center">
-          <img
-            src="/images/preview/faqs-preview.png"
-            alt="Homepage FAQs Preview"
-            className="rounded-lg border dark:border-gray-700"
-          />
+        <div className="flex justify-center w-full">
+          {/* I-wrap ang Slider component at bigyan ng fixed size */}
+          <div className="w-full max-w-8xl">
+            <FAQ />
+          </div>
         </div>
       </div>
+
 
       {/* FAQ Description Table */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">

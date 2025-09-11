@@ -2,6 +2,8 @@ import React, { useState, useRef, ChangeEvent } from "react";
 import { Upload, Archive } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
+import Slider from "../../preview/Slider";
+
 
 interface SliderData {
   id: number;
@@ -135,12 +137,11 @@ const CustomizationSlider: React.FC = () => {
       </div>
       {/* Slider Preview Section */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <div className="flex justify-center">
-          <img
-            src="/images/preview/slider-preview.png"
-            alt="Homepage Slider Preview"
-            className="rounded-lg border dark:border-gray-700"
-          />
+        <div className="flex justify-center w-full">
+          {/* I-wrap ang Slider component at bigyan ng fixed size */}
+          <div className="w-full max-w-7xl">
+            <Slider />
+          </div>
         </div>
       </div>
       {/* Sliders Table */}

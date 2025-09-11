@@ -1,6 +1,7 @@
 import React, { useState, Fragment, useRef } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import Prototype from "../../preview/Prototype";
 
 // 1. Define the interface for the table items
 interface TableItem {
@@ -263,12 +264,11 @@ const CustomizationPrototype: React.FC = () => {
       </div>
       {/* Slider Preview Section */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <div className="flex justify-center">
-          <img
-            src="/images/preview/prototype-preview.png"
-            alt="Homepage Slider Preview"
-            className="rounded-lg border dark:border-gray-700"
-          />
+        <div className="flex justify-center w-full">
+          {/* I-wrap ang Slider component at bigyan ng fixed size */}
+          <div className="w-full max-w-8xl">
+            <Prototype />
+          </div>
         </div>
       </div>
       {/* Prototype Description Table */}

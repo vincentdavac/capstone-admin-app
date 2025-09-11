@@ -1,6 +1,7 @@
 import React, { useState, Fragment } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import About from "../../preview/About";
 
 // 1. Define the interface first
 interface TableItem {
@@ -239,12 +240,11 @@ const CustomizationAbout: React.FC = () => {
 
       {/* About Section Preview */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <div className="flex justify-center">
-          <img
-            src="/images/preview/about-preview.png"
-            alt="Homepage About Preview"
-            className="rounded-lg border"
-          />
+        <div className="flex justify-center w-full">
+          {/* I-wrap ang Slider component at bigyan ng fixed size */}
+          <div className="w-full max-w-8xl">
+            <About />
+          </div>
         </div>
       </div>
 

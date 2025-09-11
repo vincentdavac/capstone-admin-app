@@ -50,7 +50,7 @@ export default function Slider() {
 
   return (
     <>
-      <div className="container mx-auto px-4 py-16 md:py-24 outline-1 outline-[#959ea5] rounded-lg">
+      <div className="container mx-auto px-4 py-16 md:py-24 outline-1 bg-[#FFFFFF] outline-[#959ea5] rounded-lg">
         <div className="flex flex-col items-center md:flex-row">
           <div className=" mb-10 md:mb-0 md:w-1/2">
             <h1 className="mb-4 text-4xl leading-tight font-bold text-[#023E8A] md:text-5xl lg:text-5xl">

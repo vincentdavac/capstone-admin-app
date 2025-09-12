@@ -1,6 +1,8 @@
 import React, { useState, Fragment, useRef } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import Team from "../../preview/Team";
+
 
 // 1. Define the interfaces for the table items
 interface TableItem {
@@ -264,13 +266,14 @@ const CustomizationTeam: React.FC = () => {
           Homepage Team Preview
         </h1>
       </div>
+
+
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <div className="flex justify-center">
-          <img
-            src="/images/preview/team-preview.png"
-            alt="Homepage Team Preview"
-            className="rounded-lg border dark:border-gray-700 w-full max-w-2xl"
-          />
+        <div className="flex justify-center w-full">
+          {/* I-wrap ang Slider component at bigyan ng fixed size */}
+          <div className="w-full max-w-8xl">
+            <Team />
+          </div>
         </div>
       </div>
 

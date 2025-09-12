@@ -2,6 +2,7 @@
 import React, { useState, Fragment } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
+import Footer from "../../preview/Footer";
 
 // 1. Define the interfaces for the table items
 interface TableItem {
@@ -220,13 +221,12 @@ const CustomizationFooter: React.FC = () => {
           Homepage Footers Preview
         </h1>
       </div>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
-        <div className="flex justify-center">
-          <img
-            src="/images/preview/footer-preview.png"
-            alt="Homepage Footer Preview"
-            className="rounded-lg border dark:border-gray-700"
-          />
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-2 mb-6">
+        <div className="flex justify-center w-full">
+          {/* I-wrap ang Slider component at bigyan ng fixed size */}
+          <div className="w-full max-w-10xl">
+            <Footer />
+          </div>
         </div>
       </div>
       {/* Brand Description Table */}

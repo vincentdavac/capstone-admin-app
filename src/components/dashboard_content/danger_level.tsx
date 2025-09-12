@@ -3,7 +3,7 @@ const dangerLevel = () => {
     <div className="grid grid-rows-3 gap-4 shrink-0">
       <div className="w-[515px] h-[192px] bg-white shadow rounded-2xl border border-[#D9D9D9] flex flex-col">
         <div className="w-full px-4 pt-4 text-center">
-          <h3 className="text-lg font-semibold mb-2">Storm Surge</h3>
+          <h3 className="text-lg font-semibold mb-2">TSUNAMI</h3>
         </div>
         <hr className="w-full border-t border-gray-300" />
         <div className="grid grid-cols-2 gap-3 w-full max-w-sm p-4 self-center mt-3">
@@ -45,14 +45,14 @@ const dangerLevel = () => {
               className="w-4 h-4 accent-gray-600"
               checked
             />
-            <span className="flex-1 text-center">Dwon</span>
+            <span className="flex-1 text-center">Down</span>
           </label>
         </div>
       </div>
 
       <div className="w-[515px] h-auto bg-white shadow rounded-2xl border border-[#D9D9D9] flex flex-col">
         <div className="w-full px-4 pt-4 text-center">
-          <h3 className="text-lg font-semibold mb-2">Tsunami</h3>
+          <h3 className="text-lg font-semibold mb-2">TROPICAL CYCLONE</h3>
         </div>
         <hr className="w-full border-t border-gray-300" />
         <div className="grid grid-cols-3 gap-3 w-full max-w-lg p-4 self-center mt-3">
@@ -111,7 +111,7 @@ const dangerLevel = () => {
 
       <div className="w-[515px] h-[192px] bg-white shadow rounded-2xl border border-[#D9D9D9] flex flex-col">
         <div className="w-full px-4 pt-4 text-center">
-          <h3 className="text-lg font-semibold mb-2">Storm Surge</h3>
+          <h3 className="text-lg font-semibold mb-2">STORM SURGE</h3>
         </div>
         <hr className="w-full border-t border-gray-300" />
         <div className="grid grid-cols-2 gap-3 w-full max-w-sm p-4 self-center mt-3">

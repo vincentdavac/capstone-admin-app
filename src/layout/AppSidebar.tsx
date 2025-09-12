@@ -489,8 +489,8 @@ const AppSidebar: React.FC = () => {
             <img
               src="/logo/forwhitebg.svg"
               alt="Logo"
-              width={32}
-              height={32}
+              width={20}
+              height={20}
             />
           )}
         </Link>

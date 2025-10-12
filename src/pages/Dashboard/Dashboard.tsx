@@ -6,10 +6,9 @@ export default function Dashboard() {
   return (
   <div>
     <DashboardCards />
-    <div className="mt-[3px]">
+    <div className="mt-[10px] ml-[3px]">
       <SearchBuoyDashboard />
     </div>
-
     <div className="flex gap-10">
       <MapDashboard />
       <DangerLevel />

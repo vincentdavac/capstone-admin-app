@@ -2,7 +2,7 @@ import { ArrowUpIcon, GroupIcon } from "../../icons";
 import Badge from "../ui/badge/Badge";
 const dashboardCards = () => {
   return (
-    <div className="p-8 flex items-start justify-start pl-1">
+    <div className="flex items-start justify-start pl-1">
       <div className="flex gap-4 md:gap-6">
         <div className="rounded-lg text-gray-800 text-xl font-semibold border p-6 w-[360px] h-[204px] bg-[#FFFFFF] border-[#D9D9D9]">
           <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl mb-4">

@@ -27,7 +27,7 @@ const MapDashboard = () => {
   }, []);
 
   return (
-    <div className="w-[965px] h-[606px] shrink-0 bg-white shadow rounded-2xl p-4 border border-[#D9D9D9]">
+    <div className="w-[965px] h-[700px] shrink-0 bg-white shadow rounded-2xl p-4 border border-[#D9D9D9]">
       <div id="map" className="w-full h-full rounded-xl" />
     </div>
   );

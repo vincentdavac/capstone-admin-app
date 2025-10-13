@@ -1,5 +1,4 @@
 import Icons from "../../components/dashboard_content/icons";
-
 const searchBuoyDashboard = () => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center mb-4 gap-3 sm:gap-45">

@@ -64,8 +64,8 @@ const navItems: NavItem[] = [
   },
   {
     icon: <GridIcon />,
-    name: "Tropical Cyclone",
-    path: "/tropical-cyclone",
+    name: "Deployed Buoy",
+    path: "/deployed-buoy",
   },
   {
     icon: <GridIcon />,

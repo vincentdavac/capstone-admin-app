@@ -46,7 +46,7 @@ import ArchiveFooter from "./pages/Archive/ArchiveFooter";
 import ArchiveUsers from "./pages/Archive/ArchiveUsers";
 import ArchiveBuoys from "./pages/Archive/ArchiveBuoys";
 import Loader from './common/Loader';
-import TropicalCycone from "./pages/Dashboard/tropical_cyclone";
+import DeployedBuoy from "./pages/Dashboard/deployedBuoy";
 
 // Add these imports for your customization components
 import CustomizationSlider from "./components/admin/customization-slider";
@@ -92,8 +92,8 @@ export default function App() {
             />
             <Route
               index
-              path="/tropical-cyclone"
-              element={<TropicalCycone />}
+              path="/deployed-buoy"
+              element={<DeployedBuoy />}
             />
             <Route index path="/dashboard" element={<Dashboard />} />
             <Route index path="/river-monitoring" element={<StormSurge />} />

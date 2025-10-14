@@ -96,7 +96,7 @@ export default function App() {
               element={<TropicalCycone />}
             />
             <Route index path="/dashboard" element={<Dashboard />} />
-            <Route index path="/storm-surge" element={<StormSurge />} />
+            <Route index path="/river-monitoring" element={<StormSurge />} />
             <Route index element={<Dashboard />} />
 
             {/* <Route index path="/admin/dashboard" element={<Home />} /> */}

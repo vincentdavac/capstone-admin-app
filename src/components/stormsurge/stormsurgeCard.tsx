@@ -1,6 +1,6 @@
 const tropicalCard = () => {
   return (
-    <div className="lg:col-span-2 flex flex-col gap-4">
+    <div className="lg:col-span-2 flex flex-col gap-4 mt-10">
       <div className="w-[1480px] h-[407px] bg-white shadow rounded-xl border border-gray-300 p-4">
         <div className="w-full px-4 flex items-center h-16">
           <h1 className="text-lg font-semibold">

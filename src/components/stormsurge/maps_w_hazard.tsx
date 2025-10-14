@@ -161,8 +161,8 @@ export default function MapsWithHazard() {
             type: "gauge",
             startAngle: 180,
             endAngle: 0,
-            center: ["50%", "93%"],
-            radius: "170%",
+            center: ["50%", "75%"],
+            radius: "110%",
             min: 0,
             max: 3,
             splitNumber: 6,
@@ -257,85 +257,58 @@ export default function MapsWithHazard() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
       <div className="lg:col-span-2 flex flex-col gap-4">
-        <div className="border-2 border-[#D9D9D9] rounded-sm h-64 sm:h-80 lg:h-[580px] w-[946px]">
+        <div className="border-2 border-[#D9D9D9] rounded-[15px] h-64 sm:h-80 lg:h-[632px] w-[946px]">
           <div id="map" className="w-full h-full rounded-xl" />
         </div>
-        <div className="border-2 border-[#D9D9D9] mb-4 h-48 sm:h-56 lg:h-[250px] w-[946px] rounded md:rounded-xl">
-          <div className="w-full px-4 flex items-center h-16">
-            <h1 className="text-lg font-semibold">DATA REGARDING THE MAP</h1>
-          </div>
-          <hr className="w-full border-t border-gray-300" />
-          <div className="px-4 py-4">
-            <p className=" text-[#6C757D] ">
-              The Storm Surge map tracks coastal water rise caused by storms,
-              showing water level, wave height, atmospheric pressure, wind
-              speed, and last update. For example, a strong surge may raise
-              water levels to 2.5 meters with waves of 1.2 meters, atmospheric
-              pressure at 960 hPa, and winds reaching 140 km/h, last recorded at
-              08:00. Moderate surges might produce 0.8-meter water rise with
-              smaller waves of 0.5 meters, pressure around 980 hPa, and winds at
-              100 km/h, updated at 09:30. This data helps communities assess
-              risk and take timely protective actions.
-            </p>
-          </div>
-        </div>
       </div>
-      <div className="flex flex-col gap-3 overflow-x-hidden overflow-y-auto scrollbar-hide h-[825px] no-scrollbar">
-        <div className="flex-shrink-0">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-x-hidden overflow-y-auto scrollbar-hide h-[632px] no-scrollbar p-2">
+        <div className="flex flex-col">
           <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[217px] flex flex-col items-center justify-center">
-            <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-              Water Level (m)
+            <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1 text-center leading-tight">
+              Surroundings <br /> Temperature (C/F)
             </p>
             <div ref={gaugeRef} className="w-full h-full" />
           </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-4">
-            Sample Sentence
+          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
+            High Moisture (High humidity supports strong tropical cyclone
+            development.)
           </div>
         </div>
 
-        <div className="flex-shrink-0">
+        <div className="flex flex-col">
           <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[217px] flex flex-col items-center justify-center">
             <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
               Wave Height (ft)
             </p>
             <div ref={waveRef} className="w-full h-full" />
           </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-4">
-            Sample Sentence
+          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
+            High Moisture (High humidity supports strong tropical cyclone
+            development.)
           </div>
         </div>
 
-        <div className="flex-shrink-0">
+        <div className="flex flex-col">
           <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[217px] flex flex-col items-center justify-center">
             <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
               Wind Speed (km/h)
             </p>
             <div ref={windSpeed} className="w-full h-full" />
           </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-4">
-            Sample Sentence
+          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
+            High Moisture (High humidity supports strong tropical cyclone
+            development.)
           </div>
         </div>
 
-        <div className="flex-shrink-0">
+        <div className="flex flex-col">
           <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[217px] flex flex-col items-center justify-center">
             <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
               Water Level (m)
             </p>
           </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-4">
-            Sample Sentence
-          </div>
-        </div>
-
-        <div className="flex-shrink-0">
-          <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[217px] flex flex-col items-center justify-center">
-            <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-              Water Level (m)
-            </p>
-          </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-4">
-            Sample Sentence
+          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
+            Normal Pressure (Fair weather; High pressure system)
           </div>
         </div>
       </div>

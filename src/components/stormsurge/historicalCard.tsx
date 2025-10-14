@@ -1,5 +1,6 @@
 import { useState } from "react";
 import chart from "../../components/stormsurge/chart";
+import TropicalCard from "../../components/stormsurge/stormsurgeCard";
 
 interface Graph {
   [key: string]: string;
@@ -31,7 +32,7 @@ export default function HistoricalCards() {
   const CurrentChart = chart[current];
   return (
     <div className="lg:col-span-2 flex flex-col">
-      <div className="border-2 border-[#D9D9D9] w-[1480px] h-[616px] mt-8 rounded md:rounded-xl">
+      <div className="border-2 border-[#D9D9D9] w-[1480px] h-[1043px] mt-8 rounded md:rounded-xl">
         <div className="w-full px-4 flex items-center h-16">
           <h1 className="text-lg font-semibold">HISTORICAL DATA</h1>
         </div>
@@ -95,16 +96,19 @@ export default function HistoricalCards() {
             </button>
           </div>
         </div>
-        <div className="w-[1410px] h-[400px] bg-white shadow rounded-xl border border-gray-300 p-4 mx-auto mt-6">
+        <div className="w-[1410px] h-[400px] bg-white shadow rounded-lg border border-gray-300 p-4 mx-auto mt-6">
           <div className="flex items-center space-x-2 justify-between">
             <h1 className="text-lg mb-3">Water Level</h1>
-            <select
-              id="my-select"
-              className="block text-nowrap overflow-hidden truncate border border-gray-300 text-[15px] rounded-md p-2 w-[158px] h-[40px]"
-            >
-              <option value="">Last 6 months</option>
-              <option value="">Last 7 months</option>
-            </select>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700">From:</label>
+                <input type="date"  className="border border-gray-300 rounded-md p-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+              </div>
+              <div className="flex items-center gap-2">
+                <label className="text-sm font-medium text-gray-700">To:</label>
+                <input type="date" className="border border-gray-300 rounded-md p-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+              </div>
+            </div>
           </div>
 
           <div className="flex gap-4 mt-4">
@@ -112,7 +116,7 @@ export default function HistoricalCards() {
               <CurrentChart />
             </div>
 
-            <div className="w-[300px] h-[300px] bg-[#E2F1FF] border border-gray-200 shadow rounded-lg p-4">
+            {/* <div className="w-[300px] h-[300px] bg-[#E2F1FF] border border-gray-200 shadow rounded-lg p-4">
               <h1 className="text-base font-semibold text-gray-700 mb-2">
                 About this Graph
               </h1>
@@ -128,9 +132,10 @@ export default function HistoricalCards() {
                     <li key={i}>{line}</li>
                   ))}
               </ul>
-            </div>
+            </div> */}
           </div>
         </div>
+        <TropicalCard />
       </div>
     </div>
   );

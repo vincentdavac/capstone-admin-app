@@ -1,10 +1,10 @@
-
+// import ModelViewer from '../../components/model-viewer/ModelViewer';
 import HistoricalCard from "../../components/stormsurge/historicalCard";
 import SearchBuoy from "../../components/stormsurge/search";
 import MapsWithHazard from "../../components/stormsurge/maps_w_hazard";
 
 
-const stormSurgePage = () => {
+const riverMonitoring = () => {
   return (
     <div className="">
       <SearchBuoy />
@@ -13,4 +13,4 @@ const stormSurgePage = () => {
     </div>
   );
 };
-export default stormSurgePage;
+export default riverMonitoring;

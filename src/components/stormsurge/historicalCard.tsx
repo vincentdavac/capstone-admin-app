@@ -30,6 +30,7 @@ export default function HistoricalCards() {
   const [current, setData] = useState("waterLevel");
   const currentData = aboutGraph[current];
   const CurrentChart = chart[current];
+  const [date, setDate] = useState('');
   return (
     <div className="lg:col-span-2 flex flex-col">
       <div className="border-2 border-[#D9D9D9] w-[1480px] h-[1043px] mt-8 rounded md:rounded-xl">
@@ -102,7 +103,7 @@ export default function HistoricalCards() {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <div className="flex items-center gap-2">
                 <label className="text-sm font-medium text-gray-700">From:</label>
-                <input type="date"  className="border border-gray-300 rounded-md p-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
+                <input type="date" className="border border-gray-300 rounded-md p-2 text-sm w-48 focus:outline-none focus:ring-2 focus:ring-blue-400"/>
               </div>
               <div className="flex items-center gap-2">
                 <label className="text-sm font-medium text-gray-700">To:</label>

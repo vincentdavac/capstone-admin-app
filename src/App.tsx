@@ -24,7 +24,7 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
 import TsunamiDashboard from "./pages/Dashboard/TsunamiDashboard";
 import Dashboard from "./pages/Dashboard/Dashboard";
-import StormSurge from "./pages/Dashboard/storm_surge";
+import StormSurge from "./pages/Dashboard/riverMonitoring";
 import ManageUsers from "./pages/Management/ManageUsers";
 import BuoyDeployment from "./pages/Management/BuoyDeployment";
 import ChatSupport from "./pages/Management/ChatSupport";

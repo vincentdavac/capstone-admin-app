@@ -1,5 +1,5 @@
 import { useState } from "react";
-import chart from "../../components/stormsurge/chart";
+import chart from "../stormsurge/chart";
 
 interface Graph {
   [key: string]: string;

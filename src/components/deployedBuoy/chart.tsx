@@ -1,4 +1,4 @@
-import SstChart from "../../components/stormsurge/sstChart";
+import SstChart from "../stormsurge/sstChart";
 
 interface ChartMap {
   [key: string]: React.ComponentType;

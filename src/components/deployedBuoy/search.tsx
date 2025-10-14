@@ -1,4 +1,4 @@
-import Icons from "../../components/dashboard_content/icons";
+import Icons from "../dashboard_content/icons";
 export default function searchBuoyStom (){
     return (
     <div className="flex flex-col sm:flex-row sm:items-center mb-4 gap-3 sm:gap-45">
@@ -12,8 +12,8 @@ export default function searchBuoyStom (){
           className="border rounded-lg pl-10 pr-3 py-2 w-full border-[#D9D9D9] h-12 sm:h-[61px] text-sm sm:text-base focus:ring-[#D9D9D9] focus:border-[#D9D9D9]"
         />
       </div>
-      <span className="text-gray-600 text-xs sm:text-sm lg:text-base font-medium">
-        REAL-TIME HAZARD STATUS OVERVIEW
+       <span className="text-gray-600 text-xs sm:text-sm lg:text-base font-medium">
+        BUOY LIGHTS CONTROLLER
       </span>
     </div>
   );

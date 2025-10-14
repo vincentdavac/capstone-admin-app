@@ -48,8 +48,8 @@ export default function ModelViewer() {
       camera={{ fov: 45, near: 0.1, far: 1000 }}
       style={{
         background: "transparent",
-        width: "110%",
-        height: "107%",
+        width: "100%",
+        height: "100%",
         borderRadius: "8px",
       }}
       gl={{ antialias: true, alpha: true }}

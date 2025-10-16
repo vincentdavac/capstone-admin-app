@@ -1,6 +1,6 @@
-import HistoricalCard from "../../components/stormsurge/historicalCard";
-import SearchBuoy from "../../components/stormsurge/search";
-import MapsWithHazard from "../../components/stormsurge/maps_w_hazard";
+import HistoricalCard from "../../components/riverMonitoring/historicalCard";
+import SearchBuoy from "../../components/riverMonitoring/search";
+import MapsWithHazard from "../../components/riverMonitoring/maps_w_hazard";
 
 
 const riverMonitoring = () => {

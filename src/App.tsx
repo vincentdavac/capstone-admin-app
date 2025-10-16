@@ -47,6 +47,8 @@ import ArchiveUsers from "./pages/Archive/ArchiveUsers";
 import ArchiveBuoys from "./pages/Archive/ArchiveBuoys";
 import Loader from './common/Loader';
 import DeployedBuoy from "./pages/Dashboard/deployedBuoy";
+import HistoricalDashboard from "./pages/Dashboard/historicalDashboard";
+
 
 // Add these imports for your customization components
 import CustomizationSlider from "./components/admin/customization-slider";
@@ -97,6 +99,7 @@ export default function App() {
             />
             <Route index path="/dashboard" element={<Dashboard />} />
             <Route index path="/river-monitoring" element={<StormSurge />} />
+            <Route index path="/historical-data" element={<HistoricalDashboard />} />
             <Route index element={<Dashboard />} />
 
             {/* <Route index path="/admin/dashboard" element={<Home />} /> */}

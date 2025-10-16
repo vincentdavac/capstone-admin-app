@@ -69,6 +69,11 @@ const navItems: NavItem[] = [
   },
   {
     icon: <GridIcon />,
+    name: "Historical Data",
+    path: "/historical-data",
+  },
+  {
+    icon: <GridIcon />,
     name: "Tsunami Monitoring",
     path: "/TsunamiDashboard",
   },

@@ -21,11 +21,11 @@ import FormElements from "./pages/Forms/FormElements";
 import Slider from "./pages/Slider";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
-import Home from "./pages/Dashboard/Home";
+// import Home from "./pages/Dashboard/Home";
 import TsunamiDashboard from "./pages/Dashboard/TsunamiDashboard";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import StormSurge from "./pages/Dashboard/riverMonitoring";
-import ManageUsers from "./pages/Management/ManageUsers";
+import ManageUsers from "./pages/Dashboard/ManageUsers";
 import BuoyDeployment from "./pages/Management/BuoyDeployment";
 import ChatSupport from "./pages/Management/ChatSupport";
 import AlertSystem from "./pages/Management/AlertSystem";
@@ -92,6 +92,12 @@ export default function App() {
               path="/TsunamiDashboard"
               element={<TsunamiDashboard />}
             />
+            <Route
+              index
+              path="/ManageUsers"
+              element={<ManageUsers />}
+            />
+
             <Route
               index
               path="/deployed-buoy"

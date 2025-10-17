@@ -77,17 +77,22 @@ const navItems: NavItem[] = [
     name: "Tsunami Monitoring",
     path: "/TsunamiDashboard",
   },
+  {
+    icon: <GridIcon />,
+    name: "Manage Users",  
+    path: "/ManageUsers",
+  },
 
   {
     name: "Management",
     icon: <Management />,
     subItems: [
-      {
-        name: "Manage users",
-        path: "/admin/manage-users",
-        icon: <ManageUsers />,
-        pro: false,
-      },
+      // {
+      //   name: "Manage users",
+      //   path: "/admin/manage-users",
+      //   icon: <ManageUsers />,
+      //   pro: false,
+      // },
       {
         name: "Buoy Deployment",
         path: "/admin/manage-buoys",

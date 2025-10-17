@@ -15,21 +15,15 @@ const monitoringTable = () => {
                   <th className="px-4 py-2">
                     Sea Surface Temperature (°C / °F)
                   </th>
-                  <th className="px-4 py-2">Atmospheric Pressure (mbar)</th>
-                  <th className="px-4 py-2">Water Pressure (mbar)</th>
-                  <th className="px-4 py-2">Wave Height (ft)</th>
-                  <th className="px-4 py-2">Rain Detection (%)</th>
-                  <th className="px-4 py-2">Depth Sensor (mbar)</th>
-                  <th className="px-4 py-2">Wind Speed (km/h or m/s)</th>
-                  <th className="px-4 py-2">Water Temperature (Surface)</th>
+                  <th className="px-4 py-2">Temperature (°C)</th>
+                  <th className="px-4 py-2">Temperature (°F)</th>
                   <th className="px-4 py-2">Status</th>
+                  <th className="px-4 py-2">Recorded At</th>
+                  <th className="px-4 py-2">Updated At</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-t">
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
                   <td className="px-4 py-2">test</td>
                   <td className="px-4 py-2">test</td>
                   <td className="px-4 py-2">test</td>
@@ -41,9 +35,6 @@ const monitoringTable = () => {
                   </td>
                 </tr>
                 <tr className="border-t">
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
                   <td className="px-4 py-2">test</td>
                   <td className="px-4 py-2">test</td>
                   <td className="px-4 py-2">test</td>

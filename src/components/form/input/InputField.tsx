@@ -1,18 +1,7 @@
-import type React from "react";
-import type { FC } from "react";
+import type { FC, InputHTMLAttributes } from "react";
 
-interface InputProps {
-  type?: "text" | "number" | "email" | "password" | "date" | "time" | string;
-  id?: string;
-  name?: string;
-  placeholder?: string;
-  value?: string | number;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  className?: string;
-  min?: string;
-  max?: string;
-  step?: number;
-  disabled?: boolean;
+// ✅ Extend InputHTMLAttributes so native <input> props like readOnly, autoComplete, etc. are allowed
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   success?: boolean;
   error?: boolean;
   hint?: string;
@@ -33,6 +22,8 @@ const Input: FC<InputProps> = ({
   success = false,
   error = false,
   hint,
+  required = false,
+  ...rest // ✅ collect extra props like readOnly, autoComplete, etc.
 }) => {
   let inputClasses = ` h-11 w-full rounded-lg border appearance-none px-4 py-2.5 text-sm shadow-theme-xs placeholder:text-gray-400 focus:outline-hidden focus:ring-3  dark:bg-gray-900 dark:text-white/90 dark:placeholder:text-white/30 ${className}`;
 
@@ -59,7 +50,9 @@ const Input: FC<InputProps> = ({
         max={max}
         step={step}
         disabled={disabled}
+        required={required}
         className={inputClasses}
+        {...rest} // ✅ spread extra props into <input>
       />
 
       {hint && (

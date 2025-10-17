@@ -18,6 +18,13 @@ import {
   HomepageAdjust,
   // ListIcon,
   PageIcon,
+  Archive,
+  Comment,
+  Management,
+  ManageUsers,
+  Buoy,
+  Chat,
+  Alert,
   // PieChartIcon,
   // PlugInIcon,
   // TableIcon,
@@ -41,17 +48,73 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
+  // {
+  //   icon: <GridIcon />,
+  //   name: "Dashboard",
+  //   path: "/admin/dashboard",
+  // },
   {
     icon: <GridIcon />,
     name: "Dashboard",
-    path: "/admin-dashboard",
+    path: "/dashboard",
+  },
+  {
+    icon: <GridIcon />,
+    name: "River Monitoring",
+    path: "/river-monitoring",
+  },
+  {
+    icon: <GridIcon />,
+    name: "Deployed Buoy",
+    path: "/deployed-buoy",
+  },
+  {
+    icon: <GridIcon />,
+    name: "Historical Data",
+    path: "/historical-data",
+  },
+  {
+    icon: <GridIcon />,
+    name: "Tsunami Monitoring",
+    path: "/TsunamiDashboard",
+  },
+
+  {
+    name: "Management",
+    icon: <Management />,
+    subItems: [
+      {
+        name: "Manage users",
+        path: "/admin/manage-users",
+        icon: <ManageUsers />,
+        pro: false,
+      },
+      {
+        name: "Buoy Deployment",
+        path: "/admin/manage-buoys",
+        icon: <Buoy />,
+        pro: false,
+      },
+      {
+        name: "Chat Support",
+        path: "/admin/chat-support",
+        icon: <Chat />,
+        pro: false,
+      },
+      {
+        name: "Alert System",
+        path: "/admin/alert-system",
+        icon: <Alert />,
+        pro: false,
+      },
+    ],
   },
 
   {
     name: "Pages",
     icon: <PageIcon />,
     subItems: [
-      { name: "Blank Page", path: "/blank", pro: false },
+      { name: "Slider", path: "/slider", pro: false },
       { name: "404 Error", path: "/error-404", pro: false },
       { name: "Calendar", path: "/calendar", pro: false },
       { name: "User Profile", path: "/admin-profile", pro: false },
@@ -119,8 +182,81 @@ const othersItems: NavItem[] = [
         pro: false,
       },
       {
+        name: "Feedback",
+        path: "/admin/customization-feedbacks",
+        icon: <Comment />,
+        pro: false,
+      },
+      {
         name: "Footer",
         path: "/admin/customization-footer",
+        icon: <HomepageFooter />,
+        pro: false,
+      },
+    ],
+  },
+
+  {
+    icon: <Archive />,
+    name: "Archive",
+    subItems: [
+      {
+        name: "Users",
+        path: "/admin/archive/users",
+        icon: <ManageUsers />,
+        pro: false,
+      },
+      {
+        name: "Buoys",
+        path: "/admin/archive/buoys",
+        icon: <Buoy />,
+        pro: false,
+      },
+      {
+        name: "Slider",
+        path: "/admin/archive/sliders",
+        icon: <HomepageSliderShow />,
+        pro: false,
+      },
+      {
+        name: "About us",
+        path: "/admin/archive/about-us",
+        icon: <HomepageAbout />,
+        pro: false,
+      },
+      {
+        name: "Prototype",
+        path: "/admin/archive/prototype",
+        icon: <HomepagePrototype />,
+        pro: false,
+      },
+      {
+        name: "Team",
+        path: "/admin/archive/teams",
+        icon: <HomepageTeam />,
+        pro: false,
+      },
+      {
+        name: "FAQs",
+        path: "/admin/archive/faqs",
+        icon: <HomepageFAQs />,
+        pro: false,
+      },
+      {
+        name: "Footer",
+        path: "/admin/archive/footer",
+        icon: <HomepageFooter />,
+        pro: false,
+      },
+      {
+        name: "Feedbacks",
+        path: "/admin/archive/feedbacks",
+        icon: <HomepageFooter />,
+        pro: false,
+      },
+      {
+        name: "Archive",
+        path: "//admin/archive/archive",
         icon: <HomepageFooter />,
         pro: false,
       },
@@ -343,26 +479,22 @@ const AppSidebar: React.FC = () => {
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <img
-                className="dark:hidden"
-                src="/images/logo/logo.svg"
+                src="/logo/forblackbg.svg"
                 alt="Logo"
-                width={150}
-                height={40}
+                className="dark:hidden"
               />
               <img
                 className="hidden dark:block"
-                src="/images/logo/logo-dark.svg"
+                src="/logo/forblackbg.svg"
                 alt="Logo"
-                width={150}
-                height={40}
               />
             </>
           ) : (
             <img
-              src="/images/logo/logo-icon.svg"
+              src="/logo/forwhitebg.svg"
               alt="Logo"
-              width={32}
-              height={32}
+              width={20}
+              height={20}
             />
           )}
         </Link>

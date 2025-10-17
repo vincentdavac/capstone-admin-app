@@ -1,4 +1,8 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
+
+
+import {  Routes, Route } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -14,56 +18,163 @@ import BarChart from "./pages/Charts/BarChart";
 import Calendar from "./pages/Calendar";
 import BasicTables from "./pages/Tables/BasicTables";
 import FormElements from "./pages/Forms/FormElements";
-import Blank from "./pages/Blank";
+import Slider from "./pages/Slider";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Home from "./pages/Dashboard/Home";
-import PrivateRoute from "./routes/PrivateRoute";
-import VerifySuccess from "./components/auth/VerifySuccess";
-import ForgotPassword from "./components/auth/ForgotPassword";
-import ResetPassword from "./components/auth/ResetPassword";
+import TsunamiDashboard from "./pages/Dashboard/TsunamiDashboard";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import StormSurge from "./pages/Dashboard/riverMonitoring";
+import ManageUsers from "./pages/Management/ManageUsers";
+import BuoyDeployment from "./pages/Management/BuoyDeployment";
+import ChatSupport from "./pages/Management/ChatSupport";
+import AlertSystem from "./pages/Management/AlertSystem";
+import CustomSlider from "./pages/Customization/CustomSlider";
+import CustomAboutUs from "./pages/Customization/CustomAboutUs";
+import CustomPrototype from "./pages/Customization/CustomPrototype";
+import CustomTeam from "./pages/Customization/CustomTeam";
+import CustomFAQs from "./pages/Customization/CustomFAQs";
+import CustomFeedback from "./pages/Customization/CustomFeedback";
+import CustomFooter from "./pages/Customization/CustomFooter";
+import ArchiveSlider from "./pages/Archive/ArchiveSlider";
+import ArchiveAboutUs from "./pages/Archive/ArchiveAboutUs";
+import ArchivePrototype from "./pages/Archive/ArchivePrototype";
+import ArchiveTeam from "./pages/Archive/ArchiveTeam";
+import ArchiveFAQs from "./pages/Archive/ArchiveFAQs";
+import ArchiveFeeback from "./pages/Archive/ArchiveFeeback";
+import ArchiveFooter from "./pages/Archive/ArchiveFooter";
+import ArchiveUsers from "./pages/Archive/ArchiveUsers";
+import ArchiveBuoys from "./pages/Archive/ArchiveBuoys";
+import Loader from './common/Loader';
+import DeployedBuoy from "./pages/Dashboard/deployedBuoy";
+import HistoricalDashboard from "./pages/Dashboard/historicalDashboard";
+
+
+// Add these imports for your customization components
+import CustomizationSlider from "./components/admin/customization-slider";
+import CustomizationAbout from "./components/admin/customization-about";
+import CustomizationPrototype from "./components/admin/customization-prototype";
+import CustomizationFaqs from "./components/admin/customization-faqs";
+import CustomizationTeam from "./components/admin/customization-team";
+import CustomizationFooter from "./components/admin/customization-footer";
+import CustomizationFeedbacks from "./components/admin/customization-feedbacks";
+import CustomizationArchive from "./components/admin/customization-archive";
+
 
 export default function App() {
-  return (
-    <Router>
-      <ScrollToTop />
-      <Routes>
-        {/* 🔐 Protected Layout + Child Routes */}
-        <Route
-          element={
-            <PrivateRoute>
-              <AppLayout />
-            </PrivateRoute>
-          }
-        >
+  
+  const [loading, setLoading] = useState<boolean>(true);
+  const { pathname } = useLocation();
 
-          <Route index path="/admin-dashboard" element={<Home />} />
-          <Route path="/admin-profile" element={<UserProfiles />} />
-          <Route path="/calendar" element={<Calendar />} />
-          <Route path="/blank" element={<Blank />} />
-          <Route path="/form-elements" element={<FormElements />} />
-          <Route path="/basic-tables" element={<BasicTables />} />
-          <Route path="/alerts" element={<Alerts />} />
-          <Route path="/avatars" element={<Avatars />} />
-          <Route path="/badge" element={<Badges />} />
-          <Route path="/buttons" element={<Buttons />} />
-          <Route path="/images" element={<Images />} />
-          <Route path="/videos" element={<Videos />} />
-          <Route path="/line-chart" element={<LineChart />} />
-          <Route path="/bar-chart" element={<BarChart />} />
-        </Route>
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
-        {/* 🌍 Public Routes */}
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/verify-success" element={<VerifySuccess />} />
-        <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/reset-password" element={<ResetPassword />} />
-        
-        {/* Catch-all */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+  useEffect(() => {
+    setTimeout(() => setLoading(false), 2000);
+  }, []);
+  
+  
+  return loading ? (
+    <Loader 
+    title="Coastella Admin" 
+    description="Please wait while loading..."  />
+  ) :(
+    <>
+        <ScrollToTop />
+        <Routes>
+          {/* Dashboard Layout */}
+          <Route element={<AppLayout />}>
+            {/* <Route index path="/admin-dashboard" element={<Home />} /> */}
+
+            <Route
+              index
+              path="/TsunamiDashboard"
+              element={<TsunamiDashboard />}
+            />
+            <Route
+              index
+              path="/deployed-buoy"
+              element={<DeployedBuoy />}
+            />
+            <Route index path="/dashboard" element={<Dashboard />} />
+            <Route index path="/river-monitoring" element={<StormSurge />} />
+            <Route index path="/historical-data" element={<HistoricalDashboard />} />
+            <Route index element={<Dashboard />} />
+
+            {/* <Route index path="/admin/dashboard" element={<Home />} /> */}
+            
+            {/* Management */}
+            <Route path="/admin/manage-users" element={<ManageUsers />} />
+            <Route path="/admin/manage-buoys" element={<BuoyDeployment />} />
+            <Route path="/admin/chat-support" element={<ChatSupport />} />
+            <Route path="/admin/alert-system" element={<AlertSystem />} />
+
+            {/* Customization */}
+            <Route path="/admin/customization/sliders" element={<CustomSlider />} />
+            <Route path="/admin/customization/about-us" element={<CustomAboutUs />} />
+            <Route path="/admin/customization/prototype" element={<CustomPrototype />} />
+            <Route path="/admin/customization/teams" element={<CustomTeam />} />
+            <Route path="/admin/customization/faqs" element={<CustomFAQs />} />
+            <Route path="/admin/customization/feedbacks" element={<CustomFeedback />} />
+            <Route path="/admin/customization/footer" element={<CustomFooter />} />
+
+            {/* Archive */}
+            <Route path="/admin/archive/users" element={<ArchiveUsers />} />
+            <Route path="/admin/archive/buoys" element={<ArchiveBuoys />} />
+            <Route path="/admin/archive/sliders" element={<ArchiveSlider />} />
+            <Route path="/admin/archive/about-us" element={<ArchiveAboutUs />} />
+            <Route path="/admin/archive/prototype" element={<ArchivePrototype />} />
+            <Route path="/admin/archive/teams" element={<ArchiveTeam />} />
+            <Route path="/admin/archive/faqs" element={<ArchiveFAQs />} />
+            <Route path="/admin/archive/feedbacks" element={<ArchiveFeeback />} />
+            <Route path="/admin/archive/archive" element={<ArchiveFeeback />} />
+            <Route path="/admin/archive/footer" element={<ArchiveFooter />} />
+            
+
+
+            {/* Others Page */}
+            <Route path="/admin-profile" element={<UserProfiles />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/slider" element={<Slider />} />
+
+            {/* Customization Routes - ADD THESE */}
+            <Route path="/admin/customization-slider" element={<CustomizationSlider />} />
+            <Route path="/admin/customization-about" element={<CustomizationAbout />} />
+            <Route path="/admin/customization-prototype" element={<CustomizationPrototype />} />
+            <Route path="/admin/customization-faqs" element={<CustomizationFaqs />} />
+            <Route path="/admin/customization-team" element={<CustomizationTeam />} />
+            <Route path="/admin/customization-footer" element={<CustomizationFooter />} />
+            <Route path="/admin/customization-feedbacks" element={<CustomizationFeedbacks />} />
+            <Route path="/admin/customization-archive" element={<CustomizationArchive />} />
+            
+
+            {/* Forms */}
+            <Route path="/form-elements" element={<FormElements />} />
+
+            {/* Tables */}
+            <Route path="/basic-tables" element={<BasicTables />} />
+
+            {/* Ui Elements */}
+            <Route path="/alerts" element={<Alerts />} />
+            <Route path="/avatars" element={<Avatars />} />
+            <Route path="/badge" element={<Badges />} />
+            <Route path="/buttons" element={<Buttons />} />
+            <Route path="/images" element={<Images />} />
+            <Route path="/videos" element={<Videos />} />
+
+            {/* Charts */}
+            <Route path="/line-chart" element={<LineChart />} />
+            <Route path="/bar-chart" element={<BarChart />} />
+          </Route>
+
+          {/* Auth Layout */}
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+
+          {/* Fallback Route */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+    </>
   );
 }
-

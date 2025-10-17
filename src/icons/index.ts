@@ -61,6 +61,17 @@ import { ReactComponent as HomepageTeam } from "./users-group.svg?react";
 import { ReactComponent as HomepageFAQs } from "./list-details.svg?react";
 import { ReactComponent as HomepageFooter } from "./layout-bottombar.svg?react";
 import { ReactComponent as HomepageAdjust } from "./adjustments-alt.svg?react";
+import { ReactComponent as Archive } from "./ArchiveIn.svg?react";
+import { ReactComponent as Comment } from "./Comment.svg?react";
+import { ReactComponent as Management } from "./CategoryManagement.svg?react";
+import { ReactComponent as ManageUsers } from "./UsersGroup.svg?react";
+import { ReactComponent as Buoy } from "./Buoy.svg?react";
+import { ReactComponent as Chat } from "./ChatDots.svg?react";
+import { ReactComponent as Alert } from "./AlertOutlined.svg?react";
+
+
+
+
 
 export {
   ErrorHexaIcon,
@@ -126,4 +137,11 @@ export {
   HomepageFAQs,
   HomepageFooter,
   HomepageAdjust,
+  Archive,
+  Comment,
+  Management,
+  ManageUsers,
+  Buoy,
+  Chat,
+  Alert,
 };

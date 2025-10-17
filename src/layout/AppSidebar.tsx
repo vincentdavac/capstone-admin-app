@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
+import { useAlert } from "../context/AlertContext"; // adjust path if different
 
 // Assume these icons are imported from an icon library
 import {
@@ -130,7 +131,14 @@ const othersItems: NavItem[] = [
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
+  const { showAlert } = useAlert();
 
+  const handleClick = (e: React.MouseEvent, name: string) => {
+  if (name === "Sign In" || name === "Sign Up") {
+    e.preventDefault();
+  showAlert("info", "Already Logged In", `You are already logged in, no need to ${name}.`);
+  }
+};
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main" | "others";
     index: number;
@@ -271,48 +279,39 @@ const AppSidebar: React.FC = () => {
                     : "0px",
               }}
             >
-              <ul className="mt-2 space-y-1 ml-9">
-                {nav.subItems.map((subItem) => (
-                  <li key={subItem.name}>
-                    <Link
-                      to={subItem.path}
-                      className={`menu-dropdown-item ${
-                        isActive(subItem.path)
-                          ? "menu-dropdown-item-active"
-                          : "menu-dropdown-item-inactive"
-                      }`}
-                    >
-                      {subItem.icon}
+<ul className="mt-2 space-y-1 ml-9">
+  {nav.subItems.map((subItem) => (
+    <li key={subItem.name}>
+      {subItem.name === "Sign In" || subItem.name === "Sign Up" ? (
+        <a
+          href="#"
+          onClick={(e) => handleClick(e, subItem.name)}
+          className={`menu-dropdown-item ${
+            isActive(subItem.path)
+              ? "menu-dropdown-item-active"
+              : "menu-dropdown-item-inactive"
+          }`}
+        >
+          {subItem.icon}
+          {subItem.name}
+        </a>
+      ) : (
+        <Link
+          to={subItem.path}
+          className={`menu-dropdown-item ${
+            isActive(subItem.path)
+              ? "menu-dropdown-item-active"
+              : "menu-dropdown-item-inactive"
+          }`}
+        >
+          {subItem.icon}
+          {subItem.name}
+        </Link>
+      )}
+    </li>
+  ))}
+</ul>
 
-                      {subItem.name}
-                      <span className="flex items-center gap-1 ml-auto">
-                        {subItem.new && (
-                          <span
-                            className={`ml-auto ${
-                              isActive(subItem.path)
-                                ? "menu-dropdown-badge-active"
-                                : "menu-dropdown-badge-inactive"
-                            } menu-dropdown-badge`}
-                          >
-                            new
-                          </span>
-                        )}
-                        {subItem.pro && (
-                          <span
-                            className={`ml-auto ${
-                              isActive(subItem.path)
-                                ? "menu-dropdown-badge-active"
-                                : "menu-dropdown-badge-inactive"
-                            } menu-dropdown-badge`}
-                          >
-                            pro
-                          </span>
-                        )}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
             </div>
           )}
         </li>

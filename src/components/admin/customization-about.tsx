@@ -262,7 +262,7 @@ const CustomizationAbout: React.FC = () => {
           <div className="relative w-full sm:max-w-xs">
             <input
               type="text"
-              placeholder="Search name or email"
+              placeholder="Search title or description..."
               value={aboutSearchTerm}
               onChange={(e) => setAboutSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
@@ -418,7 +418,7 @@ const CustomizationAbout: React.FC = () => {
           <div className="relative w-full sm:max-w-xs">
             <input
               type="text"
-              placeholder="Search name or email"
+             placeholder="Search title or description..."
               value={mvvSearchTerm}
               onChange={(e) => setMvvSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"

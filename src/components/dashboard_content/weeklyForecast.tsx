@@ -1,33 +1,7 @@
-import getWeather from "../../core_api_fetching/getWeeklyWeather";
-import { useState, useEffect } from "react";
+import { fetchWeather } from "../../api_hooks/forecasting";
 const WeatherForecast = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [forecast, setForecast] = useState<any>(null);
+  const { forecast, loading, error } = fetchWeather();
 
-  const fetchWeather = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const data = await getWeather.get();
-      console.log("test data 5", data.daily.weathercode[4]);
-      
-      setForecast(data);
-    } catch (err) {
-      setError("Failed to fetch weather data");
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchWeather();
-  }, []);
-
-  useEffect(() => {
-    console.log("forecast state updated to:", forecast);
-  }, [forecast]);
   if (!forecast) return <p>Loading forecast...</p>;
   const day1 = new Date(forecast.daily.time[0]).toLocaleDateString("en-US", {
     weekday: "short",
@@ -64,7 +38,7 @@ const WeatherForecast = () => {
     month: "long",
     day: "numeric",
   });
-  const getWeatherIcon = (code:number) => {
+  const getWeatherIcon = (code: number) => {
     if (code === 0) return "/logo/sun.svg";
     if (code >= 1 && code <= 3) return "/logo/sunCloud.svg";
     if (code === 45 || code === 48) return "/logo/fog.svg";
@@ -92,7 +66,9 @@ const WeatherForecast = () => {
                 <p className="text-2xl font-bold text-gray-900 mb-1">
                   {forecast.daily.temperature_2m_max[0]}°C
                 </p>
-                <p className="text-xs text-gray-600">Rain: {forecast.daily.precipitation_probability_max[0]+"%"}</p>
+                <p className="text-xs text-gray-600">
+                  Rain: {forecast.daily.precipitation_probability_max[0] + "%"}
+                </p>
               </div>
               <div className="relative w-12 h-12 flex-shrink-0">
                 <img
@@ -108,8 +84,13 @@ const WeatherForecast = () => {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 flex justify-between items-center w-[251px]">
               <div>
                 <p className="text-xs text-gray-600 mb-1">{day2}</p>
-                <p className="text-2xl font-bold text-gray-900 mb-1"> {forecast.daily.temperature_2m_max[1]}°C</p>
-                <p className="text-xs text-gray-600">Rain: {forecast.daily.precipitation_probability_max[1]+"%"}</p>
+                <p className="text-2xl font-bold text-gray-900 mb-1">
+                  {" "}
+                  {forecast.daily.temperature_2m_max[1]}°C
+                </p>
+                <p className="text-xs text-gray-600">
+                  Rain: {forecast.daily.precipitation_probability_max[1] + "%"}
+                </p>
               </div>
               <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
                 <img
@@ -124,8 +105,13 @@ const WeatherForecast = () => {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 flex justify-between items-center w-[251px]">
               <div>
                 <p className="text-xs text-gray-600 mb-1">{day3}</p>
-                <p className="text-2xl font-bold text-gray-900 mb-1"> {forecast.daily.temperature_2m_max[2]}°C</p>
-                <p className="text-xs text-gray-600">Rain: {forecast.daily.precipitation_probability_max[2]+"%"}</p>
+                <p className="text-2xl font-bold text-gray-900 mb-1">
+                  {" "}
+                  {forecast.daily.temperature_2m_max[2]}°C
+                </p>
+                <p className="text-xs text-gray-600">
+                  Rain: {forecast.daily.precipitation_probability_max[2] + "%"}
+                </p>
               </div>
               <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
                 <img
@@ -140,13 +126,18 @@ const WeatherForecast = () => {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 flex justify-between items-center w-[251px]">
               <div>
                 <p className="text-xs text-gray-600 mb-1">{day4}</p>
-                <p className="text-2xl font-bold text-gray-900 mb-1"> {forecast.daily.temperature_2m_max[3]}°C</p>
-               <p className="text-xs text-gray-600">Rain: {forecast.daily.precipitation_probability_max[3]+"%"}</p>
+                <p className="text-2xl font-bold text-gray-900 mb-1">
+                  {" "}
+                  {forecast.daily.temperature_2m_max[3]}°C
+                </p>
+                <p className="text-xs text-gray-600">
+                  Rain: {forecast.daily.precipitation_probability_max[3] + "%"}
+                </p>
               </div>
               <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
                 <img
                   className="h-auto w-auto object-cover"
-                 src={getWeatherIcon(forecast.daily.weathercode[3])}
+                  src={getWeatherIcon(forecast.daily.weathercode[3])}
                   alt="Logo"
                   width="100"
                   height="100"
@@ -157,8 +148,12 @@ const WeatherForecast = () => {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 flex justify-between items-center w-[251px]">
               <div>
                 <p className="text-xs text-gray-600 mb-1">{day5}</p>
-                <p className="text-2xl font-bold text-gray-900 mb-1">{forecast.daily.temperature_2m_max[4]}°C</p>
-                <p className="text-xs text-gray-600">Rain: {forecast.daily.precipitation_probability_max[4]+"%"}</p>
+                <p className="text-2xl font-bold text-gray-900 mb-1">
+                  {forecast.daily.temperature_2m_max[4]}°C
+                </p>
+                <p className="text-xs text-gray-600">
+                  Rain: {forecast.daily.precipitation_probability_max[4] + "%"}
+                </p>
               </div>
               <div className="relative w-12 h-12 flex-shrink-0">
                 <img
@@ -173,8 +168,13 @@ const WeatherForecast = () => {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 flex justify-between items-center w-[251px]">
               <div>
                 <p className="text-xs text-gray-600 mb-1">{day6}</p>
-                <p className="text-2xl font-bold text-gray-900 mb-1"> {forecast.daily.temperature_2m_max[5]}°C</p>
-                <p className="text-xs text-gray-600">Rain: {forecast.daily.precipitation_probability_max[5]+"%"}</p>
+                <p className="text-2xl font-bold text-gray-900 mb-1">
+                  {" "}
+                  {forecast.daily.temperature_2m_max[5]}°C
+                </p>
+                <p className="text-xs text-gray-600">
+                  Rain: {forecast.daily.precipitation_probability_max[5] + "%"}
+                </p>
               </div>
               <div className="relative w-12 h-12 flex-shrink-0">
                 <img
@@ -190,8 +190,12 @@ const WeatherForecast = () => {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-200 flex justify-between items-center w-[251px]">
               <div>
                 <p className="text-xs text-gray-600 mb-1">{day7}</p>
-                <p className="text-2xl font-bold text-gray-900 mb-1">{forecast.daily.temperature_2m_max[6]}°C</p>
-                <p className="text-xs text-gray-600">Rain: {forecast.daily.precipitation_probability_max[6]+"%"}</p>
+                <p className="text-2xl font-bold text-gray-900 mb-1">
+                  {forecast.daily.temperature_2m_max[6]}°C
+                </p>
+                <p className="text-xs text-gray-600">
+                  Rain: {forecast.daily.precipitation_probability_max[6] + "%"}
+                </p>
               </div>
               <div className="w-12 h-12 flex items-center justify-center flex-shrink-0">
                 <img

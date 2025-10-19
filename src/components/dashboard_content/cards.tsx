@@ -1,8 +1,14 @@
 import { ArrowUpIcon, GroupIcon } from "../../icons";
+import { fetchUserCounts } from "../../api_hooks/countUsers";
 import Badge from "../ui/badge/Badge";
 const dashboardCards = () => {
+  const { counts, loading, error } = fetchUserCounts();
   return (
+    
     <div className="flex items-start justify-start pl-1">
+      {loading && <p>Loading...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+        {counts && (
       <div className="flex gap-4 md:gap-6">
         <div className="rounded-lg text-gray-800 text-xl font-semibold border p-6 w-[360px] h-[204px] bg-[#FFFFFF] border-[#D9D9D9]">
           <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl mb-4">
@@ -11,7 +17,7 @@ const dashboardCards = () => {
           <div className="flex items-end justify-between">
             <div>
               <span className="text-sm text-gray-500">Total Users</span>
-              <h4 className="mt-2 font-bold text-gray-800 text-2xl">3,782</h4>
+              <h4 className="mt-2 font-bold text-gray-800 text-2xl">{counts.data}</h4>
             </div>
             <Badge color="success">
               <ArrowUpIcon />
@@ -68,6 +74,7 @@ const dashboardCards = () => {
           </div>
         </div>
       </div>
+        )}
     </div>
   );
 };

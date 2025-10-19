@@ -42,7 +42,8 @@
     "react-router-dom": "^7.8.0",
     "swiper": "^11.2.3",
     "tailwind-merge": "^3.0.1",
-    "vue-recaptcha-v3": "^2.0.1"
+    "vue-recaptcha-v3": "^2.0.1",
+    "webgl-sdf-generator": "^1.1.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

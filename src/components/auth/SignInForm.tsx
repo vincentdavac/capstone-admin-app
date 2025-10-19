@@ -82,7 +82,7 @@ if (!res.ok) {
     localStorage.setItem("user", JSON.stringify(data.user));
 
     showAlert("success", "Login Successful", "Welcome back!");
-    navigate("/admin-dashboard");
+    navigate("/");
   } catch (err) {
     // ❌ Network/connection error
     showAlert("error", "Error", "Server error. Please try again later.");

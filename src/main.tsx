@@ -12,14 +12,16 @@ import { BrowserRouter } from "react-router";
 import { AlertProvider } from "./context/AlertContext.tsx";
 
 // ❌ Remove reCAPTCHA v3 import & provider
-// import { GoogleReCaptchaProvider } from "react-google-recaptcha-v3";
+// import { GoogleReCAPTCHAReCaptchaProvider } from "react-google-recaptcha-v3";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
       <AppWrapper>
       <BrowserRouter>   {/* ✅ wrap App with Router */}
-        <App />
+      <AlertProvider>
+          <App />
+      </AlertProvider>
       </BrowserRouter>   {/* ✅ wrap App with Router */}
       </AppWrapper>
     </ThemeProvider>

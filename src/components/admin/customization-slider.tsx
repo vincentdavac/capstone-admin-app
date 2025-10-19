@@ -153,18 +153,10 @@ const CustomizationSlider: React.FC = () => {
             </h1>
           </div>
         </div>
-        {/* Search */}
+        {/* Search and Add Button - MODIFIED SECTION */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="flex-shrink-0">
-            <button
-              onClick={handleOpenAddModal}
-              className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-            >
-              + Add Slider
-            </button>
-          </div>
-
-          <div className="relative w-full sm:max-w-md">
+          
+          <div className="relative w-full sm:max-w-md order-2 sm:order-1"> {/* Reordered for small screens */}
             <input
               type="text"
               placeholder="Search title or description..."
@@ -185,6 +177,15 @@ const CustomizationSlider: React.FC = () => {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
+          </div>
+
+          <div className="flex-shrink-0 order-1 sm:order-2"> {/* Reordered for small screens */}
+            <button
+              onClick={handleOpenAddModal}
+              className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+            >
+              + Add Slider
+            </button>
           </div>
         </div>
 

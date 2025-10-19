@@ -257,8 +257,8 @@ const CustomizationAbout: React.FC = () => {
             </h1>
           </div>
         </div>
-        {/* Search */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-end">
+        {/* Search - MOVED TO LEFT SIDE */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-start">
           <div className="relative w-full sm:max-w-xs">
             <input
               type="text"
@@ -413,8 +413,8 @@ const CustomizationAbout: React.FC = () => {
             </h1>
           </div>
         </div>
-        {/* Search */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-end">
+        {/* Search - MOVED TO LEFT SIDE */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-start">
           <div className="relative w-full sm:max-w-xs">
             <input
               type="text"
@@ -903,14 +903,23 @@ const CustomizationAbout: React.FC = () => {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="lucide lucide-circle-check text-[#453EFE]"
+                      className="lucide lucide-check-circle text-green-500"
                     >
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="m9 12 2 2 4-4" />
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                      <polyline points="22 4 12 14.01 9 11.01" />
                     </svg>
                     <h4 className="mt-4 text-lg font-semibold text-gray-900 dark:text-white">
-                      Archived Successfully!
+                      Successfully Archived!
                     </h4>
+                  </div>
+                  <div className="mt-6 flex justify-center">
+                    <button
+                      type="button"
+                      className="px-6 py-2 rounded-lg text-white bg-[#453EFE] hover:bg-indigo-700 transition-colors"
+                      onClick={() => setIsArchiveSuccessOpen(false)}
+                    >
+                      Close
+                    </button>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>

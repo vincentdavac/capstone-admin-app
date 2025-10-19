@@ -78,7 +78,8 @@ export default function Team() {
 
   return (
     <section
-      className="w-full bg-[#0353A4] py-16  outline-1 outline-[#959ea5] rounded-lg"
+      // Add dark:bg-gray-900 and transition for smooth color change
+      className="w-full bg-[#0353A4] dark:bg-gray-900 py-16 outline-1 outline-[#959ea5] rounded-lg transition-colors duration-500"
       style={{
         backgroundImage: `url('/wave.svg')`,
         backgroundSize: 'cover',
@@ -89,8 +90,8 @@ export default function Team() {
       <div className="container mx-auto px-4">
         <div className="mb-16 text-center">
           <h2
+            // Text color is already white, which works well in both modes
             className="mb-2 text-3xl font-bold text-[#FFFFFF] md:text-5xl"
-            // style={{ fontFamily: "'Playfair Display', serif" }}
           >
             MEET OUR TEAM
           </h2>
@@ -108,7 +109,8 @@ export default function Team() {
           {teamMembers.map((member, index) => (
             <div
               key={index}
-              className="w-full flex-shrink-0 snap-start overflow-hidden rounded-lg bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-lg sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)] xl:w-[calc(25%-0.75rem)]"
+              // Add dark:bg-gray-800 for the card background
+              className="w-full flex-shrink-0 snap-start overflow-hidden rounded-lg bg-white dark:bg-gray-800 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl sm:w-[calc(50%-0.5rem)] lg:w-[calc(33.333%-0.75rem)] xl:w-[calc(25%-0.75rem)]"
             >
               <div className="aspect-[4/4] w-full overflow-hidden">
                 <img
@@ -118,23 +120,25 @@ export default function Team() {
                 />
               </div>
               <div className="p-6">
-                <h3 className="mb-2 text-xl leading-tight font-semibold text-gray-800">
+                <h3 className="mb-2 text-xl leading-tight font-semibold text-gray-800 dark:text-white">
                   {member.name}
                 </h3>
-                <p className="mb-4 text-sm font-medium text-gray-600">
+                <p className="mb-4 text-sm font-medium text-gray-600 dark:text-gray-300">
                   {member.role}
                 </p>
                 <div className="flex space-x-3">
                   <a
                     href={member.linkedin}
-                    className="text-[#0353A4] transition-colors duration-200 hover:text-[#39A7FF]"
+                    // Adjust icon color for dark mode visibility
+                    className="text-[#0353A4] dark:text-[#39A7FF] transition-colors duration-200 hover:text-[#39A7FF] dark:hover:text-blue-400"
                     aria-label={`${member.name}'s LinkedIn profile`}
                   >
                     <Linkedin size={20} />
                   </a>
                   <a
                     href={member.twitter}
-                    className="text-[#0353A4] transition-colors duration-200 hover:text-[#39A7FF]"
+                    // Adjust icon color for dark mode visibility
+                    className="text-[#0353A4] dark:text-[#39A7FF] transition-colors duration-200 hover:text-[#39A7FF] dark:hover:text-blue-400"
                     aria-label={`${member.name}'s Twitter profile`}
                   >
                     <Twitter size={20} />

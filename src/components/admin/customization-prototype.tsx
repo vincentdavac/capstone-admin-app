@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useRef } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import Prototype from "../../preview/Prototype";
+import Prototype from "../../preview/Prototype"; // Assuming this is the correct path to the updated Prototype.tsx
 
 // 1. Define the interface for the table items
 interface TableItem {
@@ -255,7 +255,7 @@ const CustomizationPrototype: React.FC = () => {
   );
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
+    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white transition-colors duration-300">
       {/* Preview Image Section - Just put your image here */}
       <div className="mb-6">
         <h1 className="text-2xl font-light text-gray-600 dark:text-gray-400">
@@ -263,7 +263,7 @@ const CustomizationPrototype: React.FC = () => {
         </h1>
       </div>
       {/* Slider Preview Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6 transition-colors duration-300">
         <div className="flex justify-center w-full">
           {/* I-wrap ang Slider component at bigyan ng fixed size */}
           <div className="w-full max-w-8xl">
@@ -272,7 +272,7 @@ const CustomizationPrototype: React.FC = () => {
         </div>
       </div>
       {/* Prototype Description Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm transition-colors duration-300">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-light text-gray-600 dark:text-gray-400">
@@ -280,8 +280,8 @@ const CustomizationPrototype: React.FC = () => {
             </h1>
           </div>
         </div>
-        {/* Search */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-end">
+        {/* Search - Moved to the left */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-start">
           <div className="relative w-full sm:max-w-xs">
             <input
               type="text"
@@ -452,7 +452,7 @@ const CustomizationPrototype: React.FC = () => {
       </div>
 
       {/* Homepage Prototype Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm mt-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm mt-6 transition-colors duration-300">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-light text-gray-600 dark:text-gray-400">
@@ -460,18 +460,10 @@ const CustomizationPrototype: React.FC = () => {
             </h1>
           </div>
         </div>
-        {/* Search */}
+        {/* Search and Add Button - Flipped the order to be Search (Left) and Button (Right) */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="flex-shrink-0">
-            <button
-              onClick={handleAddModalOpen}
-              className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-            >
-              + Add Prototype
-            </button>
-          </div>
-
-          <div className="relative w-full sm:max-w-md">
+          {/* Search (Left) */}
+          <div className="relative w-full sm:max-w-md order-2 sm:order-1">
             <input
               type="text"
               placeholder="Search title or description..."
@@ -480,7 +472,7 @@ const CustomizationPrototype: React.FC = () => {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             />
             <svg
-              className="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -492,6 +484,15 @@ const CustomizationPrototype: React.FC = () => {
                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
+          </div>
+          {/* Add Button (Right) */}
+          <div className="flex-shrink-0 order-1 sm:order-2">
+            <button
+              onClick={handleAddModalOpen}
+              className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+            >
+              + Add Prototype
+            </button>
           </div>
         </div>
 
@@ -583,7 +584,8 @@ const CustomizationPrototype: React.FC = () => {
                       </button>
                       <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition">
                         UPDATE
-                      </span>
+                      </span
+>
                     </div>
                     <div className="relative group">
                       <button
@@ -678,7 +680,7 @@ const CustomizationPrototype: React.FC = () => {
             leaveTo="opacity-0"
           >
             <div
-              className="fixed inset-0 bg-black bg-opacity-25"
+              className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
             />
           </Transition.Child>
@@ -1031,7 +1033,7 @@ const CustomizationPrototype: React.FC = () => {
             leaveTo="opacity-0"
           >
             <div
-              className="fixed inset-0 bg-black bg-opacity-25"
+              className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
             />
           </Transition.Child>
@@ -1133,7 +1135,7 @@ const CustomizationPrototype: React.FC = () => {
             leaveTo="opacity-0"
           >
             <div
-              className="fixed inset-0 bg-black bg-opacity-25"
+              className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
             />
           </Transition.Child>

@@ -50,13 +50,13 @@ export default function Slider() {
 
   return (
     <>
-      <div className="container mx-auto px-4 py-16 md:py-24 outline-1 bg-[#FFFFFF] outline-[#959ea5] rounded-lg">
+      <div className="container mx-auto px-4 py-16 md:py-24 outline-1 bg-[#FFFFFF] outline-[#959ea5] rounded-lg dark:bg-gray-800 dark:outline-gray-700">
         <div className="flex flex-col items-center md:flex-row">
           <div className=" mb-10 md:mb-0 md:w-1/2">
-            <h1 className="mb-4 text-4xl leading-tight font-bold text-[#023E8A] md:text-5xl lg:text-5xl">
+            <h1 className="mb-4 text-4xl leading-tight font-bold text-[#023E8A] md:text-5xl lg:text-5xl dark:text-white">
               {slides[currentSlide].title}
             </h1>
-            <p className="mb-8 max-w-lg text-lg text-[#000000] md:text-xl">
+            <p className="mb-8 max-w-lg text-lg text-[#000000] md:text-xl dark:text-gray-300">
               {slides[currentSlide].description}
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
@@ -86,29 +86,29 @@ export default function Slider() {
                   <div className="absolute inset-0 bg-gradient-to-r from-[#386742]/20 to-transparent"></div>
                 </div>
               ))}
-              {/* Slider controls */}
+              {/* Slider controls - UPDATED COLOR */}
               <button
                 onClick={prevSlide}
-                className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-white/70 p-2 text-[#39A7FF] hover:bg-white"
+                className="absolute top-1/2 left-2 -translate-y-1/2 rounded-full bg-white/70 p-2 text-[#453EFE] hover:bg-white dark:bg-gray-900/70 dark:hover:bg-gray-900"
                 aria-label="Previous slide"
               >
                 <ChevronLeftIcon size={24} />
               </button>
               <button
                 onClick={nextSlide}
-                className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-white/70 p-2 text-[#39A7FF] hover:bg-white"
+                className="absolute top-1/2 right-2 -translate-y-1/2 rounded-full bg-white/70 p-2 text-[#453EFE] hover:bg-white dark:bg-gray-900/70 dark:hover:bg-gray-900"
                 aria-label="Next slide"
               >
                 <ChevronRightIcon size={24} />
               </button>
-              {/* Slide indicators */}
+              {/* Slide indicators - UPDATED COLOR */}
               <div className="absolute right-0 bottom-4 left-0 flex justify-center space-x-2">
                 {slides.map((_, index) => (
                   <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
                     className={`h-3 w-3 rounded-full ${
-                      index === currentSlide ? "bg-[#87C4FF]" : "bg-white/50"
+                      index === currentSlide ? "bg-[#453EFE]" : "bg-white/50" // Updated to #453EFE
                     }`}
                     aria-label={`Go to slide ${index + 1}`}
                   />

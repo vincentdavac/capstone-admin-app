@@ -30,7 +30,8 @@ export default function Testimonials() {
 
   return (
     <section
-      className="w-full bg-[#0353A4] py-16  outline-1 outline-[#959ea5] rounded-lg"
+      // Inayos: Added dark:bg-gray-900 to support Dark Mode for the main section background
+      className="w-full bg-[#0353A4] dark:bg-gray-900 py-16  outline-1 outline-[#959ea5] rounded-lg"
       style={{
         backgroundImage: `url('/wave.svg')`,
         backgroundSize: 'cover',
@@ -41,13 +42,15 @@ export default function Testimonials() {
       <div className="container mx-auto px-4">
         <div className="mb-16 text-center">
           <h2
-            className="mb-2 text-3xl font-bold text-[#FFFFFF] md:text-5xl"
+            // Inayos: Added dark:text-gray-100 for Dark Mode header text
+            className="mb-2 text-3xl font-bold text-[#FFFFFF] dark:text-gray-100 md:text-5xl"
             // style={{ fontFamily: "'Playfair Display', serif" }}
           >
             VOICES FROM OUR COMMUNITY
           </h2>
           <p
-            className="max-w-9xl text-1xl mx-auto font-light text-[#FFFFFF]"
+            // Inayos: Added dark:text-gray-300 for Dark Mode paragraph text
+            className="max-w-9xl text-1xl mx-auto font-light text-[#FFFFFF] dark:text-gray-300"
             style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 100 }}
           >
             Your feedback helps us improve, innovate, and continue building
@@ -59,18 +62,23 @@ export default function Testimonials() {
           {testimonials.map((testimonial, index) => (
             <div
               key={index}
-              className="flex min-w-[88vw] snap-center flex-col rounded-lg bg-white p-6 shadow-md transition-shadow duration-300 hover:shadow-lg md:min-w-0 md:snap-align-none"
+              // Inayos: Added dark:bg-gray-700 for Dark Mode card background
+              className="flex min-w-[88vw] snap-center flex-col rounded-lg bg-white dark:bg-gray-700 p-6 shadow-md transition-shadow duration-300 hover:shadow-lg dark:shadow-gray-900 md:min-w-0 md:snap-align-none"
             >
               <div className="mb-4 flex">
                 {[...Array(5)].map((_, i) => (
                   <StarIcon
                     key={i}
                     size={20}
-                    className="fill-[#023E8A] text-[#FFFFFF]"
+                    // Inayos: Added dark:fill-[#453EFE] for Dark Mode star icons (using the primary color of the admin page)
+                    className="fill-[#023E8A] dark:fill-[#453EFE] text-[#FFFFFF]"
                   />
                 ))}
               </div>
-              <p className="montserrat mb-6 flex-1 text-lg font-light text-[#023E8A]">
+              <p 
+                // Inayos: Added dark:text-gray-100 for Dark Mode quote text
+                className="montserrat mb-6 flex-1 text-lg font-light text-[#023E8A] dark:text-gray-100"
+              >
                 "{testimonial.quote}"
               </p>
 
@@ -83,10 +91,18 @@ export default function Testimonials() {
                   />
                 </div>
                 <div>
-                  <h4 className="montserrat font-light text-[#023E8A]">
+                  <h4 
+                    // Inayos: Added dark:text-white for Dark Mode name text
+                    className="montserrat font-light text-[#023E8A] dark:text-white"
+                  >
                     {testimonial.name}
                   </h4>
-                  <p className="text-sm text-[#023E8A]">{testimonial.role}</p>
+                  <p 
+                    // Inayos: Added dark:text-gray-400 for Dark Mode role text
+                    className="text-sm text-[#023E8A] dark:text-gray-400"
+                  >
+                    {testimonial.role}
+                  </p>
                 </div>
               </div>
             </div>

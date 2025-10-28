@@ -18,11 +18,11 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <ThemeProvider>
       <AppWrapper>
-      <BrowserRouter>   {/* ✅ wrap App with Router */}
+      <BrowserRouter>  
       <AlertProvider>
           <App />
       </AlertProvider>
-      </BrowserRouter>   {/* ✅ wrap App with Router */}
+      </BrowserRouter>  
       </AppWrapper>
     </ThemeProvider>
   </StrictMode>,

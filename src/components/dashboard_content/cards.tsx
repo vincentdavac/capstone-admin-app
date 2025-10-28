@@ -4,10 +4,9 @@ import Badge from "../ui/badge/Badge";
 const dashboardCards = () => {
   const { counts, loading, error } = fetchUserCounts();
   return (
-    
     <div className="flex items-start justify-start pl-1">
-      {loading && <p>Loading...</p>}
-        {error && <p className="text-red-500">{error}</p>}
+      {loading}
+        {error}
         {counts && (
       <div className="flex gap-4 md:gap-6">
         <div className="rounded-lg text-gray-800 text-xl font-semibold border p-6 w-[360px] h-[204px] bg-[#FFFFFF] border-[#D9D9D9]">

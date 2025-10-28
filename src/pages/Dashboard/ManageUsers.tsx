@@ -1,19 +1,15 @@
 import React, { useState, Fragment } from "react";
 import { Upload, Archive } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-// Assuming Slider is not needed for just the table, but I'll keep the import for completeness
-// import Slider from "../../preview/Slider";
 
-// 1. Updated Interface to match the 'Manage Users' content
 interface UserData {
-  id: number; // Keeping ID in the interface for logic, but removing it from display
+  id: number; 
   name: string;
   email: string;
-  roles: "Admin" | "User" | "Editor"; // Added more roles for completeness
+  roles: "Admin" | "User" | "Editor";
   status: "Active" | "Inactive";
 }
 
-// 2. Renamed component and updated initial data
 const ManageUsers: React.FC = () => {
   const [users, setUsers] = useState<UserData[]>([
     {

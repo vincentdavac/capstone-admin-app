@@ -23,6 +23,9 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import TsunamiDashboard from "./pages/Dashboard/TsunamiDashboard";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import StormSurge from "./pages/Dashboard/riverMonitoring";
+import AlertManagement from "./pages/Dashboard/AlertManagement";
+// import PendingChats from "./pages/Dashboard/PendingChats";
+
 import ManageUsers from "./pages/Dashboard/ManageUsers";
 import BuoyDeployment from "./pages/Management/BuoyDeployment";
 import ChatSupport from "./pages/Management/ChatSupport";
@@ -92,7 +95,17 @@ export default function App() {
             />
             <Route
               index
-              path="/ManageUsers"
+              path="/alert-management"
+              element={<AlertManagement />}
+            />
+            {/* <Route
+              index
+              path="/pending-chats"
+              element={<PendingChats />}
+            /> */}
+            <Route
+              index
+              path="/manage-users"
               element={<ManageUsers />}
             />
 

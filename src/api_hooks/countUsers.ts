@@ -20,6 +20,8 @@ export const fetchUserCounts = () => {
   };
   useEffect(() => {
     fetchUserCount();
+    const interval = setInterval(fetchUserCount, 5000);
+    return () => clearInterval(interval);
   }, []);
   return { counts, loading, error, fetchUserCounts };
 };

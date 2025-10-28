@@ -1,7 +1,7 @@
-import React, { useState, Fragment} from "react";
+import React, { useState, Fragment } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import FAQ from "../../preview/FAQs";
+import FAQ from "../../preview/FAQs"; // Assuming the path is correct
 
 // 1. Define the interface for the table items
 interface TableItem {
@@ -21,9 +21,9 @@ interface HomepageFAQItem {
 const mockFAQDescriptionData: TableItem[] = [
   {
     id: 1,
-    title: "FREQUENTLY ASK QUESTIONS",
+    title: "FREQUENTLY ASKED QUESTIONS",
     description:
-      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
+      "We've gathered some of the most common inquiries to help you understand how our system works!",
     status: "Active",
   },
 ];
@@ -33,21 +33,21 @@ const mockHomepageFAQsData: HomepageFAQItem[] = [
     id: 1,
     question: "What is COASTELLA and how does it work?",
     description:
-      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
+      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics. It utilizes LoRa technology to communicate over a long distance (10-15 km range) without the internet.",
     status: "Active",
   },
   {
     id: 2,
-    question: "What is COASTELLA and how does it work?",
+    question: "Is COASTELLA suitable for small fishing communities?",
     description:
-      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
+      "Yes, COASTELLA is specifically designed to be robust, solar-powered, and easy to maintain, making it ideal for remote or small-scale fishing communities with limited infrastructure.",
     status: "Active",
   },
   {
     id: 3,
-    question: "What is COASTELLA and how does it work?",
+    question: "What kind of data does the system track?",
     description:
-      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
+      "The system tracks crucial environmental data such as water level, temperature, and location, providing real-time alerts for significant changes that could pose a threat.",
     status: "Active",
   },
 ];
@@ -61,10 +61,12 @@ const CustomizationFaqs: React.FC = () => {
   );
 
   const [faqDescriptionSearchTerm, setFaqDescriptionSearchTerm] = useState("");
-  const [homepageFAQsSearchTerm, setHomepageFAQsSearchTerm] = useState("");
+  const [homepageFAQSearchTerm, setHomepageFAQSearchTerm] = useState("");
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isAddDescModalOpen, setIsAddDescModalOpen] = useState(false); // New state for Add Description
+  const [isAddFAQModalOpen, setIsAddFAQModalOpen] = useState(false); // New state for Add FAQ
+
   const [currentUpdateItem, setCurrentUpdateItem] = useState<
     TableItem | HomepageFAQItem | null
   >(null);
@@ -74,10 +76,18 @@ const CustomizationFaqs: React.FC = () => {
   const [isArchiveSuccessOpen, setIsArchiveSuccessOpen] = useState(false);
   const [itemToArchive, setItemToArchive] = useState<{
     id: number;
-    table: "faqDescription" | "homepageFAQs";
+    table: "faqDescription" | "homepageFAQ";
   } | null>(null);
 
-  // New states for Add Modal
+  // New states for Add Description Modal
+  const [newDescriptionData, setNewDescriptionData] = useState<TableItem>({
+    id: 0,
+    title: "",
+    description: "",
+    status: "Active",
+  });
+
+  // New states for Add FAQ Modal
   const [newFAQData, setNewFAQData] = useState<HomepageFAQItem>({
     id: 0,
     question: "",
@@ -87,7 +97,7 @@ const CustomizationFaqs: React.FC = () => {
 
   // Pagination states for each table
   const [faqDescriptionCurrentPage, setFaqDescriptionCurrentPage] = useState(1);
-  const [homepageFAQsCurrentPage, setHomepageFAQsCurrentPage] = useState(1);
+  const [homepageFAQCurrentPage, setHomepageFAQCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
   const handleOpenUpdateModal = (
@@ -104,10 +114,10 @@ const CustomizationFaqs: React.FC = () => {
       if (currentTableType === "faqDescription") {
         setFaqDescriptionData(
           faqDescriptionData.map((item) =>
-            item.id === currentUpdateItem.id ? currentUpdateItem : item
-          ) as TableItem[]
+            item.id === currentUpdateItem.id ? (currentUpdateItem as TableItem) : item
+          )
         );
-      } else if (currentTableType === "homepageFAQs") {
+      } else if (currentTableType === "homepageFAQ") {
         setHomepageFAQsData(
           homepageFAQsData.map((item) =>
             item.id === currentUpdateItem.id
@@ -123,7 +133,7 @@ const CustomizationFaqs: React.FC = () => {
 
   const handleArchive = (
     id: number,
-    tableType: "faqDescription" | "homepageFAQs"
+    tableType: "faqDescription" | "homepageFAQ"
   ) => {
     setItemToArchive({ id, table: tableType });
     setIsConfirmArchiveOpen(true);
@@ -150,10 +160,10 @@ const CustomizationFaqs: React.FC = () => {
         setHomepageFAQsData(newHomepageFAQsData);
         if (
           newHomepageFAQsData.length <=
-            (homepageFAQsCurrentPage - 1) * itemsPerPage &&
-          homepageFAQsCurrentPage > 1
+            (homepageFAQCurrentPage - 1) * itemsPerPage &&
+          homepageFAQCurrentPage > 1
         ) {
-          setHomepageFAQsCurrentPage(homepageFAQsCurrentPage - 1);
+          setHomepageFAQCurrentPage(homepageFAQCurrentPage - 1);
         }
       }
       setIsConfirmArchiveOpen(false);
@@ -162,14 +172,36 @@ const CustomizationFaqs: React.FC = () => {
     }
   };
 
-  const handleAddModalOpen = () => {
+  // Handlers for Add Description Modal
+  const handleAddDescModalOpen = () => {
+    setNewDescriptionData({
+      id: 0,
+      title: "",
+      description: "",
+      status: "Active",
+    });
+    setIsAddDescModalOpen(true);
+  };
+
+  const handleAddNewDescription = () => {
+    const newId =
+      faqDescriptionData.length > 0
+        ? Math.max(...faqDescriptionData.map((item) => item.id)) + 1
+        : 1;
+    const newItem = { ...newDescriptionData, id: newId };
+    setFaqDescriptionData([...faqDescriptionData, newItem]);
+    setIsAddDescModalOpen(false);
+  };
+
+  // Handlers for Add FAQ Modal
+  const handleAddFAQModalOpen = () => {
     setNewFAQData({
       id: 0,
       question: "",
       description: "",
       status: "Active",
     });
-    setIsAddModalOpen(true);
+    setIsAddFAQModalOpen(true);
   };
 
   const handleAddNewFAQ = () => {
@@ -179,7 +211,7 @@ const CustomizationFaqs: React.FC = () => {
         : 1;
     const newItem = { ...newFAQData, id: newId };
     setHomepageFAQsData([...homepageFAQsData, newItem]);
-    setIsAddModalOpen(false);
+    setIsAddFAQModalOpen(false);
   };
 
   const filteredFaqDescriptionData = faqDescriptionData.filter(
@@ -196,17 +228,17 @@ const CustomizationFaqs: React.FC = () => {
     (item) =>
       item.question
         .toLowerCase()
-        .includes(homepageFAQsSearchTerm.toLowerCase()) ||
+        .includes(homepageFAQSearchTerm.toLowerCase()) ||
       item.description
         .toLowerCase()
-        .includes(homepageFAQsSearchTerm.toLowerCase())
+        .includes(homepageFAQSearchTerm.toLowerCase())
   );
 
+  // Pagination calculations for FAQ Description table
   const totalFaqDescriptionPages = Math.ceil(
     filteredFaqDescriptionData.length / itemsPerPage
   );
-  const lastFaqDescriptionItemIndex =
-    faqDescriptionCurrentPage * itemsPerPage;
+  const lastFaqDescriptionItemIndex = faqDescriptionCurrentPage * itemsPerPage;
   const firstFaqDescriptionItemIndex =
     lastFaqDescriptionItemIndex - itemsPerPage;
   const paginatedFaqDescriptionData = filteredFaqDescriptionData.slice(
@@ -214,14 +246,15 @@ const CustomizationFaqs: React.FC = () => {
     lastFaqDescriptionItemIndex
   );
 
-  const totalHomepageFAQsPages = Math.ceil(
+  // Pagination calculations for Homepage FAQ table
+  const totalHomepageFAQPpages = Math.ceil(
     filteredHomepageFAQsData.length / itemsPerPage
   );
-  const lastHomepageFAQsItemIndex = homepageFAQsCurrentPage * itemsPerPage;
-  const firstHomepageFAQsItemIndex = lastHomepageFAQsItemIndex - itemsPerPage;
+  const lastHomepageFAQItemIndex = homepageFAQCurrentPage * itemsPerPage;
+  const firstHomepageFAQItemIndex = lastHomepageFAQItemIndex - itemsPerPage;
   const paginatedHomepageFAQsData = filteredHomepageFAQsData.slice(
-    firstHomepageFAQsItemIndex,
-    lastHomepageFAQsItemIndex
+    firstHomepageFAQItemIndex,
+    lastHomepageFAQItemIndex
   );
 
   return (
@@ -232,17 +265,16 @@ const CustomizationFaqs: React.FC = () => {
           Homepage FAQs Preview
         </h1>
       </div>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-2 mb-6">
         <div className="flex justify-center w-full">
-          {/* I-wrap ang Slider component at bigyan ng fixed size */}
-          <div className="w-full max-w-8xl">
+          {/* FAQ component is assumed to be the preview */}
+          <div className="w-full max-w-7xl">
             <FAQ />
           </div>
         </div>
       </div>
 
-
-      {/* FAQ Description Table */}
+      {/* FAQs Description Table */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
@@ -251,19 +283,32 @@ const CustomizationFaqs: React.FC = () => {
             </h1>
           </div>
         </div>
-        {/* Search */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-end">
-          <div className="relative w-full sm:max-w-xs">
+
+        {/* Search and Add Description Button Controls - SWAPPED ORDER */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+          {/* Search bar is on the left */}
+          <div className="relative w-full sm:max-w-md">
             <input
               type="text"
-              placeholder="Search name or email"
+              placeholder="Search title or description"
               value={faqDescriptionSearchTerm}
               onChange={(e) => setFaqDescriptionSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
           </div>
+
+          {/* Add Description button is on the right */}
+          <div className="flex-shrink-0">
+            <button
+              onClick={handleAddDescModalOpen}
+              className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+            >
+              + Add Description
+            </button>
+          </div>
         </div>
+
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-200 dark:border-gray-700 rounded-lg">
@@ -343,9 +388,7 @@ const CustomizationFaqs: React.FC = () => {
                     </div>
                     <div className="relative group">
                       <button
-                        onClick={() =>
-                          handleArchive(item.id, "faqDescription")
-                        }
+                        onClick={() => handleArchive(item.id, "faqDescription")}
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
                         <Archive className="w-5 h-5" />
@@ -420,38 +463,28 @@ const CustomizationFaqs: React.FC = () => {
             </h1>
           </div>
         </div>
-        {/* Search */}
+        {/* Search and Add Button Controls - SWAPPED ORDER */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="flex-shrink-0">
-            <button
-              onClick={handleAddModalOpen}
-              className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-            >
-              + Add Question
-            </button>
-          </div>
-
+          {/* Search bar is now on the left */}
           <div className="relative w-full sm:max-w-md">
             <input
               type="text"
-              placeholder="Search name or email"
-              value={homepageFAQsSearchTerm}
-              onChange={(e) => setHomepageFAQsSearchTerm(e.target.value)}
+              placeholder="Search question or description"
+              value={homepageFAQSearchTerm}
+              onChange={(e) => setHomepageFAQSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             />
-            <svg
-              className="absolute left-3 top-2.5 h-5 w-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          </div>
+
+          {/* Add FAQ button is now on the right */}
+          <div className="flex-shrink-0">
+            <button
+              onClick={handleAddFAQModalOpen}
+              className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
+              + Add FAQ
+            </button>
           </div>
         </div>
 
@@ -501,10 +534,10 @@ const CustomizationFaqs: React.FC = () => {
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 whitespace-nowrap">
                     {item.id}
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+                  <td className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white min-w-[200px] whitespace-normal">
                     {item.question}
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 min-w-[200px] whitespace-normal">
+                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 min-w-[250px] whitespace-normal">
                     {item.description}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -522,7 +555,7 @@ const CustomizationFaqs: React.FC = () => {
                     <div className="relative group">
                       <button
                         onClick={() =>
-                          handleOpenUpdateModal(item, "homepageFAQs")
+                          handleOpenUpdateModal(item, "homepageFAQ")
                         }
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
@@ -534,9 +567,7 @@ const CustomizationFaqs: React.FC = () => {
                     </div>
                     <div className="relative group">
                       <button
-                        onClick={() =>
-                          handleArchive(item.id, "homepageFAQs")
-                        }
+                        onClick={() => handleArchive(item.id, "homepageFAQ")}
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
                         <Archive className="w-5 h-5" />
@@ -555,9 +586,9 @@ const CustomizationFaqs: React.FC = () => {
         <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-gray-700 dark:text-gray-300">
-              Showing {firstHomepageFAQsItemIndex + 1} to{" "}
+              Showing {firstHomepageFAQItemIndex + 1} to{" "}
               {Math.min(
-                lastHomepageFAQsItemIndex,
+                lastHomepageFAQItemIndex,
                 filteredHomepageFAQsData.length
               )}{" "}
               of {filteredHomepageFAQsData.length} Entries
@@ -565,19 +596,19 @@ const CustomizationFaqs: React.FC = () => {
             <div className="flex space-x-2">
               <button
                 onClick={() =>
-                  setHomepageFAQsCurrentPage(homepageFAQsCurrentPage - 1)
+                  setHomepageFAQCurrentPage(homepageFAQCurrentPage - 1)
                 }
-                disabled={homepageFAQsCurrentPage === 1}
+                disabled={homepageFAQCurrentPage === 1}
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Previous
               </button>
-              {Array.from({ length: totalHomepageFAQsPages }, (_, index) => (
+              {Array.from({ length: totalHomepageFAQPpages }, (_, index) => (
                 <button
                   key={index + 1}
-                  onClick={() => setHomepageFAQsCurrentPage(index + 1)}
+                  onClick={() => setHomepageFAQCurrentPage(index + 1)}
                   className={`px-3 py-1 text-sm rounded-lg ${
-                    homepageFAQsCurrentPage === index + 1
+                    homepageFAQCurrentPage === index + 1
                       ? "bg-[#453EFE] text-white"
                       : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
                   }`}
@@ -587,9 +618,9 @@ const CustomizationFaqs: React.FC = () => {
               ))}
               <button
                 onClick={() =>
-                  setHomepageFAQsCurrentPage(homepageFAQsCurrentPage + 1)
+                  setHomepageFAQCurrentPage(homepageFAQCurrentPage + 1)
                 }
-                disabled={homepageFAQsCurrentPage === totalHomepageFAQsPages}
+                disabled={homepageFAQCurrentPage === totalHomepageFAQPpages}
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Next
@@ -599,8 +630,8 @@ const CustomizationFaqs: React.FC = () => {
         </div>
       </div>
 
-      {/* Update Description Modal */}
-      <Transition appear show={isUpdateModalOpen && currentTableType === 'faqDescription'} as={Fragment}>
+      {/* Update Modal (Shared for both tables) */}
+      <Transition appear show={isUpdateModalOpen} as={Fragment}>
         <Dialog
           as="div"
           className="relative z-10"
@@ -638,7 +669,9 @@ const CustomizationFaqs: React.FC = () => {
                 >
                   <div className="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      Update Description
+                      {currentTableType === "homepageFAQ"
+                        ? "UPDATE FAQ"
+                        : "UPDATE DESCRIPTION"}
                     </h3>
                     <button
                       type="button"
@@ -664,53 +697,107 @@ const CustomizationFaqs: React.FC = () => {
                   </div>
                   <div className="p-6">
                     <div className="space-y-4">
-                      {/* Title Input */}
-                      <div>
-                        <label
-                          htmlFor="update-title"
-                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        >
-                          Title
-                        </label>
-                        <input
-                          type="text"
-                          id="update-title"
-                          name="title"
-                          value={(currentUpdateItem as TableItem)?.title || ""}
-                          onChange={(e) =>
-                            setCurrentUpdateItem((prev) =>
-                              prev ? { ...prev, title: e.target.value } : null
-                            )
-                          }
-                          className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                          style={{ borderRadius: "12px" }}
-                        />
-                      </div>
-                      {/* Description Input */}
-                      <div>
-                        <label
-                          htmlFor="update-description"
-                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        >
-                          Description
-                        </label>
-                        <textarea
-                          id="update-description"
-                          name="description"
-                          rows={3}
-                          value={(currentUpdateItem as TableItem)?.description || ""}
-                          onChange={(e) =>
-                            setCurrentUpdateItem((prev) =>
-                              prev
-                                ? { ...prev, description: e.target.value }
-                                : null
-                            )
-                          }
-                          className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                          style={{ borderRadius: "12px" }}
-                        ></textarea>
-                      </div>
-                      {/* Status Dropdown */}
+                      {currentTableType === "homepageFAQ" ? (
+                        <>
+                          {/* Question Input */}
+                          <div>
+                            <label
+                              htmlFor="update-question"
+                              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            >
+                              Question
+                            </label>
+                            <input
+                              type="text"
+                              id="update-question"
+                              name="question"
+                              value={(currentUpdateItem as HomepageFAQItem)?.question || ""}
+                              onChange={(e) =>
+                                setCurrentUpdateItem((prev) =>
+                                  prev ? { ...prev, question: e.target.value } : null
+                                )
+                              }
+                              className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
+                              style={{ borderRadius: "12px" }}
+                            />
+                          </div>
+                          {/* Description Input */}
+                          <div>
+                            <label
+                              htmlFor="update-description"
+                              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            >
+                              Answer/Description
+                            </label>
+                            <textarea
+                              id="update-description"
+                              name="description"
+                              rows={3}
+                              value={(currentUpdateItem as HomepageFAQItem)?.description || ""}
+                              onChange={(e) =>
+                                setCurrentUpdateItem((prev) =>
+                                  prev
+                                    ? { ...prev, description: e.target.value }
+                                    : null
+                                )
+                              }
+                              className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
+                              style={{ borderRadius: "12px" }}
+                            ></textarea>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {/* Title Input */}
+                          <div>
+                            <label
+                              htmlFor="update-title"
+                              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            >
+                              Title
+                            </label>
+                            <input
+                              type="text"
+                              id="update-title"
+                              name="title"
+                              value={(currentUpdateItem as TableItem)?.title || ""}
+                              onChange={(e) =>
+                                setCurrentUpdateItem((prev) =>
+                                  prev ? { ...prev, title: e.target.value } : null
+                                )
+                              }
+                              className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
+                              style={{ borderRadius: "12px" }}
+                            />
+                          </div>
+                          {/* Description Input */}
+                          <div>
+                            <label
+                              htmlFor="update-description"
+                              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                            >
+                              Description
+                            </label>
+                            <textarea
+                              id="update-description"
+                              name="description"
+                              rows={3}
+                              value={(currentUpdateItem as TableItem)?.description || ""}
+                              onChange={(e) =>
+                                setCurrentUpdateItem((prev) =>
+                                  prev
+                                    ? { ...prev, description: e.target.value }
+                                    : null
+                                )
+                              }
+                              className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
+                              style={{ borderRadius: "12px" }}
+                            ></textarea>
+                          </div>
+                        </>
+                      )}
+
+                      {/* Status Dropdown (Applicable to both) */}
                       <div>
                         <label
                           htmlFor="update-status"
@@ -722,7 +809,11 @@ const CustomizationFaqs: React.FC = () => {
                           <select
                             id="update-status"
                             name="status"
-                            value={(currentUpdateItem as TableItem)?.status || "Active"}
+                            value={
+                              (
+                                currentUpdateItem as TableItem | HomepageFAQItem
+                              )?.status || "Active"
+                            }
                             onChange={(e) =>
                               setCurrentUpdateItem((prev) =>
                                 prev
@@ -771,12 +862,12 @@ const CustomizationFaqs: React.FC = () => {
         </Dialog>
       </Transition>
 
-      {/* Add Question Modal */}
-      <Transition appear show={isAddModalOpen} as={Fragment}>
+      {/* Add Description Modal */}
+      <Transition appear show={isAddDescModalOpen} as={Fragment}>
         <Dialog
           as="div"
           className="relative z-10"
-          onClose={() => setIsAddModalOpen(false)}
+          onClose={() => setIsAddDescModalOpen(false)}
         >
           <Transition.Child
             as={Fragment}
@@ -810,12 +901,178 @@ const CustomizationFaqs: React.FC = () => {
                 >
                   <div className="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      Add Question
+                      Add Description
                     </h3>
                     <button
                       type="button"
                       className="text-gray-400 hover:text-gray-600 transition-colors"
-                      onClick={() => setIsAddModalOpen(false)}
+                      onClick={() => setIsAddDescModalOpen(false)}
+                    >
+                      <svg
+                        className="h-6 w-6"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                        aria-hidden="true"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <div className="p-6">
+                    <div className="space-y-4">
+                      {/* Title Input */}
+                      <div>
+                        <label
+                          htmlFor="add-title"
+                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        >
+                          Title
+                        </label>
+                        <input
+                          type="text"
+                          id="add-title"
+                          name="title"
+                          value={newDescriptionData.title}
+                          onChange={(e) =>
+                            setNewDescriptionData({
+                              ...newDescriptionData,
+                              title: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
+                          style={{ borderRadius: "12px" }}
+                        />
+                      </div>
+                      {/* Description Input */}
+                      <div>
+                        <label
+                          htmlFor="add-description"
+                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        >
+                          Description
+                        </label>
+                        <textarea
+                          id="add-description"
+                          name="description"
+                          rows={3}
+                          value={newDescriptionData.description}
+                          onChange={(e) =>
+                            setNewDescriptionData({
+                              ...newDescriptionData,
+                              description: e.target.value,
+                            })
+                          }
+                          className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
+                          style={{ borderRadius: "12px" }}
+                        ></textarea>
+                      </div>
+                      {/* Status Dropdown */}
+                      <div>
+                        <label
+                          htmlFor="add-status"
+                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                        >
+                          Status
+                        </label>
+                        <div className="relative">
+                          <select
+                            id="add-status"
+                            name="status"
+                            value={newDescriptionData.status}
+                            onChange={(e) =>
+                              setNewDescriptionData({
+                                ...newDescriptionData,
+                                status: e.target.value as "Active" | "Inactive",
+                              })
+                            }
+                            className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent appearance-none dark:bg-gray-700 dark:text-white"
+                            style={{ borderRadius: "12px" }}
+                          >
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                          </select>
+                          <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                            <svg
+                              className="h-4 w-4 fill-current text-[#453EFE]"
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                            >
+                              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700">
+                    <button
+                      type="button"
+                      className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+                      onClick={handleAddNewDescription}
+                      style={{ borderRadius: "10px" }}
+                    >
+                      Add
+                    </button>
+                  </div>
+                </Dialog.Panel>
+              </Transition.Child>
+            </div>
+          </div>
+        </Dialog>
+      </Transition>
+
+      {/* Add FAQ Modal */}
+      <Transition appear show={isAddFAQModalOpen} as={Fragment}>
+        <Dialog
+          as="div"
+          className="relative z-10"
+          onClose={() => setIsAddFAQModalOpen(false)}
+        >
+          <Transition.Child
+            as={Fragment}
+            enter="ease-out duration-300"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="ease-in duration-200"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+          >
+            <div
+              className="fixed inset-0 bg-black bg-opacity-25"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
+            />
+          </Transition.Child>
+
+          <div className="fixed inset-0 overflow-y-auto">
+            <div className="flex min-h-full items-center justify-center p-4 text-left">
+              <Transition.Child
+                as={Fragment}
+                enter="ease-out duration-300"
+                enterFrom="opacity-0 scale-95"
+                enterTo="opacity-100 scale-100"
+                leave="ease-in duration-200"
+                leaveFrom="opacity-100 scale-100"
+                leaveTo="opacity-0 scale-95"
+              >
+                <Dialog.Panel
+                  className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md overflow-hidden transform transition-all"
+                  style={{ borderRadius: "15px" }}
+                >
+                  <div className="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Add FAQ
+                    </h3>
+                    <button
+                      type="button"
+                      className="text-gray-400 hover:text-gray-600 transition-colors"
+                      onClick={() => setIsAddFAQModalOpen(false)}
                     >
                       <svg
                         className="h-6 w-6"
@@ -865,7 +1122,7 @@ const CustomizationFaqs: React.FC = () => {
                           htmlFor="add-description"
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                         >
-                          Description
+                          Answer/Description
                         </label>
                         <textarea
                           id="add-description"
@@ -937,179 +1194,7 @@ const CustomizationFaqs: React.FC = () => {
         </Dialog>
       </Transition>
 
-      {/* Update FAQs Modal */}
-      <Transition appear show={isUpdateModalOpen && currentTableType === 'homepageFAQs'} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-10"
-          onClose={() => setIsUpdateModalOpen(false)}
-        >
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div
-              className="fixed inset-0 bg-black bg-opacity-25"
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
-            />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-left">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md overflow-hidden transform transition-all"
-                  style={{ borderRadius: "15px" }}
-                >
-                  <div className="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      Update FAQs
-                    </h3>
-                    <button
-                      type="button"
-                      className="text-gray-400 hover:text-gray-600 transition-colors"
-                      onClick={() => setIsUpdateModalOpen(false)}
-                    >
-                      <svg
-                        className="h-6 w-6"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="p-6">
-                    <div className="space-y-4">
-                      {/* Question Input */}
-                      <div>
-                        <label
-                          htmlFor="update-question"
-                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        >
-                          Question
-                        </label>
-                        <input
-                          type="text"
-                          id="update-question"
-                          name="question"
-                          value={(currentUpdateItem as HomepageFAQItem)?.question || ""}
-                          onChange={(e) =>
-                            setCurrentUpdateItem((prev) =>
-                              prev ? { ...prev, question: e.target.value } : null
-                            )
-                          }
-                          className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                          style={{ borderRadius: "12px" }}
-                        />
-                      </div>
-                      {/* Description Input */}
-                      <div>
-                        <label
-                          htmlFor="update-description"
-                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        >
-                          Description
-                        </label>
-                        <textarea
-                          id="update-description"
-                          name="description"
-                          rows={3}
-                          value={(currentUpdateItem as HomepageFAQItem)?.description || ""}
-                          onChange={(e) =>
-                            setCurrentUpdateItem((prev) =>
-                              prev
-                                ? { ...prev, description: e.target.value }
-                                : null
-                            )
-                          }
-                          className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                          style={{ borderRadius: "12px" }}
-                        ></textarea>
-                      </div>
-                      {/* Status Dropdown */}
-                      <div>
-                        <label
-                          htmlFor="update-status"
-                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        >
-                          Status
-                        </label>
-                        <div className="relative">
-                          <select
-                            id="update-status"
-                            name="status"
-                            value={(currentUpdateItem as HomepageFAQItem)?.status || "Active"}
-                            onChange={(e) =>
-                              setCurrentUpdateItem((prev) =>
-                                prev
-                                  ? {
-                                      ...prev,
-                                      status: e.target.value as
-                                        | "Active"
-                                        | "Inactive",
-                                    }
-                                  : null
-                              )
-                            }
-                            className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent appearance-none dark:bg-gray-700 dark:text-white"
-                            style={{ borderRadius: "12px" }}
-                          >
-                            <option value="Active">Active</option>
-                            <option value="Inactive">Inactive</option>
-                          </select>
-                          <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                            <svg
-                              className="h-4 w-4 fill-current text-[#453EFE]"
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                            >
-                              <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                            </svg>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700">
-                    <button
-                      type="button"
-                      className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-                      onClick={handleSaveUpdate}
-                      style={{ borderRadius: "10px" }}
-                    >
-                      Update
-                    </button>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-
-      {/* Archive Confirmation Modal */}
+      {/* Archive Confirmation Modal (Unchanged) */}
       <Transition appear show={isConfirmArchiveOpen} as={Fragment}>
         <Dialog
           as="div"
@@ -1211,7 +1296,7 @@ const CustomizationFaqs: React.FC = () => {
         </Dialog>
       </Transition>
 
-      {/* Archive Success Modal */}
+      {/* Archive Success Modal (Unchanged) */}
       <Transition appear show={isArchiveSuccessOpen} as={Fragment}>
         <Dialog
           as="div"

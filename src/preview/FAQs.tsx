@@ -9,26 +9,31 @@ type FAQItemProps = {
 const FAQItem = ({ question, answer }: FAQItemProps) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    <div className="border-b border-gray-200 py-4">
+    // ADDED DARK MODE: dark:border-gray-700
+    <div className="border-b border-gray-200 dark:border-gray-700 py-4">
       <button
         className="flex w-full items-center justify-between text-left focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
         <span
-          className="text-lg font-medium text-[#023E8A]"
+          // ADDED DARK MODE: dark:text-blue-200
+          className="text-lg font-medium text-[#023E8A] dark:text-blue-200"
           style={{ fontFamily: "'Montserrat', sans-serif" }}
         >
           {question}
         </span>
         {isOpen ? (
-          <ChevronUpIcon size={20} className="flex-shrink-0 text-[#023E8A]" />
+          // ADDED DARK MODE: dark:text-blue-300
+          <ChevronUpIcon size={20} className="flex-shrink-0 text-[#023E8A] dark:text-blue-300" />
         ) : (
-          <ChevronDownIcon size={20} className="flex-shrink-0 text-[#023E8A]" />
+          // ADDED DARK MODE: dark:text-blue-300
+          <ChevronDownIcon size={20} className="flex-shrink-0 text-[#023E8A] dark:text-blue-300" />
         )}
       </button>
       <div
-        className={`mt-2 text-[#023E8A] ${isOpen ? 'block' : 'hidden'}`}
+        // ADDED DARK MODE: dark:text-gray-300
+        className={`mt-2 text-[#023E8A] dark:text-gray-300 ${isOpen ? 'block' : 'hidden'}`}
         style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 200 }}
       >
         <p>{answer}</p>
@@ -94,11 +99,13 @@ export default function FAQs() {
   ];
 
   return (
-    <section className="w-full bg-white py-16  outline-1 outline-[#959ea5] rounded-lg">
+    // ADDED DARK MODE: dark:bg-gray-900 at dark:outline-gray-700
+    <section className="w-full bg-white dark:bg-gray-900 py-16 outline-1 outline-[#959ea5] dark:outline-gray-700 rounded-lg">
       <div className="container mx-auto px-4">
         <div className="mb-16 text-center">
           <h2
-            className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] sm:text-3xl md:text-5xl"
+            // ADDED DARK MODE: dark:text-blue-100
+            className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] dark:text-blue-100 sm:text-3xl md:text-5xl"
             // style={{ fontFamily: "'Playfair Display', serif" }}
           >
             FREQUENTLY ASKED QUESTIONS
@@ -110,7 +117,8 @@ export default function FAQs() {
             Have questions about COASTELLA?
           </p> */}
           <p
-            className="mx-auto max-w-7xl text-lg text-[#023E8A]"
+            // ADDED DARK MODE: dark:text-gray-300
+            className="mx-auto max-w-7xl text-lg text-[#023E8A] dark:text-gray-300"
             // style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 200 }}
           >
             We've gathered some of the most common inquiries to help you

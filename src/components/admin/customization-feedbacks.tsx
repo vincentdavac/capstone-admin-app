@@ -65,7 +65,7 @@ const CustomizationFeedbacks: React.FC = () => {
     mockHomepageFeedbackData
   );
 
-  const [feedbackDescriptionSearchTerm, setFeedbackDescriptionSearchTerm] = useState("");
+  const [feedbackDescriptionSearchTerm] = useState("");
   const [homepageFeedbackSearchTerm, setHomepageFeedbackSearchTerm] = useState("");
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -257,19 +257,9 @@ const CustomizationFeedbacks: React.FC = () => {
             </h1>
           </div>
         </div>
-        {/* Search */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-end">
-          <div className="relative w-full sm:max-w-xs">
-            <input
-              type="text"
-              placeholder="Search title or description"
-              value={feedbackDescriptionSearchTerm}
-              onChange={(e) => setFeedbackDescriptionSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-            />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
-          </div>
-        </div>
+        
+        {/* INALIS ANG SEARCH BAR DITO (search-related div block) */}
+
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-200 dark:border-gray-700 rounded-lg">
@@ -345,7 +335,8 @@ const CustomizationFeedbacks: React.FC = () => {
                       </button>
                       <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition">
                         UPDATE
-                      </span>
+                      </span
+                      >
                     </div>
                     <div className="relative group">
                       <button
@@ -426,17 +417,10 @@ const CustomizationFeedbacks: React.FC = () => {
             </h1>
           </div>
         </div>
-        {/* Search */}
+        {/* Search and Add Button Controls - SWAPPED ORDER */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          <div className="flex-shrink-0">
-            <button
-              onClick={handleAddModalOpen}
-              className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-            >
-              + Add Feedback
-            </button>
-          </div>
-
+          
+          {/* Search bar is now on the left */}
           <div className="relative w-full sm:max-w-md">
             <input
               type="text"
@@ -446,6 +430,16 @@ const CustomizationFeedbacks: React.FC = () => {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          </div>
+
+          {/* Add Feedback button is now on the right */}
+          <div className="flex-shrink-0">
+            <button
+              onClick={handleAddModalOpen}
+              className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
+            >
+              + Add Feedback
+            </button>
           </div>
         </div>
 

@@ -78,10 +78,20 @@ const navItems: NavItem[] = [
     name: "Tsunami Monitoring",
     path: "/TsunamiDashboard",
   },
+    {
+    icon: <GridIcon />,
+    name: "Alert Management",
+    path: "/alert-management",
+  },
+    {
+    icon: <GridIcon />,
+    name: "Pending Chats",
+    path: "/pending-chats",
+  },
   {
     icon: <GridIcon />,
     name: "Manage Users",  
-    path: "/ManageUsers",
+    path: "/manage-users",
   },
 
   {

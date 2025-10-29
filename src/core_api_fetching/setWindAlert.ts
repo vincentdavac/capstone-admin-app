@@ -1,7 +1,7 @@
 import api_endpoint from "../config/coreApi";
-const setAlert = {
+const setWindAlert = {
   post: async () => {
-  const url = `${api_endpoint}/set-alert-water-temp`;
+  const url = `${api_endpoint}/set-alert-wind`;
     try {
       const response = await fetch(url, {
         method: 'POST',
@@ -26,4 +26,4 @@ const setAlert = {
   },
 };
 
-export default setAlert;
+export default setWindAlert;

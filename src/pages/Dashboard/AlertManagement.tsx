@@ -351,7 +351,7 @@ const AlertManagement: React.FC = () => {
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         {/* Header Section */}
         <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
-          <label className="block text-xl sm:text-2xl font-semibold text-gray-500 dark:text-gray-300">
+          <label className="block text-xl sm:text-2xl text-gray-500 dark:text-gray-300">
             Create New Alert
           </label>
         </div>

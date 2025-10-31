@@ -11,9 +11,6 @@ const dangerLevel = () => {
 }, [waterPressure]);
   return (
     <>
-      {loading}
-      {error}
-      {waterPressure && (
         <div className="grid grid-cols-1 gap-3">
           <div className="w-[512px] h-[192px] bg-white shadow rounded-2xl border border-[#D9D9D9] flex flex-col">
             <div className="w-full px-4 pt-4 text-center">
@@ -79,7 +76,6 @@ const dangerLevel = () => {
             />
           </div>
         </div>
-      )}
     </>
   );
 };

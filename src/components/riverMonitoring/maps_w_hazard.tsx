@@ -98,6 +98,35 @@ export default function MapsWithHazard() {
       window.addEventListener("resize", handleResize);
       charts.push(windSpeedGauge);
     }
+     if (waveRef.current) {
+      const container = waveRef.current;
+      const percentage = 0;
+      const fillY = 15 + (170 - (percentage / 100) * 170);
+
+      container.innerHTML = `
+      <svg viewBox="0 0 200 200" style="width:100%;height:100%;max-width:200px;max-height:200px;margin:0 auto;">
+        <defs>
+          <clipPath id="circleClip"><circle cx="100" cy="100" r="85" /></clipPath>
+          <pattern id="wave" x="0" y="0" width="400" height="200" patternUnits="userSpaceOnUse">
+            <path d="M0,50 Q50,35 100,50 T200,50 T300,50 T400,50 V200 H0 Z" fill="#3b82f6" opacity="0.85">
+              <animateTransform attributeName="transform" type="translate" from="0,0" to="-200,0" dur="3s" repeatCount="indefinite"/>
+            </path>
+          </pattern>
+        </defs>
+        <circle cx="100" cy="100" r="90" fill="none" stroke="#3b82f6" stroke-width="5"/>
+        <circle cx="100" cy="100" r="85" fill="#f0f9ff"/>
+        <g clip-path="url(#circleClip)">
+          <rect x="0" y="${fillY}" width="200" height="200" fill="url(#wave)">
+            <animate attributeName="y" from="200" to="${fillY}" dur="2s" fill="freeze"/>
+          </rect>
+        </g>
+        <text x="100" y="112" text-anchor="middle" font-size="46" font-weight="bold" fill="#ffffff" style="text-shadow:0 2px 4px rgba(0,0,0,0.3)">
+          ${percentage}%
+        </text>
+      </svg>
+    `;
+    }
+
     if (waveRef.current) {
       const waveChart = echarts.init(waveRef.current);
 

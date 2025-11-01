@@ -46,6 +46,5 @@ export function useBroadcastAlert() {
 
   return {
     broadcastToSelected,
-
   };
 }

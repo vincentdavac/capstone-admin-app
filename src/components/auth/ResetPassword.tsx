@@ -1,17 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
-import { useAlert } from "../../context/AlertContext";
+import API_BASE_URL from "../../config/coreApi";
+import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
 
-export default function ResetPassword() {
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
+
+export default function ResetPassword({ alertsRef }: Props) {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token") || "";
   const emailFromUrl = searchParams.get("email") || "";
 
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
 
   const [email, setEmail] = useState(emailFromUrl);
   const [password, setPassword] = useState("");
@@ -29,14 +34,14 @@ export default function ResetPassword() {
     e.preventDefault();
 
     if (password !== confirmPassword) {
-      showAlert("error", "Password Error", "Passwords do not match");
+      alertsRef.current?.addAlert("error", "Passwords do not match");
       return;
     }
 
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/api/reset-password", {
+      const res = await fetch(`${API_BASE_URL}/api/reset-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -55,14 +60,14 @@ export default function ResetPassword() {
         );
       }
 
-      showAlert(
+      alertsRef.current?.addAlert(
         "success",
-        "Success",
         "Password reset successfully. Please login."
       );
-      navigate("/signin");
+
+      navigate("/admin/signin");
     } catch (err: any) {
-      showAlert("error", "Error", err.message || "Something went wrong");
+      alertsRef.current?.addAlert("error", err.message);
     } finally {
       setLoading(false);
     }
@@ -72,7 +77,6 @@ export default function ResetPassword() {
     <div className="max-w-md mx-auto p-6">
       <h2 className="text-xl font-bold mb-4">Reset Password</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-
         <div>
           <Label>New Password</Label>
           <Input

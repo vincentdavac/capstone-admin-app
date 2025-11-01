@@ -1,13 +1,13 @@
 import api_endpoint from "../config/coreApi";
 const setHumidityAlert = {
   post: async () => {
-  const url = `${api_endpoint}/set-alert-humidity`;
+    const url = `${api_endpoint}/set-alert-humidity`;
     try {
       const response = await fetch(url, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          Accept: "application/json",
+          "Content-Type": "application/json",
         },
       });
 
@@ -17,8 +17,8 @@ const setHumidityAlert = {
       return await response.json();
     } catch (error) {
       console.error(
-        'API Error:',
-        error instanceof Error ? error.message : 'Unknown error'
+        "API Error:",
+        error instanceof Error ? error.message : "Unknown error"
       );
       throw error;
     }

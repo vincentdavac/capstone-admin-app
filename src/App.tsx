@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import {  Routes, Route } from "react-router";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { Routes, Route } from "react-router";
 import SignIn from "./pages/AuthPages/SignIn";
 import SignUp from "./pages/AuthPages/SignUp";
 import NotFound from "./pages/OtherPage/NotFound";
@@ -19,8 +19,6 @@ import FormElements from "./pages/Forms/FormElements";
 import Slider from "./pages/Slider";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
-// import Home from "./pages/Dashboard/Home";
-import TsunamiDashboard from "./pages/Dashboard/TsunamiDashboard";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import StormSurge from "./pages/Dashboard/riverMonitoring";
 import AlertManagement from "./pages/Dashboard/AlertManagement";
@@ -46,10 +44,9 @@ import ArchiveFeeback from "./pages/Archive/ArchiveFeeback";
 import ArchiveFooter from "./pages/Archive/ArchiveFooter";
 import ArchiveUsers from "./pages/Archive/ArchiveUsers";
 import ArchiveBuoys from "./pages/Archive/ArchiveBuoys";
-import Loader from './common/Loader';
+import Loader from "./common/Loader";
 import DeployedBuoy from "./pages/Dashboard/deployedBuoy";
 import HistoricalDashboard from "./pages/Dashboard/historicalDashboard";
-
 
 // Add these imports for your customization components
 import CustomizationSlider from "./components/admin/customization-slider";
@@ -60,10 +57,15 @@ import CustomizationTeam from "./components/admin/customization-team";
 import CustomizationFooter from "./components/admin/customization-footer";
 import CustomizationFeedbacks from "./components/admin/customization-feedbacks";
 import CustomizationArchive from "./components/admin/customization-archive";
+import { AlertsContainerRef } from "./components/Alert/AlertsContainer";
+import UserRoute from "./middleware/UserRoute";
+import ProtectedRoute from "./middleware/ProtectedRoute";
 
+interface AppProps {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
 
-export default function App() {
-  
+export default function App({ alertsRef }: AppProps) {
   const [loading, setLoading] = useState<boolean>(true);
   const { pathname } = useLocation();
 
@@ -74,124 +76,277 @@ export default function App() {
   useEffect(() => {
     setTimeout(() => setLoading(false), 2000);
   }, []);
-  
-  
+
   return loading ? (
-    <Loader 
-    title="Coastella Admin" 
-    description="Please wait while loading..."  />
-  ) :(
+    <Loader
+      title="X-STREAM DASHBOARD"
+      description="Please wait while loading..."
+    />
+  ) : (
     <>
-        <ScrollToTop />
-        <Routes>
-          {/* Dashboard Layout */}
-          <Route element={<AppLayout />}>
-            {/* <Route index path="/admin-dashboard" element={<Home />} /> */}
+      <ScrollToTop />
+      <Routes>
+        <Route element={<AppLayout alertsRef={alertsRef} />}>
+          <Route
+            index
+            path="/admin/alert-management"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <AlertManagement />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            index
+            path="/admin/pending-chats"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <PendingChats />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            index
+            path="/admin/manage-users"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <ManageUsers />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route
-              index
-              path="/TsunamiDashboard"
-              element={<TsunamiDashboard />}
-            />
-            <Route
-              index
-              path="/alert-management"
-              element={<AlertManagement />}
-            />
-            <Route
-              index
-              path="/pending-chats"
-              element={<PendingChats />}
-            />
-            <Route
-              index
-              path="/manage-users"
-              element={<ManageUsers />}
-            />
+          <Route
+            index
+            path="/admin/deployed-buoy"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <DeployedBuoy />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            index
+            path="/admin/dashboard"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            index
+            path="/admin/river-monitoring"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <StormSurge />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            index
+            path="/admin/historical-data"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <HistoricalDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            index
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
 
-            <Route
-              index
-              path="/deployed-buoy"
-              element={<DeployedBuoy />}
-            />
-            <Route index path="/dashboard" element={<Dashboard />} />
-            <Route index path="/river-monitoring" element={<StormSurge />} />
-            <Route index path="/historical-data" element={<HistoricalDashboard />} />
-            <Route index element={<Dashboard />} />
+          {/* Management */}
+          <Route
+            path="/admin/manage-users"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <ManageUsers />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/manage-buoys"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <BuoyDeployment />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/chat-support"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <ChatSupport />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/alert-system"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <AlertSystem />
+              </ProtectedRoute>
+            }
+          />
 
-            {/* <Route index path="/admin/dashboard" element={<Home />} /> */}
-            
-            {/* Management */}
-            <Route path="/admin/manage-users" element={<ManageUsers />} />
-            <Route path="/admin/manage-buoys" element={<BuoyDeployment />} />
-            <Route path="/admin/chat-support" element={<ChatSupport />} />
-            <Route path="/admin/alert-system" element={<AlertSystem />} />
+          {/* Customization */}
+          <Route
+            path="/admin/customization/sliders"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <CustomSlider />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/customization/about-us"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <CustomAboutUs />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/customization/prototype"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <CustomPrototype />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/customization/teams"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <CustomTeam />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/customization/faqs"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <CustomFAQs />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/customization/feedbacks"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <CustomFeedback />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/customization/footer"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <CustomFooter />
+              </ProtectedRoute>
+            }
+          />
 
-            {/* Customization */}
-            <Route path="/admin/customization/sliders" element={<CustomSlider />} />
-            <Route path="/admin/customization/about-us" element={<CustomAboutUs />} />
-            <Route path="/admin/customization/prototype" element={<CustomPrototype />} />
-            <Route path="/admin/customization/teams" element={<CustomTeam />} />
-            <Route path="/admin/customization/faqs" element={<CustomFAQs />} />
-            <Route path="/admin/customization/feedbacks" element={<CustomFeedback />} />
-            <Route path="/admin/customization/footer" element={<CustomFooter />} />
+          {/* Archive */}
+          <Route path="/admin/archive/users" element={<ArchiveUsers />} />
+          <Route path="/admin/archive/buoys" element={<ArchiveBuoys />} />
+          <Route path="/admin/archive/sliders" element={<ArchiveSlider />} />
+          <Route path="/admin/archive/about-us" element={<ArchiveAboutUs />} />
+          <Route
+            path="/admin/archive/prototype"
+            element={<ArchivePrototype />}
+          />
+          <Route path="/admin/archive/teams" element={<ArchiveTeam />} />
+          <Route path="/admin/archive/faqs" element={<ArchiveFAQs />} />
+          <Route path="/admin/archive/feedbacks" element={<ArchiveFeeback />} />
+          <Route path="/admin/archive/archive" element={<ArchiveFeeback />} />
+          <Route path="/admin/archive/footer" element={<ArchiveFooter />} />
 
-            {/* Archive */}
-            <Route path="/admin/archive/users" element={<ArchiveUsers />} />
-            <Route path="/admin/archive/buoys" element={<ArchiveBuoys />} />
-            <Route path="/admin/archive/sliders" element={<ArchiveSlider />} />
-            <Route path="/admin/archive/about-us" element={<ArchiveAboutUs />} />
-            <Route path="/admin/archive/prototype" element={<ArchivePrototype />} />
-            <Route path="/admin/archive/teams" element={<ArchiveTeam />} />
-            <Route path="/admin/archive/faqs" element={<ArchiveFAQs />} />
-            <Route path="/admin/archive/feedbacks" element={<ArchiveFeeback />} />
-            <Route path="/admin/archive/archive" element={<ArchiveFeeback />} />
-            <Route path="/admin/archive/footer" element={<ArchiveFooter />} />
-            
+          {/* Others Page */}
+          <Route path="/admin-profile" element={<UserProfiles />} />
+          <Route path="/calendar" element={<Calendar />} />
+          <Route path="/slider" element={<Slider />} />
 
+          {/* Customization Routes - ADD THESE */}
+          <Route
+            path="/admin/customization-slider"
+            element={<CustomizationSlider />}
+          />
+          <Route
+            path="/admin/customization-about"
+            element={<CustomizationAbout />}
+          />
+          <Route
+            path="/admin/customization-prototype"
+            element={<CustomizationPrototype />}
+          />
+          <Route
+            path="/admin/customization-faqs"
+            element={<CustomizationFaqs />}
+          />
+          <Route
+            path="/admin/customization-team"
+            element={<CustomizationTeam />}
+          />
+          <Route
+            path="/admin/customization-footer"
+            element={<CustomizationFooter />}
+          />
+          <Route
+            path="/admin/customization-feedbacks"
+            element={<CustomizationFeedbacks />}
+          />
+          <Route
+            path="/admin/customization-archive"
+            element={<CustomizationArchive />}
+          />
 
-            {/* Others Page */}
-            <Route path="/admin-profile" element={<UserProfiles />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/slider" element={<Slider />} />
+          {/* Forms */}
+          <Route path="/form-elements" element={<FormElements />} />
 
-            {/* Customization Routes - ADD THESE */}
-            <Route path="/admin/customization-slider" element={<CustomizationSlider />} />
-            <Route path="/admin/customization-about" element={<CustomizationAbout />} />
-            <Route path="/admin/customization-prototype" element={<CustomizationPrototype />} />
-            <Route path="/admin/customization-faqs" element={<CustomizationFaqs />} />
-            <Route path="/admin/customization-team" element={<CustomizationTeam />} />
-            <Route path="/admin/customization-footer" element={<CustomizationFooter />} />
-            <Route path="/admin/customization-feedbacks" element={<CustomizationFeedbacks />} />
-            <Route path="/admin/customization-archive" element={<CustomizationArchive />} />
-            
+          {/* Tables */}
+          <Route path="/basic-tables" element={<BasicTables />} />
 
-            {/* Forms */}
-            <Route path="/form-elements" element={<FormElements />} />
+          {/* Ui Elements */}
+          <Route path="/alerts" element={<Alerts />} />
+          <Route path="/avatars" element={<Avatars />} />
+          <Route path="/badge" element={<Badges />} />
+          <Route path="/buttons" element={<Buttons />} />
+          <Route path="/images" element={<Images />} />
+          <Route path="/videos" element={<Videos />} />
 
-            {/* Tables */}
-            <Route path="/basic-tables" element={<BasicTables />} />
+          {/* Charts */}
+          <Route path="/line-chart" element={<LineChart />} />
+          <Route path="/bar-chart" element={<BarChart />} />
+        </Route>
 
-            {/* Ui Elements */}
-            <Route path="/alerts" element={<Alerts />} />
-            <Route path="/avatars" element={<Avatars />} />
-            <Route path="/badge" element={<Badges />} />
-            <Route path="/buttons" element={<Buttons />} />
-            <Route path="/images" element={<Images />} />
-            <Route path="/videos" element={<Videos />} />
+        {/* Auth Layout */}
+        <Route
+          path="/admin/signin"
+          element={
+            <UserRoute alertsRef={alertsRef}>
+              <SignIn alertsRef={alertsRef} />
+            </UserRoute>
+          }
+        />
 
-            {/* Charts */}
-            <Route path="/line-chart" element={<LineChart />} />
-            <Route path="/bar-chart" element={<BarChart />} />
-          </Route>
+        <Route
+          path="/admin/signup"
+          element={
+            <UserRoute alertsRef={alertsRef}>
+              <SignUp alertsRef={alertsRef} />
+            </UserRoute>
+          }
+        />
 
-          {/* Auth Layout */}
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/signup" element={<SignUp />} />
-
-          {/* Fallback Route */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        {/* Fallback Route */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </>
   );
 }

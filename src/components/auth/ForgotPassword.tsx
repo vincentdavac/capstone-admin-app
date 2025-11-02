@@ -1,14 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Button from "../ui/button/Button";
-import { useAlert } from "../../context/AlertContext";
+import API_BASE_URL from "../../config/coreApi";
+import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
 
-export default function ForgotPassword() {
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
+export default function ForgotPassword({ alertsRef }: Props) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const { showAlert } = useAlert();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -16,7 +20,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/api/forgot-password", {
+      const res = await fetch(`${API_BASE_URL}/api/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
@@ -28,10 +32,17 @@ export default function ForgotPassword() {
         throw new Error(data.message || "Something went wrong");
       }
 
-    showAlert("success", "Email Sent", "Password reset link sent! Check your email.");
-      navigate("/signin");
+      alertsRef.current?.addAlert(
+        "success",
+        "Password reset link sent! Check your email."
+      );
+
+      navigate("/admin/signin");
     } catch (err: any) {
-    showAlert("error", "Error", err.message || "Failed to send reset link");
+      alertsRef.current?.addAlert(
+        "error",
+        err.message || "Failed to send reset link"
+      );
     } finally {
       setLoading(false);
     }

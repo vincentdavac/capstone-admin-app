@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
-import { useAlert } from "../context/AlertContext"; // adjust path if different
+import { AlertsContainerRef } from "../components/Alert/AlertsContainer";
+
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
 
 // Assume these icons are imported from an icon library
 import {
-  // BoxCubeIcon,
-  // CalenderIcon,
   ChevronDownIcon,
-  GridIcon,
   HorizontaLDots,
   HomepageSliderShow,
   HomepageAbout,
@@ -16,22 +17,22 @@ import {
   HomepageFAQs,
   HomepageFooter,
   HomepageAdjust,
-  // ListIcon,
-  PageIcon,
   Archive,
   Comment,
   Management,
   ManageUsers,
   Buoy,
-  Chat,
-  Alert,
-  // PieChartIcon,
-  // PlugInIcon,
-  // TableIcon,
-  // UserCircleIcon,
 } from "../icons";
 
 import { useSidebar } from "../context/SidebarContext";
+import {
+  LayoutDashboard,
+  LibraryBig,
+  MapPinHouse,
+  Megaphone,
+  MessagesSquare,
+  Waves,
+} from "lucide-react";
 
 type NavItem = {
   name: string;
@@ -48,117 +49,95 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  // {
-  //   icon: <GridIcon />,
-  //   name: "Dashboard",
-  //   path: "/admin/dashboard",
-  // },
   {
-    icon: <GridIcon />,
+    icon: <LayoutDashboard />,
     name: "Dashboard",
-    path: "/dashboard",
+    path: "/admin/dashboard",
   },
   {
-    icon: <GridIcon />,
+    icon: <Waves />,
     name: "River Monitoring",
-    path: "/river-monitoring",
+    path: "/admin/river-monitoring",
   },
   {
-    icon: <GridIcon />,
+    icon: <Buoy />,
     name: "Deployed Buoy",
-    path: "/deployed-buoy",
+    path: "/admin/deployed-buoy",
   },
   {
-    icon: <GridIcon />,
-    name: "Historical Data",
-    path: "/historical-data",
-  },
-  {
-    icon: <GridIcon />,
-    name: "Tsunami Monitoring",
-    path: "/TsunamiDashboard",
-  },
-  {
-    icon: <GridIcon />,
+    icon: <Megaphone />,
     name: "Alert Management",
-    path: "/alert-management",
+    path: "/admin/alert-management",
   },
   {
-    icon: <GridIcon />,
-    name: "Pending Chats",
-    path: "/pending-chats",
+    icon: <MessagesSquare />,
+    name: "Chat support",
+    path: "/admin/pending-chats",
   },
   {
-    icon: <GridIcon />,
-    name: "Manage Users",  
-    path: "/manage-users",
+    icon: <LibraryBig />,
+    name: "Historical Data",
+    path: "/admin/historical-data",
   },
-
   {
     name: "Management",
     icon: <Management />,
     subItems: [
-      // {
-      //   name: "Manage users",
-      //   path: "/admin/manage-users",
-      //   icon: <ManageUsers />,
-      //   pro: false,
-      // },
+      {
+        name: "Manage users",
+        path: "/admin/manage-users",
+        icon: <ManageUsers className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
       {
         name: "Buoy Deployment",
         path: "/admin/manage-buoys",
-        icon: <Buoy />,
+        icon: <Buoy className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
-        name: "Chat Support",
-        path: "/admin/chat-support",
-        icon: <Chat />,
-        pro: false,
-      },
-      {
-        name: "Alert System",
-        path: "/admin/alert-system",
-        icon: <Alert />,
+        name: "Barangay",
+        path: "/admin/barangay-management",
+        icon: <MapPinHouse className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
     ],
   },
 
-  {
-    name: "Pages",
-    icon: <PageIcon />,
-    subItems: [
-      { name: "Slider", path: "/slider", pro: false },
-      { name: "404 Error", path: "/error-404", pro: false },
-      { name: "Calendar", path: "/calendar", pro: false },
-      { name: "User Profile", path: "/admin-profile", pro: false },
-      { name: "Form Elements", path: "/form-elements", pro: false },
-      { name: "Basic Tables", path: "/basic-tables", pro: false },
-      { name: "Line Chart", path: "/line-chart", pro: false },
-      { name: "Bar Chart", path: "/bar-chart", pro: false },
-      { name: "Alerts", path: "/alerts", pro: false },
-      { name: "Avatar", path: "/avatars", pro: false },
-      { name: "Badge", path: "/badge", pro: false },
-      { name: "Buttons", path: "/buttons", pro: false },
-      { name: "Images", path: "/images", pro: false },
-      { name: "Videos", path: "/videos", pro: false },
-      { name: "Sign In", path: "/signin", pro: false },
-      { name: "Sign Up", path: "/signup", pro: false },
-    ],
-  },
-  {
-    name: "Design ",
-    icon: <PageIcon />,
-    subItems: [
-      { name: "Alert", path: "/alerts", pro: false },
-      { name: "avatars", path: "/avatars", pro: false },
-      { name: "badge", path: "/badge", pro: false },
-      { name: "buttons", path: "/buttons", pro: false },
-      { name: "images", path: "/form-elements", pro: false },
-      { name: "videos", path: "/videos", pro: false },
-    ],
-  },
+  // {
+  //   name: "Pages",
+  //   icon: <PageIcon />,
+  //   subItems: [
+  //     { name: "Slider", path: "/slider", pro: false },
+  //     { name: "404 Error", path: "/error-404", pro: false },
+  //     { name: "Calendar", path: "/calendar", pro: false },
+  //     { name: "User Profile", path: "/admin-profile", pro: false },
+  //     { name: "Form Elements", path: "/form-elements", pro: false },
+  //     { name: "Basic Tables", path: "/basic-tables", pro: false },
+  //     { name: "Line Chart", path: "/line-chart", pro: false },
+  //     { name: "Bar Chart", path: "/bar-chart", pro: false },
+  //     { name: "Alerts", path: "/alerts", pro: false },
+  //     { name: "Avatar", path: "/avatars", pro: false },
+  //     { name: "Badge", path: "/badge", pro: false },
+  //     { name: "Buttons", path: "/buttons", pro: false },
+  //     { name: "Images", path: "/images", pro: false },
+  //     { name: "Videos", path: "/videos", pro: false },
+  //     { name: "Sign In", path: "/signin", pro: false },
+  //     { name: "Sign Up", path: "/signup", pro: false },
+  //   ],
+  // },
+  // {
+  //   name: "Design ",
+  //   icon: <PageIcon />,
+  //   subItems: [
+  //     { name: "Alert", path: "/alerts", pro: false },
+  //     { name: "avatars", path: "/avatars", pro: false },
+  //     { name: "badge", path: "/badge", pro: false },
+  //     { name: "buttons", path: "/buttons", pro: false },
+  //     { name: "images", path: "/form-elements", pro: false },
+  //     { name: "videos", path: "/videos", pro: false },
+  //   ],
+  // },
 ];
 
 const othersItems: NavItem[] = [
@@ -169,43 +148,43 @@ const othersItems: NavItem[] = [
       {
         name: "Slider",
         path: "/admin/customization-slider",
-        icon: <HomepageSliderShow />,
+        icon: <HomepageSliderShow className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "About us",
         path: "/admin/customization-about",
-        icon: <HomepageAbout />,
+        icon: <HomepageAbout className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Prototype",
         path: "/admin/customization-prototype",
-        icon: <HomepagePrototype />,
+        icon: <HomepagePrototype className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Team",
         path: "/admin/customization-team",
-        icon: <HomepageTeam />,
+        icon: <HomepageTeam className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "FAQs",
         path: "/admin/customization-faqs",
-        icon: <HomepageFAQs />,
+        icon: <HomepageFAQs className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Feedback",
         path: "/admin/customization-feedbacks",
-        icon: <Comment />,
+        icon: <Comment className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Footer",
         path: "/admin/customization-footer",
-        icon: <HomepageFooter />,
+        icon: <HomepageFooter className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
     ],
@@ -218,78 +197,27 @@ const othersItems: NavItem[] = [
       {
         name: "Users",
         path: "/admin/archive/users",
-        icon: <ManageUsers />,
-        pro: false,
-      },
-      {
-        name: "Buoys",
-        path: "/admin/archive/buoys",
-        icon: <Buoy />,
-        pro: false,
-      },
-      {
-        name: "Slider",
-        path: "/admin/archive/sliders",
-        icon: <HomepageSliderShow />,
-        pro: false,
-      },
-      {
-        name: "About us",
-        path: "/admin/archive/about-us",
-        icon: <HomepageAbout />,
-        pro: false,
-      },
-      {
-        name: "Prototype",
-        path: "/admin/archive/prototype",
-        icon: <HomepagePrototype />,
-        pro: false,
-      },
-      {
-        name: "Team",
-        path: "/admin/archive/teams",
-        icon: <HomepageTeam />,
-        pro: false,
-      },
-      {
-        name: "FAQs",
-        path: "/admin/archive/faqs",
-        icon: <HomepageFAQs />,
-        pro: false,
-      },
-      {
-        name: "Footer",
-        path: "/admin/archive/footer",
-        icon: <HomepageFooter />,
-        pro: false,
-      },
-      {
-        name: "Feedbacks",
-        path: "/admin/archive/feedbacks",
-        icon: <HomepageFooter />,
-        pro: false,
-      },
-      {
-        name: "Archive",
-        path: "//admin/archive/archive",
-        icon: <HomepageFooter />,
+        icon: <ManageUsers className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
     ],
   },
 ];
 
-const AppSidebar: React.FC = () => {
+const AppSidebar = ({ alertsRef }: Props) => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
-  const { showAlert } = useAlert();
 
   const handleClick = (e: React.MouseEvent, name: string) => {
-  if (name === "Sign In" || name === "Sign Up") {
-    e.preventDefault();
-  showAlert("info", "Already Logged In", `You are already logged in, no need to ${name}.`);
-  }
-};
+    if (name === "Sign In" || name === "Sign Up") {
+      e.preventDefault();
+
+      alertsRef.current?.addAlert(
+        "warning",
+        `You are already logged in, no need to ${name}.`
+      );
+    }
+  };
   const [openSubmenu, setOpenSubmenu] = useState<{
     type: "main" | "others";
     index: number;
@@ -430,39 +358,39 @@ const AppSidebar: React.FC = () => {
                     : "0px",
               }}
             >
-<ul className="mt-2 space-y-1 ml-9">
-  {nav.subItems.map((subItem) => (
-    <li key={subItem.name}>
-      {subItem.name === "Sign In" || subItem.name === "Sign Up" ? (
-        <a
-          href="#"
-          onClick={(e) => handleClick(e, subItem.name)}
-          className={`menu-dropdown-item ${
-            isActive(subItem.path)
-              ? "menu-dropdown-item-active"
-              : "menu-dropdown-item-inactive"
-          }`}
-        >
-          {subItem.icon}
-          {subItem.name}
-        </a>
-      ) : (
-        <Link
-          to={subItem.path}
-          className={`menu-dropdown-item ${
-            isActive(subItem.path)
-              ? "menu-dropdown-item-active"
-              : "menu-dropdown-item-inactive"
-          }`}
-        >
-          {subItem.icon}
-          {subItem.name}
-        </Link>
-      )}
-    </li>
-  ))}
-</ul>
-
+              <ul className="mt-2 space-y-1 ml-9">
+                {nav.subItems.map((subItem) => (
+                  <li key={subItem.name}>
+                    {subItem.name === "Sign In" ||
+                    subItem.name === "Sign Up" ? (
+                      <a
+                        href="#"
+                        onClick={(e) => handleClick(e, subItem.name)}
+                        className={`menu-dropdown-item ${
+                          isActive(subItem.path)
+                            ? "menu-dropdown-item-active"
+                            : "menu-dropdown-item-inactive"
+                        }`}
+                      >
+                        {subItem.icon}
+                        {subItem.name}
+                      </a>
+                    ) : (
+                      <Link
+                        to={subItem.path}
+                        className={`menu-dropdown-item ${
+                          isActive(subItem.path)
+                            ? "menu-dropdown-item-active"
+                            : "menu-dropdown-item-inactive"
+                        }`}
+                      >
+                        {subItem.icon}
+                        {subItem.name}
+                      </Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </li>
@@ -490,27 +418,22 @@ const AppSidebar: React.FC = () => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link to="/">
+        <Link to="/admin/dashboard">
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <img
-                src="/logo/forblackbg.svg"
+                src="/logo_with_name.svg"
                 alt="Logo"
                 className="dark:hidden"
               />
               <img
                 className="hidden dark:block"
-                src="/logo/forblackbg.svg"
+                src="/logo_with_name.svg"
                 alt="Logo"
               />
             </>
           ) : (
-            <img
-              src="/logo/forwhitebg.svg"
-              alt="Logo"
-              width={20}
-              height={20}
-            />
+            <img src="/favicon.svg" alt="Logo" width={50} height={50} />
           )}
         </Link>
       </div>

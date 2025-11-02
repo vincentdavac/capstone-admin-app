@@ -1,106 +1,132 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
-import { useAlert } from "../../context/AlertContext";
+import API_BASE_URL from "../../config/coreApi";
+import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
+import { AppContext } from "../../context/AppContext";
+import CryptoJS from "crypto-js";
 
-export default function SignInForm() {
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
+
+export default function SignInForm({ alertsRef }: Props) {
+  const SECRET_KEY = "my-secret-key";
+
+  const { setEncryptedToken } = useContext(AppContext)!;
+
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
 
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
 
-  // 🚀 Redirect if already logged in
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+  const [retryAfter, setRetryAfter] = useState<number | null>(null);
+
+  // ⏳ Countdown handler (no alerts)
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      navigate("/admin-dashboard", { replace: true });
+    let timer: ReturnType<typeof setInterval>;
+
+    if (retryAfter && retryAfter > 0) {
+      timer = setInterval(() => {
+        setRetryAfter((prev) => {
+          if (!prev) return null;
+          return prev > 1 ? prev - 1 : null;
+        });
+      }, 1000);
     }
-  }, [navigate]);
 
-const [retryAfter, setRetryAfter] = useState<number | null>(null);
+    return () => clearInterval(timer);
+  }, [retryAfter]);
 
-// ⏳ Countdown handler (no alerts)
-useEffect(() => {
-  let timer: ReturnType<typeof setInterval>;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-  if (retryAfter && retryAfter > 0) {
-    timer = setInterval(() => {
-      setRetryAfter((prev) => {
-        if (!prev) return null;
-        return prev > 1 ? prev - 1 : null;
-      });
-    }, 1000);
-  }
-
-  return () => clearInterval(timer);
-}, [retryAfter]);
-
-
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-
-  try {
-    const res = await fetch("http://127.0.0.1:8000/api/login", {
+    const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        "Access-Control-Allow-Origin": "*",
+      },
+      body: JSON.stringify(formData),
     });
 
-    let data: any = {};
-    try {
-      data = await res.json(); // catch kung hindi valid JSON
-    } catch {
-      data = {};
+    const data = await res.json();
+    if (!res.ok) {
+      // 🕓 Handle too many attempts (rate limiting)
+      if (res.status === 429) {
+        const waitTime = data.retry_after ?? 60;
+        setRetryAfter(waitTime);
+
+        alertsRef.current?.addAlert(
+          "error",
+          `Please wait ${waitTime} seconds before trying again.`
+        );
+        return;
+      }
+
+      // ⚠️ Handle validation errors from Laravel
+      if (data.errors) {
+        Object.values(data.errors).forEach((messages) => {
+          (messages as string[]).forEach((msg) => {
+            alertsRef.current?.addAlert("error", msg);
+          });
+        });
+      } else {
+        // 🔹 Generic error message (fallback)
+        alertsRef.current?.addAlert("error", data.message || "Login failed");
+      }
+
+      console.log("Error Response:", data);
+      return;
     }
 
-if (!res.ok) {
-  // 🚀 Handle rate limit separately
-  if (res.status === 429) {
-    const waitTime = data.retry_after ?? 60; // default 15s kung walang ibalik backend
-    setRetryAfter(waitTime);
-    showAlert(
-      "error",
-      "Too Many Attempts",
-      `Please wait ${waitTime} seconds before trying again.`
-    );
-    return;
-  }
+    if (data.errors) {
+      // Loop through errors and display each one
+      Object.values(data.data.errors).forEach((messages) => {
+        (messages as string[]).forEach((msg) => {
+          alertsRef.current?.addAlert("error", msg);
+        });
+      });
+      console.log(data.data.errors);
+    } else {
+      console.log(data);
 
-  showAlert("error", "Login Failed", data.message || "Invalid email or password.");
-  return;
-}
+      // get token from data.data.token
+      const newToken = data.data.token;
 
+      const encryptedToken = CryptoJS.AES.encrypt(
+        newToken,
+        SECRET_KEY
+      ).toString();
 
-    // ✅ Success
-    localStorage.setItem("token", data.token);
-    localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("token", encryptedToken);
+      console.log("Encrypted Token:", encryptedToken);
 
-    showAlert("success", "Login Successful", "Welcome back!");
-    navigate("/");
-  } catch (err) {
-    // ❌ Network/connection error
-    showAlert("error", "Error", "Server error. Please try again later.");
-  }
-};
+      // ✅ FIX: Set the ENCRYPTED token, not the decrypted one
+      setEncryptedToken(encryptedToken);
+
+      // ✅ Show success message first
+      alertsRef.current?.addAlert("success", "Login successful!");
+
+      // ✅ Wait a bit for context to update before navigating
+      setTimeout(() => {
+        navigate("/admin/dashboard");
+      }, 300);
+
+      console.log({ newToken });
+    }
+  };
 
   return (
     <div className="flex flex-col flex-1">
-      <div className="w-full max-w-md pt-10 mx-auto">
-        <Link
-          to="/"
-          className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-        >
-          <ChevronLeftIcon className="size-5" />
-          Back to dashboard
-        </Link>
-      </div>
-
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
@@ -116,24 +142,38 @@ if (!res.ok) {
             <div className="space-y-6">
               {/* Email */}
               <div>
-                <Label>Email <span className="text-error-500">*</span></Label>
+                <Label>
+                  Email <span className="text-error-500">*</span>
+                </Label>
                 <Input
                   placeholder="info@gmail.com"
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      email: e.target.value,
+                    })
+                  }
                 />
               </div>
 
               {/* Password */}
               <div>
-                <Label>Password <span className="text-error-500">*</span></Label>
+                <Label>
+                  Password <span className="text-error-500">*</span>
+                </Label>
                 <div className="relative">
                   <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={formData.password}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        password: e.target.value,
+                      })
+                    }
                   />
                   <span
                     onClick={() => setShowPassword(!showPassword)}
@@ -156,27 +196,27 @@ if (!res.ok) {
                     Keep me logged in
                   </span>
                 </div>
-<Link
-  to="/forgot-password"
-  className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
->
-  Forgot password?
-</Link>
-
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"
+                >
+                  Forgot password?
+                </Link>
               </div>
 
               {/* Submit button */}
               <div>
-<button
-  type="submit"
-  disabled={retryAfter !== null && retryAfter > 0}
-  className={`w-full rounded-lg py-3 text-white ${
-    retryAfter ? "bg-gray-400 cursor-not-allowed" : "bg-brand-500 hover:bg-brand-600"
-  }`}
->
-  {retryAfter ? `Try again in ${retryAfter}s` : "Sign in"}
-</button>
-
+                <button
+                  type="submit"
+                  disabled={retryAfter !== null && retryAfter > 0}
+                  className={`w-full rounded-lg py-3 text-white ${
+                    retryAfter
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-brand-500 hover:bg-brand-600"
+                  }`}
+                >
+                  {retryAfter ? `Try again in ${retryAfter}s` : "Sign in"}
+                </button>
               </div>
             </div>
           </form>
@@ -185,7 +225,7 @@ if (!res.ok) {
             <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
               Don&apos;t have an account?{" "}
               <Link
-                to="/signup"
+                to="/admin/signup"
                 className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
               >
                 Sign Up

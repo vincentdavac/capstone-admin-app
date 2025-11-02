@@ -3,7 +3,7 @@ import { Upload, Archive } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment } from "react";
 import Slider from "../../preview/Slider";
-
+import Breadcrumb from "../Breadcrumbs/Breadcrumb";
 
 interface SliderData {
   id: number;
@@ -129,12 +129,8 @@ const CustomizationSlider: React.FC = () => {
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
-      {/* Preview Image Section - Just put your image here */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-light text-gray-600 dark:text-gray-400">
-          Homepage Sliders Preview
-        </h1>
-      </div>
+      <Breadcrumb pageName="Customize Slider" />
+
       {/* Slider Preview Section */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
         <div className="flex justify-center w-full">
@@ -155,8 +151,9 @@ const CustomizationSlider: React.FC = () => {
         </div>
         {/* Search and Add Button - MODIFIED SECTION */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          
-          <div className="relative w-full sm:max-w-md order-2 sm:order-1"> {/* Reordered for small screens */}
+          <div className="relative w-full sm:max-w-md order-2 sm:order-1">
+            {" "}
+            {/* Reordered for small screens */}
             <input
               type="text"
               placeholder="Search title or description..."
@@ -179,7 +176,9 @@ const CustomizationSlider: React.FC = () => {
             </svg>
           </div>
 
-          <div className="flex-shrink-0 order-1 sm:order-2"> {/* Reordered for small screens */}
+          <div className="flex-shrink-0 order-1 sm:order-2">
+            {" "}
+            {/* Reordered for small screens */}
             <button
               onClick={handleOpenAddModal}
               className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"

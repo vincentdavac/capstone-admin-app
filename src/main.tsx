@@ -1,29 +1,42 @@
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
+import React, { useRef } from "react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter as Router } from "react-router-dom";
+import App from "./App.tsx";
 import "./index.css";
 import "swiper/swiper-bundle.css";
 import "flatpickr/dist/flatpickr.css";
-import App from "./App.tsx";
-import { AppWrapper } from "./components/common/PageMeta.tsx";
+
+// Contexts and wrappers
 import { ThemeProvider } from "./context/ThemeContext.tsx";
-import { BrowserRouter } from "react-router";
+import { AppWrapper } from "./components/common/PageMeta.tsx";
+import AppProvider from "./context/AppContext";
 
-// ✅ Keep the AlertProvider
-import { AlertProvider } from "./context/AlertContext.tsx";
+// If you have a global AlertsContainer like in the reference, you can include it:
+import AlertsContainer, {
+  AlertsContainerRef,
+} from "./components/Alert/AlertsContainer"; // optional
 
-// ❌ Remove reCAPTCHA v3 import & provider
-// import { GoogleReCAPTCHAReCaptchaProvider } from "react-google-recaptcha-v3";
+// eslint-disable-next-line react-refresh/only-export-components
+function Root() {
+  const alertsRef = useRef<AlertsContainerRef>(null);
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+  return (
     <ThemeProvider>
       <AppWrapper>
-      <BrowserRouter>  
-      <AlertProvider>
-          <App />
-      </AlertProvider>
-      </BrowserRouter>  
+        <Router>
+          <AppProvider>
+            <AlertsContainer ref={alertsRef} />
+            <App alertsRef={alertsRef} />
+          </AppProvider>
+        </Router>
       </AppWrapper>
     </ThemeProvider>
-  </StrictMode>,
+  );
+}
+
+const container = document.getElementById("root")!;
+ReactDOM.createRoot(container).render(
+  <React.StrictMode>
+    <Root />
+  </React.StrictMode>
 );

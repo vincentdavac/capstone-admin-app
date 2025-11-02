@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { fetchAlertsAlerts } from "../../api_hooks/fetchAllAlerts";
 import { useBroadcastAlert } from "../../core_api_fetching/broadCastAlert";
@@ -135,7 +136,6 @@ const AlertManagement: React.FC = () => {
   const [alerts, setAlerts] = useState<AlertData[]>([]);
   const { showAlert } = useAlert();
   const { alertsGet, loading, error } = fetchAlertsAlerts();
-  const [searchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedAlertId, setSelectedAlertId] = useState<number | null>(null);
   const { broadcastToSelected } = useBroadcastAlert();

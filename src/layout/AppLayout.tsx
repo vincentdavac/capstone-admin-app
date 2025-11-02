@@ -3,14 +3,19 @@ import { Outlet } from "react-router";
 import AppHeader from "./AppHeader";
 import Backdrop from "./Backdrop";
 import AppSidebar from "./AppSidebar";
+import { AlertsContainerRef } from "../components/Alert/AlertsContainer";
 
-const LayoutContent: React.FC = () => {
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
+
+const LayoutContent = ({ alertsRef }: Props) => {
   const { isExpanded, isHovered, isMobileOpen } = useSidebar();
 
   return (
     <div className="min-h-screen xl:flex">
       <div>
-        <AppSidebar />
+        <AppSidebar alertsRef={alertsRef} />
         <Backdrop />
       </div>
       <div
@@ -18,7 +23,7 @@ const LayoutContent: React.FC = () => {
           isExpanded || isHovered ? "lg:ml-[290px]" : "lg:ml-[90px]"
         } ${isMobileOpen ? "ml-0" : ""}`}
       >
-        <AppHeader />
+        <AppHeader alertsRef={alertsRef} />
         <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
           <Outlet />
         </div>
@@ -27,10 +32,10 @@ const LayoutContent: React.FC = () => {
   );
 };
 
-const AppLayout: React.FC = () => {
+const AppLayout = ({ alertsRef }: Props) => {
   return (
     <SidebarProvider>
-      <LayoutContent />
+      <LayoutContent alertsRef={alertsRef} />
     </SidebarProvider>
   );
 };

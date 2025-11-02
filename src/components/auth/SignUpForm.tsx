@@ -1,33 +1,39 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "../../icons";
+import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
 import Checkbox from "../form/input/Checkbox";
-import { useAlert } from "../../context/AlertContext";
-import ReCAPTCHA from "react-google-recaptcha"; // ✅ Added
+import ReCAPTCHA from "react-google-recaptcha";
+import API_BASE_URL from "../../config/coreApi";
+import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
 
-const SITE_KEY = ""; // ✅ Your site key
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
 
-export default function SignUpForm() {
+export default function SignUpForm({ alertsRef }: Props) {
+  const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
+
   const navigate = useNavigate();
-  const { showAlert } = useAlert();
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const [confirmPassword, setConfirmPassword] = useState("");
-
-  const [fname, setFname] = useState("");
-  const [lname, setLname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [contactNumber, setContactNumber] = useState("");
-
-  // 🚀 Modal states
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
-
-  // ✅ reCAPTCHA state
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+
+  const [first_name, setFirstname] = useState("");
+  const [last_name, setLastname] = useState("");
+  const [password, setPassword] = useState("");
+  const [password_confirmation, setConfirmationPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [contact_number, setContactNumber] = useState("");
+  const [image, SetImage] = useState<File | null>(null);
+  const [house_no, setHouseNumber] = useState("");
+  const [street, setStreet] = useState("");
+  const [barangay, setBarangay] = useState("160");
+  const [municipality] = useState("Caloocan City");
 
   const handleCaptcha = (token: string | null) => {
     setCaptchaToken(token);
@@ -36,100 +42,79 @@ export default function SignUpForm() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 🔹 Validation same as before
-   const newErrors: { [key: string]: string } = {};
-if (!fname.trim()) newErrors.fname = "First name is required.";
-if (!lname.trim()) newErrors.lname = "Last name is required.";
-if (!email.trim()) newErrors.email = "Email is required.";
-else if (!/\S+@\S+\.\S+/.test(email)) newErrors.email = "Invalid email format.";
-if (!password.trim()) newErrors.password = "Password is required.";
-else if (password.length < 8)
-  newErrors.password = "Password must be at least 8 characters.";
+    if (!isChecked) {
+      alertsRef.current?.addAlert(
+        "error",
+        "You must agree to the Terms and Conditions and Privacy Policy."
+      );
+    }
 
-// ✅ Add this block for retype password
-if (!confirmPassword.trim())
-  newErrors.confirmPassword = "Please retype your password.";
-else if (confirmPassword !== password)
-  newErrors.confirmPassword = "Passwords do not match.";
+    if (!captchaToken) {
+      alertsRef.current?.addAlert("error", "Please complete the reCAPTCHA.");
+    }
 
-if (!isChecked)
-  newErrors.terms =
-    "You must agree to the Terms and Conditions and Privacy Policy.";
-if (!captchaToken) newErrors.recaptcha = "Please complete the reCAPTCHA.";
+    const formData = new FormData();
+    formData.append("first_name", String(first_name));
+    formData.append("last_name", String(last_name));
+    formData.append("password", String(password));
+    formData.append("password_confirmation", String(password_confirmation));
+    formData.append("email", String(email));
+    formData.append("contact_number", String(contact_number));
+    formData.append("house_no", String(house_no));
+    formData.append("street", String(street));
+    formData.append("barangay", String(barangay));
+    formData.append("municipality", String(municipality));
+    formData.append("g-recaptcha-response", String(captchaToken));
 
-if (Object.keys(newErrors).length > 0) {
-  Object.values(newErrors).forEach((msg) =>
-    showAlert("error", "Validation Error", msg)
-  );
-  return;
-}
-
+    if (image) {
+      formData.append("image", image);
+    }
 
     try {
-      const res = await fetch("http://127.0.0.1:8000/api/register", {
+      const res = await fetch(`${API_BASE_URL}/api/register`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
           Accept: "application/json",
         },
-body: JSON.stringify({
-  first_name: fname,
-  last_name: lname,
-  email,
-  password,
-  password_confirmation: password,
-  image: null, // ✅ no default image
-  image_url: null, // ✅ no default image URL
-  contact_number: contactNumber || "0000000000",
-  is_admin: 1, // ✅ admin registration
-  "g-recaptcha-response": captchaToken,
-}),
-
+        body: formData,
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        if (data?.errors) {
-          Object.keys(data.errors).forEach((key) => {
-            showAlert("error", "Signup Failed", data.errors[key][0]);
+        if (data.errors) {
+          Object.values(data.errors).forEach((messages) => {
+            (messages as string[]).forEach((msg) => {
+              alertsRef.current?.addAlert("error", msg);
+            });
           });
-        } else if (data?.message) {
-          showAlert("error", "Signup Failed", data.message);
         } else {
-          showAlert("error", "Signup Failed", "Please try again.");
+          // 🔹 Generic error message (fallback)
+          alertsRef.current?.addAlert(
+            "error",
+            data.message || "Registration failed"
+          );
         }
+
+        console.log("Error Response:", data);
         return;
       }
-
-      // ✅ Success (do NOT store token yet)
-      showAlert(
+      alertsRef.current?.addAlert(
         "success",
-        "Account Created",
         "We sent a verification link to your email. Please verify your account before logging in."
       );
 
-      navigate("/signin"); // redirect to login page
-    } catch (err) {
-      showAlert(
+      navigate("/signin");
+    } catch (err: any) {
+      alertsRef.current?.addAlert(
         "error",
-        "Error",
-        "Unable to connect to the server. Please try again later."
+        err.message || "An unexpected error occurred."
       );
     }
   };
 
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
-      <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
-        <Link
-          to="/"
-          className="inline-flex items-center text-sm text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-        >
-          <ChevronLeftIcon className="size-5" />
-          Back to dashboard
-        </Link>
-      </div>
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
@@ -141,8 +126,8 @@ body: JSON.stringify({
             </p>
           </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="space-y-5">
+          <form onSubmit={handleSubmit} encType="multipart/form-data">
+            <div className="max-h-[80vh] overflow-y-auto px-2 space-y-5">
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 <div>
                   <Label>
@@ -151,8 +136,8 @@ body: JSON.stringify({
                   <Input
                     type="text"
                     placeholder="Enter your first name"
-                    value={fname}
-                    onChange={(e) => setFname(e.target.value)}
+                    value={first_name}
+                    onChange={(e) => setFirstname(e.target.value)}
                   />
                 </div>
                 <div>
@@ -162,8 +147,8 @@ body: JSON.stringify({
                   <Input
                     type="text"
                     placeholder="Enter your last name"
-                    value={lname}
-                    onChange={(e) => setLname(e.target.value)}
+                    value={last_name}
+                    onChange={(e) => setLastname(e.target.value)}
                   />
                 </div>
               </div>
@@ -203,38 +188,107 @@ body: JSON.stringify({
                   </span>
                 </div>
               </div>
-<div>
-  <Label>
-    Retype Password<span className="text-error-500">*</span>
-  </Label>
-  <div className="relative">
-    <Input
-      placeholder="Retype your password"
-      type={showPassword ? "text" : "password"}
-      value={confirmPassword}
-      onChange={(e) => setConfirmPassword(e.target.value)}
-    />
-    <span
-      onClick={() => setShowPassword(!showPassword)}
-      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-    >
-      {showPassword ? (
-        <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-      ) : (
-        <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
-      )}
-    </span>
-  </div>
-</div>
+              <div>
+                <Label>
+                  Retype Password<span className="text-error-500">*</span>
+                </Label>
+                <div className="relative">
+                  <Input
+                    placeholder="Retype your password"
+                    type={showPassword ? "text" : "password"}
+                    value={password_confirmation}
+                    onChange={(e) => setConfirmationPassword(e.target.value)}
+                  />
+                  <span
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
+                  >
+                    {showPassword ? (
+                      <EyeIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                    ) : (
+                      <EyeCloseIcon className="fill-gray-500 dark:fill-gray-400 size-5" />
+                    )}
+                  </span>
+                </div>
+              </div>
 
               <div>
                 <Label>Contact Number</Label>
                 <Input
                   type="text"
                   placeholder="Enter your contact number"
-                  value={contactNumber}
+                  value={contact_number}
                   onChange={(e) => setContactNumber(e.target.value)}
                 />
+              </div>
+
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div>
+                  <Label>House No.</Label>
+                  <Input
+                    type="text"
+                    placeholder="Enter your house number"
+                    value={house_no}
+                    onChange={(e) => setHouseNumber(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <Label>Street</Label>
+                  <Input
+                    type="text"
+                    placeholder="Enter your street"
+                    value={street}
+                    onChange={(e) => setStreet(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <div>
+                  <Label>Barangay</Label>
+                  <select
+                    value={barangay}
+                    onChange={(e) => setBarangay(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border rounded-md border-gray-300 dark:bg-gray-800 dark:text-gray-200"
+                  >
+                    <option value="160">Barangay 160</option>
+                    <option value="161">Barangay 161</option>
+                    <option value="162">Barangay 162</option>
+                    <option value="163">Barangay 163</option>
+                    <option value="164">Barangay 164</option>
+                    <option value="165">Barangay 165</option>
+                  </select>
+                </div>
+
+                <div>
+                  <Label>Municipality</Label>
+                  <Input
+                    type="text"
+                    value={municipality}
+                    disabled
+                    className="bg-gray-100 dark:bg-gray-700 cursor-not-allowed"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <Label>Profile Image</Label>
+                <input
+                  type="file"
+                  name="image"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      SetImage(e.target.files[0]);
+                    }
+                  }}
+                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-500 file:text-white hover:file:bg-brand-600"
+                />
+                {image && (
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Selected file: {image.name}
+                  </p>
+                )}
               </div>
 
               <div className="flex items-center gap-3">
@@ -283,7 +337,7 @@ body: JSON.stringify({
             <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
               Already have an account?{" "}
               <Link
-                to="/signin"
+                to="/admin/signin"
                 className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
               >
                 Sign In
@@ -339,9 +393,7 @@ body: JSON.stringify({
                 We value your privacy. This policy explains how we collect, use,
                 and protect your personal information.
               </p>
-              <p>
-                1. We collect only necessary data to provide our services.
-              </p>
+              <p>1. We collect only necessary data to provide our services.</p>
               <p>
                 2. We will not sell your personal information to third parties.
               </p>

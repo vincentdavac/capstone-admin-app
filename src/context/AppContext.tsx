@@ -88,7 +88,7 @@ export default function AppProvider({ children }: MyComponentProps) {
       }
 
       try {
-        const res = await fetch(`${API_BASE_URL}/api/information/user`, {
+        const res = await fetch(`${API_BASE_URL}/information/user`, {
           headers: {
             Authorization: `Bearer ${token}`,
             "Access-Control-Allow-Origin": "*",

@@ -48,7 +48,7 @@ export default function SignInForm({ alertsRef }: Props) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch(`${API_BASE_URL}/api/admin/login`, {
+    const res = await fetch(`${API_BASE_URL}/admin/login`, {
       method: "POST",
       headers: {
         Accept: "application/json",

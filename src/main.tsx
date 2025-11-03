@@ -15,7 +15,7 @@ import AppProvider from "./context/AppContext";
 import AlertsContainer, {
   AlertsContainerRef,
 } from "./components/Alert/AlertsContainer"; // optional
-
+import { AlertProvider } from "./context/AlertContext.tsx";
 // eslint-disable-next-line react-refresh/only-export-components
 function Root() {
   const alertsRef = useRef<AlertsContainerRef>(null);
@@ -24,10 +24,12 @@ function Root() {
     <ThemeProvider>
       <AppWrapper>
         <Router>
+          <AlertProvider>
           <AppProvider>
             <AlertsContainer ref={alertsRef} />
             <App alertsRef={alertsRef} />
           </AppProvider>
+          </AlertProvider>
         </Router>
       </AppWrapper>
     </ThemeProvider>

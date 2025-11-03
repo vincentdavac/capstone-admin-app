@@ -20,7 +20,7 @@ export default function ForgotPassword({ alertsRef }: Props) {
     setLoading(true);
 
     try {
-      const res = await fetch(`${API_BASE_URL}/api/forgot-password`, {
+      const res = await fetch(`${API_BASE_URL}/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),

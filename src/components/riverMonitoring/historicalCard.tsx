@@ -1,39 +1,19 @@
 import { useState } from "react";
 import chart from "./chart";
-import TropicalCard from "./stormsurgeCard";
+import SensorMonitoring from "./sensorMonitoring";
 
 interface Graph {
   [key: string]: string;
 }
 
-const aboutGraph: Graph = {
-  SST: "Sea Surface Temperature (SST) indicates ocean warming trends; sustained highs can lead to coral bleaching. \n Unit: °C \n Normal (tropics): 26-30 °C\nWatch: ≥ 32 °C (heat stress)",
-  waterLevel:
-    "Water Level tracks sea/river height. Peaks align with high tides, storm surges, or heavy rain runoff. \nUnit: meters (m)\nNormal: 0.8-2.0 m\nWatch: > 2.5 m (possible flooding)",
-  waterpressure:
-    "Water Pressurerises with depth and wave action; sudden spikes may indicate strong currents or surges. \n Unit: kPa \n Typical: 100-200 kPa (shallow sensors) \n Watch: abrupt ±20 kPa shifts",
-  atmospheric:
-    "Atmospheric Pressure helps track weather systems; sharp drops often precede storms/typhoons. \nUnit: hPa \nNormal: 1000-1015 hPa \nWatch: < 990 hPa (low-pressure system)",
-  waveHeight:
-    "Wave Height shows sea roughness. Larger waves pose risks for small craft and coastal operations.  \nUnit: meters (m) \nFair: 0.5-1.5 m \n Rough/High: > 3-4 m",
-  waterDepth:
-    "Water Depth variations may reflect tides, sedimentation, scouring, or subsidence along channels. \nUnit: meters (m) \nNormal: site-specific, generally stable \n Watch: sudden change > 1 ms",
-  waterTemp:
-    "Water Temperature (below surface) influences dissolved oxygen and species distribution. \n Unit: °C \nNormal (tropics, sub-surface): 24-28 °C \nWatch: > 30 °C sustained",
-  windSpeed:
-    "Wind Speed helps assess sea state and storm risk; gusty periods often precede higher waves. \nUnit: m/s \n Breeze: 3-8 m/s \n Strong/Gale: > 15 m/s",
-  rainFall:
-    "Rainfall totals drive runoff and flood risk; monthly accumulations highlight wet/dry seasons. \nUnit: millimeters (mm) \n Light: 1-10 mm/day \n Heavy: > 50 mm/day",
-};
 
 export default function HistoricalCards() {
   const [current, setData] = useState("waterLevel");
-  const currentData = aboutGraph[current];
   const CurrentChart = chart[current];
   const [date, setDate] = useState("");
   return (
     <div className="lg:col-span-2 flex flex-col">
-      <div className="border-2 border-[#D9D9D9] w-[1480px] h-[1043px] mt-8 rounded md:rounded-xl">
+      <div className="border-2 border-[#D9D9D9] w-[1480px] h-[1200px] mt-8 rounded md:rounded-xl">
         <div className="w-full px-4 flex items-center h-16">
           <h1 className="text-lg font-semibold">HISTORICAL DATA</h1>
         </div>
@@ -144,7 +124,7 @@ export default function HistoricalCards() {
             </div> */}
           </div>
         </div>
-        <TropicalCard />
+        <SensorMonitoring />
       </div>
     </div>
   );

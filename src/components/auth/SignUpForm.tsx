@@ -13,7 +13,7 @@ interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
-export default function SignUpForm({ alertsRef }: Props) {
+export default function SignUpForm ({ alertsRef }: Props) {
   const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
   const navigate = useNavigate();
@@ -75,6 +75,14 @@ const handleSubmit = async (e: React.FormEvent) => {
   if (image) {
     formData.append("image", image);
   }
+    try {
+      const res = await fetch(`${API_BASE_URL}/register`, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+        },
+        body: formData,
+      });
 
   try {
     const res = await fetch(`${API_BASE_URL}/api/register`, {

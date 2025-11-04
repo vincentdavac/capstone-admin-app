@@ -1,4 +1,4 @@
-import{ createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 import Alert from "../components/ui/alert/Alert";
 
 type AlertVariant = "success" | "warning" | "error" | "info";
@@ -43,23 +43,22 @@ export const AlertProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
+    
     <AlertContext.Provider value={{ showAlert }}>
       {children}
 
       {/* Global alert container (fixed at top-right) */}
-<div className="fixed top-5 right-5 space-y-2 z-[2147483647]">
-  {alerts.map((a) => (
-    <Alert
-      key={a.id}
-      variant={a.variant}
-      title={a.title}
-      message={a.message}
-      showLink={false}
-    />
-  ))}
-</div>
-
-
+      <div className="fixed top-5 right-5 space-y-2 z-[2147483647]">
+        {alerts.map((a) => (
+          <Alert
+            key={a.id}
+            variant={a.variant}
+            title={a.title}
+            message={a.message}
+            showLink={false}
+          />
+        ))}
+      </div>
     </AlertContext.Provider>
   );
 };

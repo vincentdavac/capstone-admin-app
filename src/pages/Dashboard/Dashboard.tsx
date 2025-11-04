@@ -5,7 +5,7 @@ import MapDashboard from "../../components/dashboard_content/map";
 import ForecastCard from "../../components/dashboard_content/forecast";
 import { useEffect } from 'react';
 import  setAlert from "../../core_api_fetching/insertingAlert";
-import  setHumidityAlert  from "../../core_api_fetching/humidityAlert";
+import  insertHistorical  from "../../core_api_fetching/setHistorical";
 
 export default function Dashboard() {
   useEffect(() => {
@@ -17,16 +17,16 @@ export default function Dashboard() {
     }
   };
   
-  const sendHumidityAlert = async () => {
+  const sendHistorical = async () => {
     try {
-      await setHumidityAlert.post(); 
+      await insertHistorical.post(); 
     } catch (error) {
-      console.error('Failed to set humidity alert:', error);
+      console.error('Failed to set historical data:', error);
     }
   };
 
   sendAlert();
-  sendHumidityAlert();
+  sendHistorical();
 }, []);
   return (
     <div>

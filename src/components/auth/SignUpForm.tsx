@@ -48,48 +48,34 @@ const handleSubmit = async (e: React.FormEvent) => {
       "error",
       "You must agree to the Terms and Conditions and Privacy Policy."
     );
-    return; // ✅ stop form
+    return;
   }
 
   if (!captchaToken) {
     alertsRef.current?.addAlert("error", "Please complete the reCAPTCHA.");
-    return; // ✅ stop form
+    return;
   }
 
   const formData = new FormData();
-  formData.append("first_name", String(first_name));
-  formData.append("last_name", String(last_name));
-  formData.append("password", String(password));
-  formData.append("password_confirmation", String(password_confirmation));
-  formData.append("email", String(email));
-  formData.append("contact_number", String(contact_number));
-  formData.append("house_no", String(house_no));
-  formData.append("street", String(street));
-  formData.append("barangay", String(barangay));
-  formData.append("municipality", String(municipality));
+  formData.append("first_name", first_name);
+  formData.append("last_name", last_name);
+  formData.append("password", password);
+  formData.append("password_confirmation", password_confirmation);
+  formData.append("email", email);
+  formData.append("contact_number", contact_number);
+  formData.append("house_no", house_no);
+  formData.append("street", street);
+  formData.append("barangay", barangay);
+  formData.append("municipality", municipality);
   formData.append("g-recaptcha-response", String(captchaToken));
-
-  // ✅ Add this line (important)
   formData.append("is_admin", "1");
 
-  if (image) {
-    formData.append("image", image);
-  }
-    try {
-      const res = await fetch(`${API_BASE_URL}/register`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-        },
-        body: formData,
-      });
+  if (image) formData.append("image", image);
 
   try {
     const res = await fetch(`${API_BASE_URL}/api/register`, {
       method: "POST",
-      headers: {
-        Accept: "application/json",
-      },
+      headers: { Accept: "application/json" },
       body: formData,
     });
 
@@ -446,3 +432,4 @@ onClick={() => {
     </div>
   );
 }
+

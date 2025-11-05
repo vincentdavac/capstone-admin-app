@@ -15,7 +15,7 @@ interface ChartMap {
 
 const chart: ChartMap = {
   SST: SstChart,
-  waterLevel: WaterLevelChart,
+  humidity: WaterLevelChart,
   waterpressure: WaterPressure,
   waveHeight: WaveHeight,
   atmospheric: Atmospheric,

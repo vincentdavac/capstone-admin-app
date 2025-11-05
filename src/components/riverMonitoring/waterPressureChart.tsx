@@ -1,9 +1,25 @@
 import { useEffect, useRef } from "react";
 import * as echarts from "echarts";
+import { fetchSensorData } from "../../api_hooks/waterHooks";
 export default function waterPressures() {
   const waterPressure = useRef<HTMLDivElement>(null);
+  const { water } = fetchSensorData();
   useEffect(() => {
     const charts: echarts.ECharts[] = [];
+     if (!water || water.length === 0) return;
+
+    const dates = water.map((item: any) =>
+      new Date(item.recorded_at).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      })
+    );
+    const sensorValues = water.map((item: any) => item.pressure_hpa);
     if (waterPressure.current) {
       const waterpressureChart = echarts.init(waterPressure.current);
 
@@ -18,13 +34,19 @@ export default function waterPressures() {
           left: "center",
           top: 5,
         },
-        xAxis: {
+         xAxis: {
           type: "category",
           boundaryGap: false,
-          data: ["Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+          data: dates,
           axisLabel: {
-            fontSize: 8,
+            fontSize: 10,
             color: "#6b7280",
+            formatter: function (value: any) {
+              const parts = value.split(",");
+              const datePart = parts.slice(0, 2).join(",");
+              const timePart = parts[2] ? parts[2].trim() : "";
+              return `${datePart}\n${timePart}`;
+            },
           },
         },
         yAxis: {
@@ -37,7 +59,7 @@ export default function waterPressures() {
         },
         series: [
           {
-            data: [1003,1005,1007,1009,1011],
+            data: sensorValues,
             type: "line",
             areaStyle: {
               color: "rgba(59, 130, 246, 0.3)",
@@ -70,6 +92,6 @@ export default function waterPressures() {
       window.removeEventListener("resize", handleResize);
       charts.forEach((chart) => chart.dispose());
     };
-  }, []);
+  }, [water]);
   return <div ref={waterPressure} className="w-full h-full" />;
 }

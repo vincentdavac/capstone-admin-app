@@ -46,28 +46,39 @@ export const fetchSensorData = () => {
   const [error, setError] = useState<string | null>(null);
   const [sensorData, setSensorData] = useState<Sensor[]>([]);
 
-  const fetchMonitoring = async () => {
+  useEffect(() => {
+  let isMounted = true;
+  
+  const fetchData = async () => {
+    if (!isMounted) return;
+    
     try {
       setLoading(true);
       setError(null);
       const response = await getsensormonitoring.get();
       console.log("sensor data:", response);
-      setSensorData(response); 
+      
+      if (isMounted) {
+        setSensorData(response);
+      }
     } catch (err) {
-      setError("Failed to fetch data");
+      if (isMounted) {
+        setError("Failed to fetch data");
+      }
     } finally {
-      setLoading(false);
+      if (isMounted) {
+        setLoading(false);
+      }
     }
   };
 
-  useEffect(() => {
-    fetchMonitoring()
-    const fetchMonitoringData =() => {
-    fetchMonitoring();
-    }
-  fetchMonitoringData
-  const interval = setInterval(fetchMonitoringData, 5000);
-  return ()=>clearInterval(interval)
-  }, []);
+  fetchData(); 
+  const interval = setInterval(fetchData, 5000);
+
+  return () => {
+    isMounted = false;
+    clearInterval(interval);
+  };
+}, []);
   return { sensorData, loading, error, fetchSensorData };
 };

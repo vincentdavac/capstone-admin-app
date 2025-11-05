@@ -5,13 +5,9 @@ interface Graph {
   [key: string]: string;
 }
 
-const aboutGraph: Graph = {
-  SST: "SST shows the temperature of the ocean surface, which can indicate cyclone potential. \nUnit: °C \nLow: <26°C \nModerate: 26-27.9°C \nHigh: 28-28.9°C \nVery High: 29°C or higher",
-};
 
 export default function HistoricalCards() {
   const [current, setData] = useState("SST");
-  const currentData = aboutGraph[current];
   const CurrentChart = chart[current];
   return (
     <div className="lg:col-span-2 flex flex-col">
@@ -26,7 +22,7 @@ export default function HistoricalCards() {
               className="px-4 py-2 bg-blue-500 text-white hover:bg-blue-700 rounded-full"
               onClick={() => setData("SST")}
             >
-              Sea Surface Temperature
+             Surroundings Temperature
             </button>
             <button className="px-4 py-2 bg-white text-black  rounded-full border border-blue-700">
               Humidity
@@ -35,22 +31,22 @@ export default function HistoricalCards() {
               Atmospheric Pressure
             </button>
             <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
+            Water Depth
+            </button>
+            <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
+             Water Temperature
+            </button>
+            <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
+             Wind Speed
+            </button>
+            <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
+             Rain Gauge
+            </button>
+            <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
+              Rain
+            </button>
+            <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
               Water Pressure
-            </button>
-            <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
-              Water Temperature
-            </button>
-            <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
-              Air Temperature
-            </button>
-            <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
-              Wave Rotation
-            </button>
-            <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
-              Wind Speed
-            </button>
-            <button className="px-4 py-2 bg-white text-black rounded-full border border-blue-700">
-              Danger Level
             </button>
           </div>
         </div>
@@ -69,24 +65,6 @@ export default function HistoricalCards() {
           <div className="flex gap-4 mt-4">
             <div className="border-2 border-[#D9D9D9] rounded-sm h-[250px] flex-1">
               <CurrentChart />
-            </div>
-
-            <div className="w-[300px] bg-[#E2F1FF] border border-gray-200 shadow rounded-lg p-4">
-              <h1 className="text-base font-semibold text-gray-700 mb-2">
-                About this Graph
-              </h1>
-              <p className="text-sm text-gray-600 mb-2">
-                {currentData.split("\n")[0]}
-              </p>
-              <ul className="list-disc list-inside text-sm text-gray-600">
-                {currentData
-                  .split("\n")
-                  .slice(1)
-                  .map((line, i) => (
-                    <li key={i}>{line}</li>
-                  ))}
-              </ul>
-              {/* <p className="text-sm text-gray-600">{currentData}</p> */}
             </div>
           </div>
         </div>

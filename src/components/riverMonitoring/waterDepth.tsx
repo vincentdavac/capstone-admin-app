@@ -1,106 +1,99 @@
 import { useEffect, useRef } from "react";
 import * as echarts from "echarts";
-
+import { fetchSensorData } from "../../api_hooks/waterHooks";
 export default function waterDepth() {
   const waterDepthRef = useRef<HTMLDivElement>(null);
+  const { water } = fetchSensorData();
 
   useEffect(() => {
-    let waterDepthChart: echarts.ECharts | null = null;
+    let waterDepthChart: echarts.ECharts[] = [];
+    if (!water || water.length === 0) return;
+
+    const dates = water.map((item: any) =>
+      new Date(item.recorded_at).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      })
+    );
+    const sensorValues = water.map((item: any) => item.depth_m);
 
     if (waterDepthRef.current) {
-      waterDepthChart = echarts.init(waterDepthRef.current);
+      const waterDepth = echarts.init(waterDepthRef.current);
 
-      waterDepthChart.setOption({
-        legend: {
-          data: ["Water Depth (m)"],
-          top: 15,
-          left: "center",
-          itemWidth: 15,
-          itemHeight: 10,
+      waterDepth.setOption({
+        title: {
+          text: "Water Depth",
           textStyle: {
-            fontSize: 11,
-            color: "#6b7280",
+            fontSize: 10,
+            fontWeight: "normal",
+            color: "#374151",
           },
-          itemStyle: {
-            color: "#7dd3fc",
-          },
+          left: "center",
+          top: 5,
         },
         xAxis: {
           type: "category",
-          data: ["Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+          boundaryGap: false,
+          data: dates,
           axisLabel: {
-            fontSize: 11,
+            fontSize: 10,
             color: "#6b7280",
-            margin: 10,
-          },
-          axisLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
+            formatter: function (value: any) {
+              const parts = value.split(",");
+              const datePart = parts.slice(0, 2).join(",");
+              const timePart = parts[2] ? parts[2].trim() : "";
+              return `${datePart}\n${timePart}`;
+            },
           },
         },
         yAxis: {
           type: "value",
           axisLabel: {
-            show: true,
-            fontSize: 10,
+            fontSize: 8,
+            formatter: "{value}m",
             color: "#6b7280",
-            formatter: "{value}",
-          },
-          axisLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
-          },
-          splitLine: {
-            show: true,
-            lineStyle: {
-              color: "#e5e7eb",
-              width: 1,
-              type: "solid",
-            },
           },
         },
         series: [
           {
-            name: "Water Depth (m)",
-            data: [20, 20, 20, 20, 20, 20],
-            type: "bar",
-            itemStyle: {
-              color: "#7dd3fc",
-              borderColor: "#0891b2",
-              borderWidth: 1,
+            data: sensorValues,
+            type: "line",
+            areaStyle: {
+              color: "rgba(59, 130, 246, 0.3)",
             },
-            barWidth: "50%",
+            itemStyle: {
+              color: "#3b82f6",
+            },
+            lineStyle: {
+              color: "#3b82f6",
+            },
           },
         ],
         grid: {
-          top: 60,
-          left: 40,
-          right: 30,
-          bottom: 40,
+          top: 30,
+          left: 25,
+          right: 15,
+          bottom: 20,
         },
-        backgroundColor: "transparent",
       });
-
-      const handleResize = () => {
-        if (waterDepthChart) {
-          waterDepthChart.resize();
-        }
-      };
-
-      window.addEventListener("resize", handleResize);
-
-      return () => {
-        window.removeEventListener("resize", handleResize);
-        if (waterDepthChart) {
-          waterDepthChart.dispose();
-        }
-      };
+      waterDepthChart.push(waterDepth);
     }
-  }, []);
+    const handleResize = () => {
+      waterDepthChart.forEach((chart) => chart.resize());
+    };
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+      waterDepthChart.forEach((chart) => chart.dispose());
+    };
+  }, [water]);
 
   return <div ref={waterDepthRef} className="w-full h-full" />;
 }

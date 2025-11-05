@@ -1,14 +1,35 @@
 import { useEffect, useRef } from "react";
 import * as echarts from "echarts";
+import { fetchSensorData } from "../../api_hooks/waterTempHooks";
 
 export default function WaterLevelChart() {
   const waterTemp = useRef<HTMLDivElement>(null);
-
+  const { waterTemperate } = fetchSensorData();
   useEffect(() => {
     let waterTempChart: echarts.ECharts | null = null;
+    if (!waterTemperate || waterTemperate.length === 0) return;
 
+    const dates = waterTemperate.map((item: any) =>
+      new Date(item.recorded_at).toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      })
+    );
+    const sensorValues = waterTemperate.map(
+      (item: any) => item.temperature_celsius
+    );
     if (waterTemp.current) {
       waterTempChart = echarts.init(waterTemp.current);
+      const minValue = Math.min(...sensorValues);
+      const maxValue = Math.max(...sensorValues);
+      const yAxisMin = Math.floor(minValue);
+      const yAxisMax = Math.ceil(maxValue);
+
       waterTempChart.setOption({
         legend: {
           data: ["Water Temperature (°C)"],
@@ -28,24 +49,23 @@ export default function WaterLevelChart() {
         xAxis: {
           type: "category",
           boundaryGap: false,
-          data: ["Mar", "Apr", "May", "Jun", "Jul", "Aug"],
+          data: dates,
           axisLabel: {
-            fontSize: 11,
+            fontSize: 10,
             color: "#6b7280",
-            margin: 10,
-          },
-          axisLine: {
-            show: false,
-          },
-          axisTick: {
-            show: false,
+            formatter: function (value: any) {
+              const parts = value.split(",");
+              const datePart = parts.slice(0, 2).join(",");
+              const timePart = parts[2] ? parts[2].trim() : "";
+              return `${datePart}\n${timePart}`;
+            },
           },
         },
         yAxis: {
           type: "value",
-          min: 25.0,
-          max: 28.0,
-          interval: 0.5,
+          min: yAxisMin,
+          max: yAxisMax,
+          interval: 1,
           axisLabel: {
             fontSize: 10,
             formatter: "{value}",
@@ -69,7 +89,7 @@ export default function WaterLevelChart() {
         series: [
           {
             name: "Water Temperature (°C)",
-            data: [25.2, 25.8, 26.5, 27.2, 27.7, 27.3],
+            data: sensorValues,
             type: "line",
             smooth: false,
             symbol: "circle",
@@ -114,8 +134,8 @@ export default function WaterLevelChart() {
           waterTempChart.dispose();
         }
       };
-    }
-  }, []);
+    } 
+  }, [waterTemperate]);
 
   return <div ref={waterTemp} className="w-full h-full" />;
 }

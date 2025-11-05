@@ -22,6 +22,7 @@ export default function SignUpForm ({ alertsRef }: Props) {
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
   const [captchaToken, setCaptchaToken] = useState<string | null>(null);
+  const [termsAcknowledged, setTermsAcknowledged] = useState(false);
 
   const [first_name, setFirstname] = useState("");
   const [last_name, setLastname] = useState("");
@@ -39,79 +40,78 @@ export default function SignUpForm ({ alertsRef }: Props) {
     setCaptchaToken(token);
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
 
-    if (!isChecked) {
-      alertsRef.current?.addAlert(
-        "error",
-        "You must agree to the Terms and Conditions and Privacy Policy."
-      );
-    }
+  if (!isChecked) {
+    alertsRef.current?.addAlert(
+      "error",
+      "You must agree to the Terms and Conditions and Privacy Policy."
+    );
+    return;
+  }
 
-    if (!captchaToken) {
-      alertsRef.current?.addAlert("error", "Please complete the reCAPTCHA.");
-    }
+  if (!captchaToken) {
+    alertsRef.current?.addAlert("error", "Please complete the reCAPTCHA.");
+    return;
+  }
 
-    const formData = new FormData();
-    formData.append("first_name", String(first_name));
-    formData.append("last_name", String(last_name));
-    formData.append("password", String(password));
-    formData.append("password_confirmation", String(password_confirmation));
-    formData.append("email", String(email));
-    formData.append("contact_number", String(contact_number));
-    formData.append("house_no", String(house_no));
-    formData.append("street", String(street));
-    formData.append("barangay", String(barangay));
-    formData.append("municipality", String(municipality));
-    formData.append("g-recaptcha-response", String(captchaToken));
+  const formData = new FormData();
+  formData.append("first_name", first_name);
+  formData.append("last_name", last_name);
+  formData.append("password", password);
+  formData.append("password_confirmation", password_confirmation);
+  formData.append("email", email);
+  formData.append("contact_number", contact_number);
+  formData.append("house_no", house_no);
+  formData.append("street", street);
+  formData.append("barangay", barangay);
+  formData.append("municipality", municipality);
+  formData.append("g-recaptcha-response", String(captchaToken));
+  formData.append("is_admin", "1");
 
-    if (image) {
-      formData.append("image", image);
-    }
+  if (image) formData.append("image", image);
 
-    try {
-      const res = await fetch(`${API_BASE_URL}/register`, {
-        method: "POST",
-        headers: {
-          Accept: "application/json",
-        },
-        body: formData,
-      });
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/register`, {
+      method: "POST",
+      headers: { Accept: "application/json" },
+      body: formData,
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (!res.ok) {
-        if (data.errors) {
-          Object.values(data.errors).forEach((messages) => {
-            (messages as string[]).forEach((msg) => {
-              alertsRef.current?.addAlert("error", msg);
-            });
+    if (!res.ok) {
+      if (data.errors) {
+        Object.values(data.errors).forEach((messages) => {
+          (messages as string[]).forEach((msg) => {
+            alertsRef.current?.addAlert("error", msg);
           });
-        } else {
-          // 🔹 Generic error message (fallback)
-          alertsRef.current?.addAlert(
-            "error",
-            data.message || "Registration failed"
-          );
-        }
-
-        console.log("Error Response:", data);
-        return;
+        });
+      } else {
+        alertsRef.current?.addAlert(
+          "error",
+          data.message || "Registration failed"
+        );
       }
-      alertsRef.current?.addAlert(
-        "success",
-        "We sent a verification link to your email. Please verify your account before logging in."
-      );
-
-      navigate("/signin");
-    } catch (err: any) {
-      alertsRef.current?.addAlert(
-        "error",
-        err.message || "An unexpected error occurred."
-      );
+      console.log("Error Response:", data);
+      return;
     }
-  };
+
+    alertsRef.current?.addAlert(
+      "success",
+      "We sent a verification link to your email. Please verify your account before logging in."
+    );
+
+    navigate("/admin/signin");
+  } catch (err: any) {
+    alertsRef.current?.addAlert(
+      "error",
+      err.message || "An unexpected error occurred."
+    );
+  }
+};
+
 
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
@@ -295,6 +295,7 @@ export default function SignUpForm ({ alertsRef }: Props) {
                 <Checkbox
                   className="w-5 h-5"
                   checked={isChecked}
+                    disabled={!termsAcknowledged} // ✅ disable until terms seen
                   onChange={setIsChecked}
                 />
                 <p className="inline-block font-normal text-gray-500 dark:text-gray-400">
@@ -316,7 +317,11 @@ export default function SignUpForm ({ alertsRef }: Props) {
                   </button>
                 </p>
               </div>
-
+{/* ✅ Show message until Terms/Privacy read */}
+{!termsAcknowledged && (
+  <span className="text-xs text-red-500 mt-1 block">
+  </span>
+)}
               {/* ✅ Added reCAPTCHA */}
               <div className="flex justify-center">
                 <ReCAPTCHA sitekey={SITE_KEY} onChange={handleCaptcha} />
@@ -368,10 +373,11 @@ export default function SignUpForm ({ alertsRef }: Props) {
                 Close
               </button>
               <button
-                onClick={() => {
-                  setIsChecked(true);
-                  setIsTermsOpen(false);
-                }}
+onClick={() => {
+  setTermsAcknowledged(true);
+  setIsChecked(true); // ✅ auto-check checkbox
+  setIsTermsOpen(false);
+}}
                 className="px-4 py-2 text-sm text-white rounded-lg bg-brand-500 hover:bg-brand-600"
               >
                 Accept
@@ -409,10 +415,12 @@ export default function SignUpForm ({ alertsRef }: Props) {
                 Close
               </button>
               <button
-                onClick={() => {
-                  setIsChecked(true);
-                  setIsPrivacyOpen(false);
-                }}
+onClick={() => {
+  setTermsAcknowledged(true);
+  setIsChecked(true); // ✅ auto-check checkbox
+  setIsPrivacyOpen(false);
+}}
+
                 className="px-4 py-2 text-sm text-white rounded-lg bg-brand-500 hover:bg-brand-600"
               >
                 Accept
@@ -424,3 +432,4 @@ export default function SignUpForm ({ alertsRef }: Props) {
     </div>
   );
 }
+

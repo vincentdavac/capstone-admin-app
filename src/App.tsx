@@ -28,8 +28,8 @@ import StormSurge from "./pages/Dashboard/riverMonitoring";
 import AlertManagement from "./pages/Dashboard/AlertManagement";
 import PendingChats from "./pages/Dashboard/PendingChats";
 
-import ManageUsers from "./pages/Dashboard/ManageUsers";
-import BuoyDeployment from "./pages/Management/BuoyDeployment";
+import ManageUsers from "./pages/Management/ManageUsers/ManageUsers";
+import BuoyDeployment from "./pages/Management/BuoyDeployment/BuoyDeployment";
 import ChatSupport from "./pages/Management/ChatSupport";
 import AlertSystem from "./pages/Management/AlertSystem";
 import CustomSlider from "./pages/Customization/CustomSlider";
@@ -64,6 +64,7 @@ import CustomizationArchive from "./components/admin/customization-archive";
 import { AlertsContainerRef } from "./components/Alert/AlertsContainer";
 import UserRoute from "./middleware/UserRoute";
 import ProtectedRoute from "./middleware/ProtectedRoute";
+import Barangay from "./pages/Management/Barangay/Barangay";
 
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -114,7 +115,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/admin/manage-users"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
-                <ManageUsers />
+                <ManageUsers alertsRef={alertsRef} />
               </ProtectedRoute>
             }
           />
@@ -169,7 +170,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/admin/manage-users"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
-                <ManageUsers />
+                <ManageUsers alertsRef={alertsRef} />
               </ProtectedRoute>
             }
           />
@@ -177,7 +178,15 @@ export default function App({ alertsRef }: AppProps) {
             path="/admin/manage-buoys"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
-                <BuoyDeployment />
+                <BuoyDeployment alertsRef={alertsRef} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/barangay-management"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <Barangay alertsRef={alertsRef} />
               </ProtectedRoute>
             }
           />
@@ -328,16 +337,16 @@ export default function App({ alertsRef }: AppProps) {
           <Route path="/line-chart" element={<LineChart />} />
           <Route path="/bar-chart" element={<BarChart />} />
         </Route>
-          {/* Add the Forgot Password route */}
-          <Route
-            path="/admin/forgot-password"
-  element={<ForgotPasswordPage alertsRef={alertsRef} />}
-          />
+        {/* Add the Forgot Password route */}
+        <Route
+          path="/admin/forgot-password"
+          element={<ForgotPasswordPage alertsRef={alertsRef} />}
+        />
 
-          <Route
-  path="/reset-password"
-  element={<ResetPassword alertsRef={alertsRef} />}
-/>
+        <Route
+          path="/reset-password"
+          element={<ResetPassword alertsRef={alertsRef} />}
+        />
         {/* Auth Layout */}
         <Route
           path="/admin/signin"
@@ -357,15 +366,15 @@ export default function App({ alertsRef }: AppProps) {
           }
         />
 
-{/* ✅ Add this new route */}
-<Route
-  path="/verify-success"
-  element={
-    <UserRoute alertsRef={alertsRef}>
-      <VerifySuccessPage />
-    </UserRoute>
-  }
-/>
+        {/* ✅ Add this new route */}
+        <Route
+          path="/verify-success"
+          element={
+            <UserRoute alertsRef={alertsRef}>
+              <VerifySuccessPage />
+            </UserRoute>
+          }
+        />
         {/* Fallback Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>

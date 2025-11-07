@@ -1,7 +1,7 @@
-import { useState, useImperativeHandle, forwardRef } from 'react';
-import Alert from './Alert';
+import { useState, useImperativeHandle, forwardRef } from "react";
+import Alert from "./Alert";
 
-export type AlertType = 'success' | 'warning' | 'error';
+export type AlertType = "success" | "warning" | "error";
 
 export interface AlertsContainerRef {
   addAlert: (type: AlertType, message: string) => void;
@@ -32,7 +32,7 @@ const AlertsContainer = forwardRef<AlertsContainerRef>((_props, ref) => {
   }));
 
   return (
-    <div className="fixed top-5 right-5 z-[9999] flex flex-col items-end">
+    <div className="fixed top-5 right-5 z-[10001] flex flex-col items-end">
       {alerts.map((alert) => (
         <Alert
           key={alert.id}

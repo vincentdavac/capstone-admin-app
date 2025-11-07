@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { EyeCloseIcon, EyeIcon } from "../../icons";
 import Label from "../form/Label";
@@ -9,11 +9,19 @@ import ReCAPTCHA from "react-google-recaptcha";
 import API_BASE_URL from "../../config/coreApi";
 import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
 
+interface Barangay {
+  id: number;
+  attributes: {
+    barangayCode: string;
+    name: string;
+  };
+}
+
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
-export default function SignUpForm ({ alertsRef }: Props) {
+export default function SignUpForm({ alertsRef }: Props) {
   const SITE_KEY = import.meta.env.VITE_RECAPTCHA_SITE_KEY;
 
   const navigate = useNavigate();
@@ -33,85 +41,123 @@ export default function SignUpForm ({ alertsRef }: Props) {
   const [image, SetImage] = useState<File | null>(null);
   const [house_no, setHouseNumber] = useState("");
   const [street, setStreet] = useState("");
-  const [barangay, setBarangay] = useState("160");
+  const [barangay, setBarangay] = useState<string>("");
+  const [barangays, setBarangays] = useState<Barangay[]>([]);
+  const [loadingBarangays, setLoadingBarangays] = useState<boolean>(true);
   const [municipality] = useState("Caloocan City");
 
   const handleCaptcha = (token: string | null) => {
     setCaptchaToken(token);
   };
 
-const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-
-  if (!isChecked) {
-    alertsRef.current?.addAlert(
-      "error",
-      "You must agree to the Terms and Conditions and Privacy Policy."
-    );
-    return;
-  }
-
-  if (!captchaToken) {
-    alertsRef.current?.addAlert("error", "Please complete the reCAPTCHA.");
-    return;
-  }
-
-  const formData = new FormData();
-  formData.append("first_name", first_name);
-  formData.append("last_name", last_name);
-  formData.append("password", password);
-  formData.append("password_confirmation", password_confirmation);
-  formData.append("email", email);
-  formData.append("contact_number", contact_number);
-  formData.append("house_no", house_no);
-  formData.append("street", street);
-  formData.append("barangay", barangay);
-  formData.append("municipality", municipality);
-  formData.append("g-recaptcha-response", String(captchaToken));
-  formData.append("is_admin", "1");
-
-  if (image) formData.append("image", image);
-
-  try {
-    const res = await fetch(`${API_BASE_URL}/api/register`, {
-      method: "POST",
-      headers: { Accept: "application/json" },
-      body: formData,
-    });
-
-    const data = await res.json();
-
-    if (!res.ok) {
-      if (data.errors) {
-        Object.values(data.errors).forEach((messages) => {
-          (messages as string[]).forEach((msg) => {
-            alertsRef.current?.addAlert("error", msg);
-          });
+  useEffect(() => {
+    const fetchBarangays = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/barangays`, {
+          method: "GET",
+          headers: { Accept: "application/json" },
         });
-      } else {
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          alertsRef.current?.addAlert(
+            "error",
+            data.message || "Failed to load barangays"
+          );
+          setLoadingBarangays(false);
+          return;
+        }
+
+        setBarangays(data.data);
+        if (data.data.length > 0) {
+          // default to first barangay
+          setBarangay(String(data.data[0].id));
+        }
+      } catch (error: any) {
         alertsRef.current?.addAlert(
           "error",
-          data.message || "Registration failed"
+          error.message || "Unable to fetch barangays."
         );
+      } finally {
+        setLoadingBarangays(false);
       }
-      console.log("Error Response:", data);
+    };
+
+    fetchBarangays();
+  }, [alertsRef]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!isChecked) {
+      alertsRef.current?.addAlert(
+        "error",
+        "You must agree to the Terms and Conditions and Privacy Policy."
+      );
       return;
     }
 
-    alertsRef.current?.addAlert(
-      "success",
-      "We sent a verification link to your email. Please verify your account before logging in."
-    );
+    if (!captchaToken) {
+      alertsRef.current?.addAlert("error", "Please complete the reCAPTCHA.");
+      return;
+    }
 
-    navigate("/admin/signin");
-  } catch (err: any) {
-    alertsRef.current?.addAlert(
-      "error",
-      err.message || "An unexpected error occurred."
-    );
-  }
-};
+    const formData = new FormData();
+    formData.append("first_name", first_name);
+    formData.append("last_name", last_name);
+    formData.append("password", password);
+    formData.append("password_confirmation", password_confirmation);
+    formData.append("email", email);
+    formData.append("contact_number", contact_number);
+    formData.append("house_no", house_no);
+    formData.append("street", street);
+    formData.append("barangay_id", barangay);
+    formData.append("municipality", municipality);
+    formData.append("g-recaptcha-response", String(captchaToken));
+    formData.append("is_admin", "1");
 
+    if (image) formData.append("image", image);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/register`, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: formData,
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        if (data.errors) {
+          Object.values(data.errors).forEach((messages) => {
+            (messages as string[]).forEach((msg) => {
+              alertsRef.current?.addAlert("error", msg);
+            });
+          });
+        } else {
+          alertsRef.current?.addAlert(
+            "error",
+            data.message || "Registration failed"
+          );
+        }
+        console.log("Error Response:", data);
+        return;
+      }
+
+      alertsRef.current?.addAlert(
+        "success",
+        "We sent a verification link to your email. Please verify your account before logging in."
+      );
+
+      navigate("/admin/signin");
+    } catch (err: any) {
+      alertsRef.current?.addAlert(
+        "error",
+        err.message || "An unexpected error occurred."
+      );
+    }
+  };
 
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
@@ -250,13 +296,19 @@ const handleSubmit = async (e: React.FormEvent) => {
                     value={barangay}
                     onChange={(e) => setBarangay(e.target.value)}
                     className="w-full px-3 py-2 text-sm border rounded-md border-gray-300 dark:bg-gray-800 dark:text-gray-200"
+                    disabled={loadingBarangays}
                   >
-                    <option value="160">Barangay 160</option>
-                    <option value="161">Barangay 161</option>
-                    <option value="162">Barangay 162</option>
-                    <option value="163">Barangay 163</option>
-                    <option value="164">Barangay 164</option>
-                    <option value="165">Barangay 165</option>
+                    {loadingBarangays ? (
+                      <option>Loading barangays...</option>
+                    ) : barangays.length === 0 ? (
+                      <option>No barangays available</option>
+                    ) : (
+                      barangays.map((b) => (
+                        <option key={b.id} value={b.id}>
+                          {b.attributes.name}
+                        </option>
+                      ))
+                    )}
                   </select>
                 </div>
 
@@ -295,7 +347,7 @@ const handleSubmit = async (e: React.FormEvent) => {
                 <Checkbox
                   className="w-5 h-5"
                   checked={isChecked}
-                    disabled={!termsAcknowledged} // ✅ disable until terms seen
+                  disabled={!termsAcknowledged} // ✅ disable until terms seen
                   onChange={setIsChecked}
                 />
                 <p className="inline-block font-normal text-gray-500 dark:text-gray-400">
@@ -317,11 +369,10 @@ const handleSubmit = async (e: React.FormEvent) => {
                   </button>
                 </p>
               </div>
-{/* ✅ Show message until Terms/Privacy read */}
-{!termsAcknowledged && (
-  <span className="text-xs text-red-500 mt-1 block">
-  </span>
-)}
+              {/* ✅ Show message until Terms/Privacy read */}
+              {!termsAcknowledged && (
+                <span className="text-xs text-red-500 mt-1 block"></span>
+              )}
               {/* ✅ Added reCAPTCHA */}
               <div className="flex justify-center">
                 <ReCAPTCHA sitekey={SITE_KEY} onChange={handleCaptcha} />
@@ -373,11 +424,11 @@ const handleSubmit = async (e: React.FormEvent) => {
                 Close
               </button>
               <button
-onClick={() => {
-  setTermsAcknowledged(true);
-  setIsChecked(true); // ✅ auto-check checkbox
-  setIsTermsOpen(false);
-}}
+                onClick={() => {
+                  setTermsAcknowledged(true);
+                  setIsChecked(true); // ✅ auto-check checkbox
+                  setIsTermsOpen(false);
+                }}
                 className="px-4 py-2 text-sm text-white rounded-lg bg-brand-500 hover:bg-brand-600"
               >
                 Accept
@@ -415,12 +466,11 @@ onClick={() => {
                 Close
               </button>
               <button
-onClick={() => {
-  setTermsAcknowledged(true);
-  setIsChecked(true); // ✅ auto-check checkbox
-  setIsPrivacyOpen(false);
-}}
-
+                onClick={() => {
+                  setTermsAcknowledged(true);
+                  setIsChecked(true); // ✅ auto-check checkbox
+                  setIsPrivacyOpen(false);
+                }}
                 className="px-4 py-2 text-sm text-white rounded-lg bg-brand-500 hover:bg-brand-600"
               >
                 Accept
@@ -432,4 +482,3 @@ onClick={() => {
     </div>
   );
 }
-

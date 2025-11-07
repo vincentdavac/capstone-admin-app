@@ -73,7 +73,7 @@ const handleSubmit = async (e: React.FormEvent) => {
   if (image) formData.append("image", image);
 
   try {
-    const res = await fetch(`${API_BASE_URL}/api/register`, {
+    const res = await fetch(`${API_BASE_URL}/register`, {
       method: "POST",
       headers: { Accept: "application/json" },
       body: formData,

@@ -172,8 +172,10 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
                 </tr>
               ) : currentBuoys.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="text-center py-10 text-gray-500">
-                    No buoy records found.
+                  <td colSpan={9} className="py-10 text-gray-500">
+                    <div className="flex items-center justify-center h-full">
+                      No buoy records found.
+                    </div>
                   </td>
                 </tr>
               ) : (

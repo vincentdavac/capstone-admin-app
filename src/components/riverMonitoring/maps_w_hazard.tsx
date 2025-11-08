@@ -22,7 +22,7 @@ export default function MapsWithHazard() {
   useEffect(() => {
     const sstRef = ref(
       database,
-      "BUOY-2025-8664/BME280/SURROUNDING_TEMPERATURE"
+      "BME280/SURROUNDING_TEMPERATURE"
     );
 
     const unsubscribe = onValue(
@@ -46,7 +46,7 @@ export default function MapsWithHazard() {
     return () => unsubscribe();
   }, []);
   useEffect(() => {
-    const humidityDBRef = ref(database, "BUOY-2025-8664/BME280/HUMIDITY");
+    const humidityDBRef = ref(database, "BME280/HUMIDITY");
 
     const unsubscribe = onValue(humidityDBRef, (snapshot) => {
       if (snapshot.exists()) {
@@ -148,7 +148,7 @@ export default function MapsWithHazard() {
       charts.push(windSpeedGauge);
 
       const unsubscribe = onValue(
-        ref(database, "BUOY-2025-8664/ANEMOMETER/WIND_SPEED_km_h"),
+        ref(database, "ANEMOMETER/WIND_SPEED_km_h"),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -217,7 +217,7 @@ export default function MapsWithHazard() {
       charts.push(gaugeChart);
 
       const unsubscribe = onValue(
-        ref(database, "BUOY-2025-8664/BME280/SURROUNDING_TEMPERATURE"),
+        ref(database, "BME280/SURROUNDING_TEMPERATURE"),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -273,7 +273,7 @@ export default function MapsWithHazard() {
       });
       charts.push(pressureGauge);
       const unsubscribe = onValue(
-        ref(database, "BUOY-2025-8664/BME280/ATMOSPHERIC_PRESSURE"),
+        ref(database, "BME280/ATMOSPHERIC_PRESSURE"),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -348,7 +348,7 @@ export default function MapsWithHazard() {
       });
       charts.push(levelGauge);
       const unsubscribe = onValue(
-        ref(database, "BUOY-2025-8664/MS5837/WATER_LEVEL_METER"),
+        ref(database, "MS5837/WATER_LEVEL_METER"),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -415,7 +415,7 @@ export default function MapsWithHazard() {
       });
       charts.push(tempGauge);
       const unsubscribe = onValue(
-        ref(database, "BUOY-2025-8664/MS5837/WATER_TEMPERATURE"),
+        ref(database, "MS5837/WATER_TEMPERATURE"),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -495,7 +495,7 @@ export default function MapsWithHazard() {
       });
       charts.push(pressureGauge);
       const unsubscribe = onValue(
-        ref(database, "BUOY-2025-8664/MS5837/WATER_PRESSURE"),
+        ref(database, "MS5837/WATER_PRESSURE"),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -582,7 +582,7 @@ export default function MapsWithHazard() {
       });
       charts.push(rainGaugeChart);
       const unsubscribe = onValue(
-        ref(database, "BUOY-2025-8664/RAIN_GAUGE/FALL_COUNT_MILIMETERS"),
+        ref(database, "RAIN_GAUGE/FALL_COUNT_MILIMETERS"),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();

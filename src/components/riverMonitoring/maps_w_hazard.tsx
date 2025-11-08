@@ -615,7 +615,7 @@ export default function MapsWithHazard() {
         <div className="flex flex-col">
           <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[225px] flex flex-col items-center justify-center">
             <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1 text-center leading-tight">
-              Surroundings <br /> Temperature (C/F)
+              Surroundings <br /> Temperature
             </p>
             <div ref={gaugeRef} className="w-full h-full" />
           </div>

@@ -55,6 +55,11 @@ const navItems: NavItem[] = [
     path: "/admin/dashboard",
   },
   {
+    icon: <LayoutDashboard />,
+    name: "Barangay Dashboard",
+    path: "/admin/barangay-dashboard",
+  },
+  {
     icon: <Waves />,
     name: "River Monitoring",
     path: "/admin/river-monitoring",

@@ -24,6 +24,7 @@ import Slider from "./pages/Slider";
 import AppLayout from "./layout/AppLayout";
 import { ScrollToTop } from "./components/common/ScrollToTop";
 import Dashboard from "./pages/Dashboard/Dashboard";
+import BarangayDashboard from "./pages/Dashboard/BarangayDashboard";
 import StormSurge from "./pages/Dashboard/riverMonitoring";
 import AlertManagement from "./pages/Dashboard/AlertManagement";
 import PendingChats from "./pages/Dashboard/PendingChats";
@@ -146,6 +147,15 @@ export default function App({ alertsRef }: AppProps) {
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            index
+            path="/admin/barangay-dashboard"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <BarangayDashboard />
               </ProtectedRoute>
             }
           />

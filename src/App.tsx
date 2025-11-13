@@ -27,12 +27,12 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import BarangayDashboard from "./pages/Dashboard/BarangayDashboard";
 import StormSurge from "./pages/Dashboard/riverMonitoring";
 import AlertManagement from "./pages/Dashboard/AlertManagement";
-import PendingChats from "./pages/Dashboard/PendingChats";
+import ChatSupport from "./pages/Dashboard/ChatSupport";
 
 import ManageUsers from "./pages/Dashboard/ManageUsers";
 import ArchivedUsers from "./pages/Dashboard/ArchivedUsers";
 import BuoyDeployment from "./pages/Management/BuoyDeployment/BuoyDeployment";
-import ChatSupport from "./pages/Management/ChatSupport";
+// import ChatSupport from "./pages/Management/ChatSupport";
 import AlertSystem from "./pages/Management/AlertSystem";
 import CustomSlider from "./pages/Customization/CustomSlider";
 import CustomAboutUs from "./pages/Customization/CustomAboutUs";
@@ -105,10 +105,10 @@ export default function App({ alertsRef }: AppProps) {
           />
           <Route
             index
-            path="/admin/pending-chats"
+            path="/admin/chat-support"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
-                <PendingChats />
+                <ChatSupport />
               </ProtectedRoute>
             }
           />

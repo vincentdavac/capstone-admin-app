@@ -77,7 +77,7 @@ const navItems: NavItem[] = [
   {
     icon: <MessagesSquare />,
     name: "Chat support",
-    path: "/admin/pending-chats",
+    path: "/admin/chat-support",
   },
   {
     icon: <LibraryBig />,

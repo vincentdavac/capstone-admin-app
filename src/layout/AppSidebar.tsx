@@ -80,15 +80,28 @@ const navItems: NavItem[] = [
     path: "/admin/historical-data",
   },
   {
+    icon: <LibraryBig />,
+    name: "Manage Users",
+    path: "/admin/manage-users",
+  },
+  {
+    icon: <LibraryBig />,
+    name: "Archived Users",
+    path: "/admin/archived-users",
+  },
+
+
+
+  {
     name: "Management",
     icon: <Management />,
     subItems: [
-      {
-        name: "Manage users",
-        path: "/admin/manage-users",
-        icon: <ManageUsers className="w-5 h-5 stroke-[1.5]" />,
-        pro: false,
-      },
+      // {
+      //   name: "Manage users",
+      //   path: "/admin/manage-users",
+      //   icon: <ManageUsers className="w-5 h-5 stroke-[1.5]" />,
+      //   pro: false,
+      // },
       {
         name: "Buoy Deployment",
         path: "/admin/manage-buoys",

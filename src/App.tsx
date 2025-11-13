@@ -28,7 +28,8 @@ import StormSurge from "./pages/Dashboard/riverMonitoring";
 import AlertManagement from "./pages/Dashboard/AlertManagement";
 import PendingChats from "./pages/Dashboard/PendingChats";
 
-import ManageUsers from "./pages/Management/ManageUsers/ManageUsers";
+import ManageUsers from "./pages/Dashboard/ManageUsers";
+import ArchivedUsers from "./pages/Dashboard/ArchivedUsers";
 import BuoyDeployment from "./pages/Management/BuoyDeployment/BuoyDeployment";
 import ChatSupport from "./pages/Management/ChatSupport";
 import AlertSystem from "./pages/Management/AlertSystem";
@@ -122,6 +123,16 @@ export default function App({ alertsRef }: AppProps) {
 
           <Route
             index
+            path="/admin/archived-users"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <ArchivedUsers alertsRef={alertsRef} />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            index
             path="/admin/deployed-buoy"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
@@ -166,14 +177,6 @@ export default function App({ alertsRef }: AppProps) {
           />
 
           {/* Management */}
-          <Route
-            path="/admin/manage-users"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <ManageUsers alertsRef={alertsRef} />
-              </ProtectedRoute>
-            }
-          />
           <Route
             path="/admin/manage-buoys"
             element={

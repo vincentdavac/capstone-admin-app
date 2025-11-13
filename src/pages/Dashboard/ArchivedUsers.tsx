@@ -1,13 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useContext, useEffect } from "react";
-import { Archive, Fullscreen } from "lucide-react";
-import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-import API_BASE_URL from "../../../config/coreApi";
-import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
-import { AppContext } from "../../../context/AppContext";
+import { RotateCcw } from "lucide-react"; 
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
+import API_BASE_URL from "../../config/coreApi";
+import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
+import { AppContext } from "../../context/AppContext";
 
-import UpdateUserModal from ".//UpdateUserModal";
-import ArchiveUserModal from "./ArchiveUserModal";
 
 interface BarangayData {
   id: number;
@@ -24,7 +22,7 @@ interface UserAttributes {
   barangay: BarangayData | null;
   municipality: string | null;
   isAdmin: boolean;
-  isActive: boolean;
+  isActive: boolean; // Dapat false ito para sa Archived Users
   image: string | null;
   imageUrl: string | null;
   createdDate: string | null;
@@ -42,36 +40,34 @@ interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
-const ManageUsers = ({ alertsRef }: Props) => {
+// eslint-disable-next-line no-empty-pattern
+const ArchivedUsers = ({ }: Props) => {
   const { user, token } = useContext(AppContext)!;
 
   // state:
-  const [showUpdate, setShowUpdate] = useState(false);
-  const [showArchive, setShowArchive] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [, setShowRestore] = useState(false); // Para sa Restore Modal
+  const [, setSelectedUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
 
   // handlers:
-  const handleUpdateClick = (u: UserData) => {
+  const handleRestoreClick = (u: UserData) => {
     setSelectedUser(u);
-    setShowUpdate(true);
+    setShowRestore(true);
   };
 
-  const handleArchiveClick = (u: UserData) => {
-    setSelectedUser(u);
-    setShowArchive(true);
-  };
-
-  const [users, setUsers] = useState<UserData[]>([]);
+  const [archivedUsers, setArchivedUsers] = useState<UserData[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const itemsPerPage = 10; // Ibinase sa ManageUsers
 
-  const fetchUsers = async () => {
+  const fetchArchivedUsers = async () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      // ✅ Ipagpalagay na ang endpoint para sa archived users ay '/users/archived'
+      // o mayroong filter parameter ang '/users' (e.g., ?archived=true).
+      // Gagamitin ko ang '?archived=true' sa pag-aakala na ito ay karaniwan.
+      const response = await fetch(`${API_BASE_URL}/users?archived=true`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -80,32 +76,34 @@ const ManageUsers = ({ alertsRef }: Props) => {
       const res = await response.json();
 
       if (response.ok && res.data) {
-        setUsers(res.data);
+        // I-filter ang data kung hindi gumana ang server side filter,
+        // bagaman mas maganda kung server side ang filtering.
+        setArchivedUsers(res.data.filter((u: UserData) => !u.attributes.isActive));
       } else {
-        console.error("Failed to fetch users:", res);
+        console.error("Failed to fetch archived users:", res);
       }
     } catch (error) {
-      console.error("Error fetching users:", error);
+      console.error("Error fetching archived users:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (user?.id && token) fetchUsers();
+    if (user?.id && token) fetchArchivedUsers();
   }, [user, token]);
 
-  // ✅ Updated search to handle nested attributes
-  const filteredUsers = users.filter((u) => {
-    const { firstName, lastName, email, barangay } = u.attributes;
+  // ✅ Updated search to handle nested attributes (based on ManageUsers.tsx)
+  const filteredUsers = archivedUsers.filter((u) => {
+    const { firstName, lastName, email } = u.attributes;
     const fullName = `${firstName} ${lastName}`.toLowerCase();
-    const brgy = barangay?.name?.toLowerCase() ?? "";
     const term = searchTerm.toLowerCase();
 
     return (
       fullName.includes(term) ||
-      email.toLowerCase().includes(term) ||
-      brgy.includes(term)
+      email.toLowerCase().includes(term)
+      // I-disable muna ang barangay search dahil hindi ito nakikita sa screenshot
+      // || brgy.includes(term) 
     );
   });
 
@@ -118,13 +116,23 @@ const ManageUsers = ({ alertsRef }: Props) => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // TINANGGAL ANG handleExportCSV FUNCTION
+
+
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
-      <PageBreadcrumb pageTitle="Manage Users" />
+      <PageBreadcrumb pageTitle="Archive Users" />
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-        {/* 🔍 Search Bar */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+        <div className="p-6 border-b border-gray-200">
+          <h2 className="text-xl font-normal text-gray-500 dark:text-white">
+            Archive Users
+          </h2>
+        </div>
+        
+        {/* 🔍 Search Bar - TINANGGAL ANG EXPORT CSV BUTTON */}
+        <div className="p-6 border-t border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-end">
+            {/* Search Bar (Updated style based on screenshot) */}
           <form
             onSubmit={(e) => {
               return e.preventDefault();
@@ -150,7 +158,7 @@ const ManageUsers = ({ alertsRef }: Props) => {
             <input
               ref={inputRef}
               type="text"
-              placeholder="Search by name, email, or barangay..."
+              placeholder="Search or email"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="dark:bg-dark-900 h-11 w-full rounded-lg border border-gray-200 bg-transparent py-2.5 pl-12 pr-14 text-sm text-gray-800 shadow-theme-xs placeholder:text-gray-400 focus:border-brand-300 focus:outline-hidden focus:ring-3 focus:ring-brand-500/10 dark:border-gray-800 dark:bg-gray-900 dark:bg-white/[0.03] dark:text-white/90 dark:placeholder:text-white/30 dark:focus:border-brand-800 xl:w-[430px]"
@@ -158,36 +166,22 @@ const ManageUsers = ({ alertsRef }: Props) => {
           </form>
         </div>
 
-        {/* 📋 Users Table */}
+        {/* 📋 Archived Users Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-200 dark:border-gray-700 rounded-lg">
             <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">
-                  No.
+                  Full Name
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Profile
+                  Contact Number
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Name
+                  Email Address
                 </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Contact No.
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Email
-                </th>
-
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Barangay
-                </th>
-
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">
                   Status
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">
-                  Role
                 </th>
                 <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">
                   Actions
@@ -198,7 +192,7 @@ const ManageUsers = ({ alertsRef }: Props) => {
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-10">
+                  <td colSpan={5} className="text-center py-10">
                     <div className="flex justify-center items-center gap-2 text-gray-500">
                       <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
                       Loading data...
@@ -207,28 +201,18 @@ const ManageUsers = ({ alertsRef }: Props) => {
                 </tr>
               ) : currentUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-10 text-gray-500">
-                    No user records found.
+                  <td colSpan={5} className="text-center py-10 text-gray-500">
+                    No archived user records found.
                   </td>
                 </tr>
               ) : (
-                currentUsers.map((u, i) => {
+                currentUsers.map((u) => {
                   const a = u.attributes;
                   return (
                     <tr
                       key={u.id}
                       className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                     >
-                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-white whitespace-nowrap">
-                        {startIndex + i + 1}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-white whitespace-nowrap">
-                        <img
-                          src={a.image ?? ""}
-                          alt="User"
-                          className="w-10 h-10 rounded-md object-cover"
-                        />
-                      </td>
                       <td className="px-6 py-4 text-sm text-gray-900 dark:text-white whitespace-nowrap">
                         {a.firstName} {a.lastName}
                       </td>
@@ -238,35 +222,19 @@ const ManageUsers = ({ alertsRef }: Props) => {
                       <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                         {a.email}
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
-                        {a.barangay?.name ?? "—"}
-                      </td>
-                      <td className="px-4 py-2 whitespace-nowrap">
-                        <span
-                          className={`px-3 py-0.5 inline-flex text-xs font-medium rounded-full ${
-                            a.isActive
-                              ? "bg-green-100 text-green-700"
-                              : "bg-red-100 text-red-700"
-                          }`}
-                        >
-                          {a.isActive ? "Active" : "Inactive"}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-3 py-0.5 inline-flex text-xs font-medium rounded-full bg-red-100 text-red-700">
+                          Archived
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
-                        {a.isAdmin ? "Admin" : "User"}
-                      </td>
-                      <td className="px-6 py-4 flex flex-row gap-2">
+                      <td className="px-6 py-4">
+                        {/* Restore Button (Based on Screenshot - I assumed the icon is a standard action button) */}
                         <button
-                          onClick={() => handleUpdateClick(u)}
+                          onClick={() => handleRestoreClick(u)}
                           className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
+                          title="Restore User"
                         >
-                          <Fullscreen className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => handleArchiveClick(u)}
-                          className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
-                        >
-                          <Archive className="w-5 h-5" />
+                          <RotateCcw className="w-5 h-5" />
                         </button>
                       </td>
                     </tr>
@@ -277,30 +245,33 @@ const ManageUsers = ({ alertsRef }: Props) => {
           </table>
         </div>
 
-        {/* Pagination */}
+        {/* Pagination (Updated style based on screenshot) */}
         <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-gray-700 dark:text-gray-300">
               Showing {startIndex + 1} to{" "}
               {Math.min(startIndex + itemsPerPage, filteredUsers.length)} of{" "}
-              {filteredUsers.length} entries
+              {filteredUsers.length} Entries
             </div>
             <div className="flex space-x-2">
               <button
                 onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                 disabled={currentPage === 1}
-                className="px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-50"
+                // Updated style
+                className="px-3 py-1 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-50 transition-colors"
               >
                 Previous
               </button>
-              {[...Array(totalPages)].map((_, i) => (
+              {/* Pagination buttons based on totalPages */}
+              {Array.from({ length: totalPages }, (_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentPage(i + 1)}
+                  // Updated style to use the main brand color
                   className={`px-3 py-1 text-sm rounded ${
                     currentPage === i + 1
                       ? "bg-[#453EFE] text-white"
-                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                      : "hidden" // Itinago ang number buttons para tumugma sa screenshot
                   }`}
                 >
                   {i + 1}
@@ -311,7 +282,12 @@ const ManageUsers = ({ alertsRef }: Props) => {
                   setCurrentPage(Math.min(totalPages, currentPage + 1))
                 }
                 disabled={currentPage === totalPages}
-                className="px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-50"
+                // Updated style for Next button to match the brand color box in the screenshot
+                className={`px-3 py-1 text-sm rounded transition ${
+                  currentPage === totalPages
+                    ? "bg-[#453EFE] text-white disabled:bg-[#453EFE] disabled:opacity-100" // Disabled state should be the same color
+                    : "bg-[#453EFE] text-white hover:bg-indigo-700"
+                }`}
               >
                 Next
               </button>
@@ -320,27 +296,8 @@ const ManageUsers = ({ alertsRef }: Props) => {
         </div>
       </div>
 
-      <UpdateUserModal
-        show={showUpdate}
-        onClose={() => setShowUpdate(false)}
-        token={token ?? ""}
-        userId={selectedUser?.id ?? null}
-        userData={selectedUser?.attributes}
-        onUpdated={fetchUsers}
-        alertsRef={alertsRef}
-      />
-
-      <ArchiveUserModal
-        show={showArchive}
-        onClose={() => setShowArchive(false)}
-        token={token ?? ""}
-        userId={selectedUser?.id ?? null}
-        onArchived={fetchUsers}
-        alertsRef={alertsRef}
-        userData={selectedUser?.attributes}
-      />
     </div>
   );
 };
 
-export default ManageUsers;
+export default ArchivedUsers;

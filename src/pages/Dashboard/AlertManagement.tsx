@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { fetchAlertsAlerts } from "../../api_hooks/fetchAllAlerts";
 import { useBroadcastAlert } from "../../core_api_fetching/broadCastAlert";
 import { useAlert } from "../../context/AlertContext";
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 // --- Custom Icons (Pure SVG) ---
 const SearchIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg
@@ -186,6 +187,8 @@ const AlertManagement: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
+      <PageBreadcrumb pageTitle="Alert Management" />
+
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         {/* Header Section */}
         <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">

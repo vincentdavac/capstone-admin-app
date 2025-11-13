@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { PaperAirplaneIcon } from '@heroicons/react/24/solid';
+import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 
 const ADMIN_AVATAR = "https://i.pravatar.cc/150?img=50"; 
 const RESIDENT_AVATAR_BASE = "https://i.pravatar.cc/150?img="; 
@@ -96,6 +97,8 @@ const PendingChats: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 relative text-gray-500 dark:text-white">
+       <PageBreadcrumb pageTitle="Pending chats" />
+       
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl h-[80vh] max-h-[90vh] flex flex-col overflow-hidden border border-gray-200 dark:border-gray-700">
         <div className="px-6 pt-6 pb-6 flex-shrink-0 border-b border-gray-200 dark:border-gray-700"> 
           <label className="text-xl sm:text-2xl text-gray-500 dark:text-white">

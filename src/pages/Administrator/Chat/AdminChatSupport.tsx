@@ -56,6 +56,7 @@ interface ChatListItem {
   isRead: boolean;
   receiverID?: number;
   lastSenderId: number;
+  userType?: string; 
 }
 
 interface Message {
@@ -118,31 +119,32 @@ const AdminChatSupport = ({ alertsRef }: Props) => {
 
   // Map API response to ChatListItem[]
   const mapApiResponseToChatList = (
-    apiData: ChatListItemProps[]
-  ): ChatListItem[] => {
-    if (!Array.isArray(apiData)) return [];
+  apiData: ChatListItemProps[]
+    ): ChatListItem[] => {
+      if (!Array.isArray(apiData)) return [];
 
-    return apiData
-      .filter((item) => item && item.chat && item.user)
-      .map((item) => {
-        const lastMessage = item.chat.attributes.message;
-        const lastSenderId = item.chat.attributes.senderId;
+      return apiData
+        .filter((item) => item && item.chat && item.user)
+        .map((item) => {
+          const lastMessage = item.chat.attributes.message;
+          const lastSenderId = item.chat.attributes.senderId;
 
-        // Determine if last message is read for this admin
-        const isRead =
-          lastSenderId === user?.id || item.chat.attributes.isRead === true;
+          // Determine if last message is read for this admin
+          const isRead =
+            lastSenderId === user?.id || item.chat.attributes.isRead === true;
 
-        return {
-          id: item.chat.id,
-          name: `${item.user.attributes.firstName} ${item.user.attributes.lastName}`,
-          lastMessage,
-          avatar: item.user.attributes.image,
-          isRead,
-          receiverID: item.user.id,
-          lastSenderId,
-        };
-      });
-  };
+          return {
+            id: item.chat.id,
+            name: `${item.user.attributes.firstName} ${item.user.attributes.lastName}`,
+            lastMessage,
+            avatar: item.user.attributes.image,
+            isRead,
+            receiverID: item.user.id,
+            lastSenderId,
+            userType: item.user.attributes.userType, // ADD THIS LINE
+          };
+        });
+    };
 
   const fetchChatList = async () => {
     try {

@@ -28,7 +28,6 @@ interface user {
     updatedTime: string;
   };
 }
-
 interface chat {
   id: number;
   attributes: {
@@ -42,12 +41,10 @@ interface chat {
     updatedTime: string;
   };
 }
-
 interface ChatListItemProps {
   user: user;
   chat: chat;
 }
-
 interface ChatListItem {
   id: number;
   name: string;
@@ -56,8 +53,9 @@ interface ChatListItem {
   isRead: boolean;
   receiverID?: number;
   lastSenderId: number;
-}
+  userType?: string; 
 
+}
 interface Message {
   sender: string;
   text: string;
@@ -67,7 +65,6 @@ interface Message {
   time?: string;
   isRead?: boolean;
 }
-
 interface ChatWindowProps {
   chatId: number;
   sender: {
@@ -104,7 +101,6 @@ interface ChatWindowProps {
     };
   }[];
 }
-
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
@@ -140,13 +136,14 @@ const BarangayChatSupport = ({ alertsRef }: Props) => {
           isRead,
           receiverID: item.user.id,
           lastSenderId,
+          userType: item.user.attributes.userType, 
         };
       });
   };
 
   const fetchChatList = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/admin/chats/users-admins`, {
+      const res = await fetch(`${API_BASE_URL}/barangay/chats/users-admins`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -324,7 +321,7 @@ const BarangayChatSupport = ({ alertsRef }: Props) => {
 
   const fetchChatBox = async (chatId: number) => {
     try {
-      const res = await fetch(`${API_BASE_URL}/chat/${chatId}`, {
+    const res = await fetch(`${API_BASE_URL}/chat/${chatId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",

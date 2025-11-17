@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { EyeCloseIcon, EyeIcon } from "../../icons";
-import Label from "../form/Label";
-import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
+import { EyeCloseIcon, EyeIcon } from "../../../icons";
+import Label from "../../form/Label";
+import Input from "../../form/input/InputField";
+import Checkbox from "../../form/input/Checkbox";
 import ReCAPTCHA from "react-google-recaptcha";
-import API_BASE_URL from "../../config/coreApi";
-import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
+import API_BASE_URL from "../../../config/coreApi";
+import { AlertsContainerRef } from "../../Alert/AlertsContainer";
 
 interface Barangay {
   id: number;
@@ -39,6 +39,8 @@ export default function SignUpForm({ alertsRef }: Props) {
   const [email, setEmail] = useState("");
   const [contact_number, setContactNumber] = useState("");
   const [image, SetImage] = useState<File | null>(null);
+  const [id_document, setIdDocument] = useState<File | null>(null);
+
   const [house_no, setHouseNumber] = useState("");
   const [street, setStreet] = useState("");
   const [barangay, setBarangay] = useState<string>("");
@@ -118,6 +120,7 @@ export default function SignUpForm({ alertsRef }: Props) {
     formData.append("is_admin", "1");
 
     if (image) formData.append("image", image);
+    if (id_document) formData.append("id_document", id_document);
 
     try {
       const res = await fetch(`${API_BASE_URL}/admin/register`, {
@@ -136,10 +139,14 @@ export default function SignUpForm({ alertsRef }: Props) {
             });
           });
         } else {
-          alertsRef.current?.addAlert(
-            "error",
-            data.message || "Registration failed"
-          );
+          const errorMessage =
+            typeof data.message === "string"
+              ? data.message
+              : typeof data.data === "string"
+              ? data.data
+              : "Registration failed";
+
+          alertsRef.current?.addAlert("error", errorMessage);
         }
         console.log("Error Response:", data);
         return;
@@ -324,7 +331,7 @@ export default function SignUpForm({ alertsRef }: Props) {
               </div>
 
               <div>
-                <Label>Profile Image</Label>
+                <Label>Identification Photo</Label>
                 <input
                   type="file"
                   name="image"
@@ -339,6 +346,26 @@ export default function SignUpForm({ alertsRef }: Props) {
                 {image && (
                   <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                     Selected file: {image.name}
+                  </p>
+                )}
+              </div>
+
+              <div>
+                <Label>Government-Issued ID</Label>
+                <input
+                  type="file"
+                  name="id_document"
+                  accept="image/*"
+                  onChange={(e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      setIdDocument(e.target.files[0]);
+                    }
+                  }}
+                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-brand-500 file:text-white hover:file:bg-brand-600"
+                />
+                {id_document && (
+                  <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                    Selected file: {id_document.name}
                   </p>
                 )}
               </div>

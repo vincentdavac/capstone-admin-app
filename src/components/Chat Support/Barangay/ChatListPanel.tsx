@@ -4,11 +4,12 @@ import { AppContext } from "../../../context/AppContext";
 interface ChatListItem {
   id: number;
   name: string;
-  lastMessage: string;
+  lastMessage: string | null;
   avatar: string;
   isRead?: boolean;
   receiverID?: number;
-  lastSenderId: number; // important for unread highlighting
+  lastSenderId: number;
+  userType?: string;
 }
 
 interface ChatListPanelProps {
@@ -28,11 +29,13 @@ const ChatListPanel: React.FC<ChatListPanelProps> = ({
   // Filter chat list based on search term
   const filteredChatList = chatList.filter((chat) => {
     if (!searchTerm.trim()) return true;
-
     const searchLower = searchTerm.toLowerCase();
     const nameMatch = chat.name.toLowerCase().includes(searchLower);
-    const messageMatch = chat.lastMessage.toLowerCase().includes(searchLower);
-
+    
+    // Handle null lastMessage
+    const messageToSearch = chat.lastMessage || chat.userType || "";
+    const messageMatch = messageToSearch.toLowerCase().includes(searchLower);
+    
     return nameMatch || messageMatch;
   });
 
@@ -75,9 +78,18 @@ const ChatListPanel: React.FC<ChatListPanelProps> = ({
       ) : (
         filteredChatList.map((chat) => {
           const isActive = chat.id === selectedChatId;
+          
+          // Only highlight as unread if:
+          // 1. There is a message (lastMessage is not null)
+          // 2. Last message is from other user
+          // 3. Message is unread
+          const isUnread = 
+            chat.lastMessage !== null && 
+            chat.lastSenderId !== user?.id && 
+            chat.isRead === false;
 
-          // Highlight if last message is from other user and unread
-          const isUnread = chat.lastSenderId !== user?.id && !chat.isRead;
+          // Always display userType instead of message
+          const displayMessage = chat.userType || "Unknown";
 
           return (
             <div
@@ -104,6 +116,7 @@ const ChatListPanel: React.FC<ChatListPanelProps> = ({
                   <span className="absolute -top-0.5 -right-0.5 w-3 h-3 bg-blue-500 rounded-full border-2 border-white dark:border-gray-800"></span>
                 )}
               </div>
+
               <div className="flex flex-col min-w-0 flex-1">
                 <p
                   className={`text-sm truncate ${
@@ -119,9 +132,11 @@ const ChatListPanel: React.FC<ChatListPanelProps> = ({
                     isUnread
                       ? "font-medium text-gray-700 dark:text-gray-300"
                       : "text-gray-500 dark:text-gray-400"
+                  } ${
+                    chat.lastMessage === null ? "italic" : ""
                   }`}
                 >
-                  {chat.lastMessage}
+                  {displayMessage}
                 </p>
               </div>
             </div>

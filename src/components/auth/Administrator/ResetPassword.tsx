@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
-import Label from "../form/Label";
-import Input from "../form/input/InputField";
-import Button from "../ui/button/Button";
-import API_BASE_URL from "../../config/coreApi";
-import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
+import Label from "../../form/Label";
+import Input from "../../form/input/InputField";
+import Button from "../../ui/button/Button";
+import API_BASE_URL from "../../../config/coreApi";
+import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;

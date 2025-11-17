@@ -1,6 +1,6 @@
-import PageMeta from "../../components/common/PageMeta";
-import AuthLayout from "./AuthPageLayout";
-import VerifySuccess from "../../components/auth/VerifySuccess";
+import PageMeta from "../../../components/common/PageMeta";
+import AuthLayout from "../AuthPageLayout";
+import VerifySuccess from "../../../components/auth/Administrator/VerifySuccess";
 
 export default function VerifySuccessPage() {
   return (

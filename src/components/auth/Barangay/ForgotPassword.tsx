@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Label from "../form/Label";
-import Input from "../form/input/InputField";
-import Button from "../ui/button/Button";
-import API_BASE_URL from "../../config/coreApi";
-import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
+import Label from "../../form/Label";
+import Input from "../../form/input/InputField";
+import Button from "../../ui/button/Button";
+import API_BASE_URL from "../../../config/coreApi";
+import { AlertsContainerRef } from "../../Alert/AlertsContainer";
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -38,7 +38,7 @@ export default function ForgotPassword({ alertsRef }: Props) {
         "Password reset link sent! Check your email."
       );
 
-      navigate("/admin/signin");
+      navigate("/barangay/signin");
     } catch (err: any) {
       alertsRef.current?.addAlert(
         "error",
@@ -89,7 +89,7 @@ export default function ForgotPassword({ alertsRef }: Props) {
             <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
               Remembered your password?{" "}
               <Link
-                to="/admin/signin"
+                to="/barangay/signin"
                 className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
               >
                 Sign In

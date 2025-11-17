@@ -1,7 +1,7 @@
-import PageMeta from "../../components/common/PageMeta";
-import AuthLayout from "./AuthPageLayout";
-import SignUpForm from "../../components/auth/SignUpForm";
-import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
+import PageMeta from "../../../components/common/PageMeta";
+import AuthLayout from "../AuthPageLayout";
+import SignUpForm from "../../../components/auth/Administrator/SignUpForm";
+import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;

@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { Routes, Route } from "react-router";
-import SignIn from "./pages/AuthPages/SignIn";
-import SignUp from "./pages/AuthPages/SignUp";
-import ForgotPasswordPage from "./pages/AuthPages/ForgotPassword";
-import ResetPassword from "./pages/AuthPages/ResetPassword";
+import SignIn from "./pages/AuthPages/Administrator/SignIn";
+import SignUp from "./pages/AuthPages/Administrator/SignUp";
+import ForgotPasswordPage from "./pages/AuthPages/Administrator/ForgotPassword";
+import ResetPassword from "./pages/AuthPages/Administrator/ResetPassword";
 //import VerifySuccess from "./pages/AuthPages/VerifySuccess";
-import VerifySuccessPage from "./pages/AuthPages/VerifySuccess";
+import VerifySuccessPage from "./pages/AuthPages/Administrator/VerifySuccess";
 import NotFound from "./pages/OtherPage/NotFound";
 import UserProfiles from "./pages/UserProfiles";
 import Videos from "./pages/UiElements/Videos";
@@ -68,6 +68,9 @@ import UserRoute from "./middleware/UserRoute";
 import ProtectedRoute from "./middleware/ProtectedRoute";
 import Barangay from "./pages/Administrator/Management/Barangay/Barangay";
 import BarangayChatSupport from "./pages/Barangay/Chat/BarangayChatSupport";
+import BarangaySignUp from "./pages/AuthPages/Barangay/BarangaySignUp";
+import BarangaySignIn from "./pages/AuthPages/Barangay/BarangaySignIn";
+import BarangayForgotPassword from "./pages/AuthPages/Barangay/BarangayForgotPassword";
 
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -348,19 +351,16 @@ export default function App({ alertsRef }: AppProps) {
             element={<BarangayChatSupport alertsRef={alertsRef} />}
           />
         </Route>
-        
-        
-        {/* Add the Forgot Password route */}
+
+        {/* ADMIN AUTHENTICATION */}
         <Route
           path="/admin/forgot-password"
           element={<ForgotPasswordPage alertsRef={alertsRef} />}
         />
-
         <Route
           path="/reset-password"
           element={<ResetPassword alertsRef={alertsRef} />}
         />
-        {/* Auth Layout */}
         <Route
           path="/admin/signin"
           element={
@@ -369,7 +369,6 @@ export default function App({ alertsRef }: AppProps) {
             </UserRoute>
           }
         />
-
         <Route
           path="/admin/signup"
           element={
@@ -378,8 +377,6 @@ export default function App({ alertsRef }: AppProps) {
             </UserRoute>
           }
         />
-
-        {/* ✅ Add this new route */}
         <Route
           path="/verify-success"
           element={
@@ -387,6 +384,28 @@ export default function App({ alertsRef }: AppProps) {
               <VerifySuccessPage />
             </UserRoute>
           }
+        />
+
+        {/* BARANGAY AUTHENTICATION */}
+        <Route
+          path="/barangay/signup"
+          element={
+            <UserRoute alertsRef={alertsRef}>
+              <BarangaySignUp alertsRef={alertsRef} />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/barangay/signin"
+          element={
+            <UserRoute alertsRef={alertsRef}>
+              <BarangaySignIn alertsRef={alertsRef} />
+            </UserRoute>
+          }
+        />
+        <Route
+          path="/barangay/forgot-password"
+          element={<BarangayForgotPassword alertsRef={alertsRef} />}
         />
 
         {/* Fallback Route */}

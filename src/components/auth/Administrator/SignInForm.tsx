@@ -1,12 +1,12 @@
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { EyeCloseIcon, EyeIcon } from "../../icons";
-import Label from "../form/Label";
-import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
-import API_BASE_URL from "../../config/coreApi";
-import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
-import { AppContext } from "../../context/AppContext";
+import { EyeCloseIcon, EyeIcon } from "../../../icons";
+import Label from "../../form/Label";
+import Input from "../../form/input/InputField";
+import Checkbox from "../../form/input/Checkbox";
+import API_BASE_URL from "../../../config/coreApi";
+import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
+import { AppContext } from "../../../context/AppContext";
 import CryptoJS from "crypto-js";
 
 interface Props {

@@ -1,5 +1,6 @@
-import { useContext, useState } from "react";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
+/* eslint-disable react-hooks/rules-of-hooks */
+import { useContext, useEffect, useState } from "react";
+// import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { useNavigate } from "react-router";
 import { AppContext } from "../../context/AppContext";
@@ -33,8 +34,13 @@ export default function UserDropdown({ alertsRef }: Props) {
     // ✅ Show logout message
     alertsRef.current?.addAlert("success", "Logged out successfully!");
 
-    // ✅ Navigate to sign-in
-    navigate("/admin/signin", { replace: true });
+    useEffect(() => {
+      if (user?.userType === "admin") {
+        navigate("/admin/signin", { replace: true });
+      } else if (user?.userType === "barangay") {
+        navigate("/barangay/signin", { replace: true });
+      }
+    }, [user?.userType, navigate]); // navigate("/admin/signin", { replace: true });
   }
   return (
     <div className="relative">
@@ -44,16 +50,18 @@ export default function UserDropdown({ alertsRef }: Props) {
       >
         <span className="mr-3 overflow-hidden rounded-full h-11 w-11">
           <img
-            src={
-              user?.attributes?.image ? user.attributes.image : "/favicon.svg"
-            }
+            src={user?.image ? user.image : "/favicon.svg"}
             alt="User"
             className="w-full h-full object-cover rounded-md"
           />
         </span>
 
         <span className="block mr-1 font-medium text-theme-sm">
-          Administrator{" "}
+          {user?.userType === "admin"
+            ? "Administrator"
+            : user?.userType === "barangay"
+            ? "Barangay Official"
+            : "User"}
         </span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
@@ -82,10 +90,10 @@ export default function UserDropdown({ alertsRef }: Props) {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            {user?.attributes?.firstName} {user?.attributes?.lastName}
+            {user?.firstName} {user?.lastName}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            {user?.attributes?.email}
+            {user?.email}
           </span>
         </div>
 

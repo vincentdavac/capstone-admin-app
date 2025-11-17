@@ -1,65 +1,53 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext } from "react";
 import { Archive, Fullscreen, Plus } from "lucide-react";
-import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-import API_BASE_URL from "../../../config/coreApi";
-import { AppContext } from "../../../context/AppContext";
-import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
-import ViewBuoyModal from "./ViewBuoyModal";
-import UpdateBuoyModal from "./UpdateBuoyModal";
-import AddBuoyModal from "./AddBuoyModal";
+import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
+import API_BASE_URL from "../../../../config/coreApi";
+import { AppContext } from "../../../../context/AppContext";
+import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
+
+import ViewBarangayModal from "./ViewBarangayModal";
+import UpdateBarangayModal from "./UpdateBarangayModal";
+import AddBarangayModal from "./AddBarangayModal";
 
 // 🧩 Interfaces
 interface Attributes {
-  buoyCode: string;
-  riverName: string;
-  wallHeight: string;
-  riverHectare: string;
-  latitude: string;
-  longitude: string;
-  barangayId: string;
+  barangayCode: string;
+  name: string;
+  number: number;
+  riverWallHeight: number;
+  squareMeter: number;
+  hectare: number;
+  whiteLevelAlert: number;
+  blueLevelAlert: number;
+  redLevelAlert: number;
+  description: string;
   attachment: string;
-  status: string;
-  maintenanceAt: string;
   createdDate: string;
   createdTime: string;
   updatedDate: string;
   updatedTime: string;
 }
 
-interface barangay {
-  id: number;
-  barangayCode: string;
-  name: string;
-  number: number;
-  riverWallHeight: string;
-  squareMeter: string;
-  hectare: string;
-  whiteLevelAlert: string;
-  blueLevelAlert: string;
-  redLevelAlert: string;
-  description: string;
-  attachment: string;
-}
-
-interface BuoyData {
+interface Barangay {
   id: number;
   attributes: Attributes;
-  barangay: barangay;
 }
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
-const BuoyDeployment = ({ alertsRef }: Props) => {
+const Barangay = ({ alertsRef }: Props) => {
   const { token } = useContext(AppContext)!;
 
   // 🔹 State
-  const [buoys, setBuoys] = useState<BuoyData[]>([]);
+  const [barangays, setBarangays] = useState<Barangay[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBuoy, setSelectedBuoy] = useState<BuoyData | null>(null);
+  const [selectedBarangay, setSelectedBarangay] = useState<Barangay | null>(
+    null
+  );
   const [showView, setShowView] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
@@ -69,10 +57,11 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
   const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
 
-  const fetchBuoys = async () => {
+  // ✅ Fetch Barangays
+  const fetchBarangays = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/buoys`, {
+      const res = await fetch(`${API_BASE_URL}/barangays`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -80,54 +69,52 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
       });
       const data = await res.json();
       if (res.ok && data.data) {
-        setBuoys(data.data);
+        setBarangays(data.data);
       } else {
-        console.error("Failed to fetch buoys:", data);
+        console.error("Failed to fetch barangays:", data);
       }
     } catch (error) {
-      console.error("Error fetching buoys:", error);
+      console.error("Error fetching barangays:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (token) fetchBuoys();
+    if (token) fetchBarangays();
   }, [token]);
 
-  // 🔍 Filter by river name or code
-  const filteredBuoys = buoys.filter((b) => {
+  // 🔍 Filter by name or code
+  const filteredBarangays = barangays.filter((b) => {
     const term = searchTerm.toLowerCase();
-    const { buoyCode, riverName, status } = b.attributes;
+    const { barangayCode, name } = b.attributes;
     return (
-      buoyCode.toLowerCase().includes(term) ||
-      riverName.toLowerCase().includes(term) ||
-      status.toLowerCase().includes(term)
+      barangayCode.toLowerCase().includes(term) ||
+      name.toLowerCase().includes(term)
     );
   });
 
-  const totalPages = Math.ceil(filteredBuoys.length / itemsPerPage);
-  const currentBuoys = filteredBuoys.slice(
+  const totalPages = Math.ceil(filteredBarangays.length / itemsPerPage);
+  const currentBarangays = filteredBarangays.slice(
     startIndex,
     startIndex + itemsPerPage
   );
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white">
-      <PageBreadcrumb pageTitle="Buoy Deployment" />
+      <PageBreadcrumb pageTitle="Barangay Management" />
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         {/* Search and Add Button */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
           <input
             type="text"
-            placeholder="Search by code, river name, or status..."
+            placeholder="Search by barangay name or code..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="h-11 w-full sm:w-96 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent px-4 text-sm text-gray-800 dark:text-white focus:ring-2 focus:ring-[#453EFE] focus:border-[#453EFE]"
           />
 
-          {/* Add Buoy Button */}
           <button
             onClick={() => setShowAdd(true)}
             className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
@@ -143,12 +130,12 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
               <tr>
                 {[
                   "No.",
-                  "Buoy Code",
+                  "Barangay Code",
                   "Attachment",
-                  "River",
-                  "Barangay",
-                  "Status",
+                  "Name",
+                  "River Wall Height",
                   "Hectare",
+                  "Alerts (W/B/R)",
                   "Actions",
                 ].map((h) => (
                   <th
@@ -160,26 +147,25 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
                 ))}
               </tr>
             </thead>
+
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={9} className="text-center py-10">
+                  <td colSpan={8} className="text-center py-10">
                     <div className="flex justify-center items-center gap-2 text-gray-500">
                       <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
                       Loading data...
                     </div>
                   </td>
                 </tr>
-              ) : currentBuoys.length === 0 ? (
+              ) : currentBarangays.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="py-10 text-gray-500">
-                    <div className="flex items-center justify-center h-full">
-                      No buoy records found.
-                    </div>
+                  <td colSpan={8} className="text-center py-10 text-gray-500">
+                    No barangay records found.
                   </td>
                 </tr>
               ) : (
-                currentBuoys.map((b, i) => {
+                currentBarangays.map((b, i) => {
                   const a = b.attributes;
                   return (
                     <tr
@@ -189,40 +175,31 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
                       <td className="px-6 py-4 text-sm">
                         {startIndex + i + 1}
                       </td>
-                      <td className="px-6 py-4 text-sm">{a.buoyCode}</td>
-
-                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-white whitespace-nowrap">
-                        <img
-                          src={a.attachment ?? "N/A"}
-                          alt="Feedback"
-                          className="w-10 h-10 rounded-md object-cover" // smaller and neat image
-                        />
+                      <td className="px-6 py-4 text-sm">{a.barangayCode}</td>
+                      <td className="px-6 py-4">
+                        {a.attachment ? (
+                          <img
+                            src={a.attachment}
+                            alt={a.name}
+                            className="w-10 h-10 rounded-md object-cover"
+                          />
+                        ) : (
+                          "N/A"
+                        )}
                       </td>
-                      <td className="px-6 py-4 text-sm">{a.riverName}</td>
+                      <td className="px-6 py-4 text-sm">{a.name}</td>
+                      <td className="px-6 py-4 text-sm">{a.riverWallHeight}</td>
+                      <td className="px-6 py-4 text-sm">{a.hectare}</td>
                       <td className="px-6 py-4 text-sm">
-                        {b.barangay?.name || "N/A"}
-                      </td>
-                      <td className="px-6 py-4 text-sm">
-                        <span
-                          className={`px-3 py-0.5 inline-flex text-xs font-medium rounded-full ${
-                            a.status === "active"
-                              ? "bg-green-100 text-green-700"
-                              : a.status === "inactive"
-                              ? "bg-red-100 text-red-700"
-                              : a.status === "maintenance"
-                              ? "bg-gray-200 text-gray-700"
-                              : "bg-gray-100 text-gray-600"
-                          }`}
-                        >
-                          {a.status}
+                        <span className="text-gray-700 dark:text-gray-300">
+                          {a.whiteLevelAlert}/{a.blueLevelAlert}/
+                          {a.redLevelAlert}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm">{a.riverHectare}</td>
-
                       <td className="px-6 py-4 flex gap-2">
                         <button
                           onClick={() => {
-                            setSelectedBuoy(b);
+                            setSelectedBarangay(b);
                             setShowView(true);
                           }}
                           className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
@@ -231,7 +208,7 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
                         </button>
                         <button
                           onClick={() => {
-                            setSelectedBuoy(b);
+                            setSelectedBarangay(b);
                             setShowUpdate(true);
                           }}
                           className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
@@ -251,8 +228,8 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
         <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
           <span className="text-sm text-gray-600 dark:text-gray-400">
             Showing {startIndex + 1}–
-            {Math.min(startIndex + itemsPerPage, filteredBuoys.length)} of{" "}
-            {filteredBuoys.length}
+            {Math.min(startIndex + itemsPerPage, filteredBarangays.length)} of{" "}
+            {filteredBarangays.length}
           </span>
           <div className="flex space-x-2">
             {[...Array(totalPages)].map((_, i) => (
@@ -273,36 +250,36 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
       </div>
 
       {/* 🧩 Modals */}
-      {showView && selectedBuoy && (
-        <ViewBuoyModal
+      {showView && selectedBarangay && (
+        <ViewBarangayModal
           show={showView}
           onClose={() => setShowView(false)}
-          data={selectedBuoy}
+          data={selectedBarangay}
         />
       )}
 
-      {showUpdate && selectedBuoy && (
-        <UpdateBuoyModal
+      {showUpdate && selectedBarangay && (
+        <UpdateBarangayModal
           show={showUpdate}
           onClose={() => setShowUpdate(false)}
-          data={selectedBuoy}
+          data={selectedBarangay}
           token={token ?? ""}
           alertsRef={alertsRef}
-          onUpdated={fetchBuoys}
+          onUpdated={fetchBarangays}
         />
       )}
 
       {showAdd && (
-        <AddBuoyModal
+        <AddBarangayModal
           show={showAdd}
           onClose={() => setShowAdd(false)}
           token={token ?? ""}
           alertsRef={alertsRef}
-          onAdded={fetchBuoys}
+          onAdded={fetchBarangays}
         />
       )}
     </div>
   );
 };
 
-export default BuoyDeployment;
+export default Barangay;

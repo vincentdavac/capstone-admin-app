@@ -8,8 +8,8 @@ import UsersTableHeader from "../../components/Manage User/UsersTableHeader";
 import UsersTable from "../../components/Manage User/UsersTable";
 import UsersPagination from "../../components/Manage User/UsersPagination";
 
-import UpdateUserModal from "../Management/ManageUsers/UpdateUserModal";
-import ArchiveUserModal from "../Management/ManageUsers/ArchiveUserModal";
+import UpdateUserModal from "../Administrator/Management/ManageUsers/UpdateUserModal";
+import ArchiveUserModal from "../Administrator/Management/ManageUsers/ArchiveUserModal";
 
 interface BarangayData {
   id: number;
@@ -35,7 +35,7 @@ interface UserAttributes {
   updatedTime: string | null;
 }
 
-export interface UserData { 
+export interface UserData {
   id: number;
   attributes: UserAttributes;
 }
@@ -56,7 +56,9 @@ const ManageUsers = ({ alertsRef }: Props) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
-  const inputRef = useRef<HTMLInputElement>(null) as React.RefObject<HTMLInputElement>;
+  const inputRef = useRef<HTMLInputElement>(
+    null
+  ) as React.RefObject<HTMLInputElement>;
 
   // handlers:
   const handleUpdateClick = (u: UserData) => {
@@ -128,7 +130,6 @@ const ManageUsers = ({ alertsRef }: Props) => {
       <PageBreadcrumb pageTitle="Manage Users" />
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-        
         {/* 1. Header (Title and Search Bar) */}
         <UsersTableHeader
           searchTerm={searchTerm}
@@ -154,7 +155,6 @@ const ManageUsers = ({ alertsRef }: Props) => {
           startIndex={startIndex}
           setCurrentPage={setCurrentPage}
         />
-        
       </div>
 
       <UpdateUserModal

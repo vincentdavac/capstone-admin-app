@@ -2,9 +2,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
-import { X, ImageOff } from "lucide-react";
-import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
-import API_BASE_URL from "../../../config/coreApi";
+import { X } from "lucide-react";
+import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
+import API_BASE_URL from "../../../../config/coreApi";
 
 interface Attributes {
   buoyCode: string;
@@ -17,10 +17,6 @@ interface Attributes {
   attachment: string | File | null;
   status: string;
   maintenanceAt: string;
-  createdDate: string;
-  createdTime: string;
-  updatedDate: string;
-  updatedTime: string;
 }
 
 interface Barangay {
@@ -31,52 +27,32 @@ interface Barangay {
   };
 }
 
-interface barangay {
-  id: number;
-  barangayCode: string;
-  name: string;
-  number: number;
-  riverWallHeight: string;
-  squareMeter: string;
-  hectare: string;
-  whiteLevelAlert: string;
-  blueLevelAlert: string;
-  redLevelAlert: string;
-  description: string;
-  attachment: string;
-}
-
-interface BuoyData {
-  id: number;
-  attributes: Attributes;
-  barangay: barangay;
-}
-
 interface Props {
   show: boolean;
   onClose: () => void;
-  data: BuoyData;
   token: string;
-  onUpdated: () => void;
+  onAdded: () => void;
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
-const UpdateBuoyModal = ({
-  show,
-  onClose,
-  data,
-  token,
-  alertsRef,
-  onUpdated,
-}: Props) => {
-  const [form, setForm] = useState<Attributes>(
-    data?.attributes ?? ({} as Attributes)
-  );
+const AddBuoyModal = ({ show, onClose, token, alertsRef, onAdded }: Props) => {
+  const [form, setForm] = useState<Attributes>({
+    buoyCode: "",
+    riverName: "",
+    wallHeight: "",
+    riverHectare: "",
+    latitude: "",
+    longitude: "",
+    barangayId: "",
+    attachment: null,
+    status: "active",
+    maintenanceAt: "",
+  });
+
   const [barangays, setBarangays] = useState<Barangay[]>([]);
   const [loadingBarangays, setLoadingBarangays] = useState<boolean>(true);
-  const [attachmentPreview, setAttachmentPreview] = useState<string>("");
 
-  if (!show || !data) return null;
+  if (!show) return null;
 
   useEffect(() => {
     const fetchBarangays = async () => {
@@ -85,7 +61,6 @@ const UpdateBuoyModal = ({
           method: "GET",
           headers: { Accept: "application/json" },
         });
-
         const result = await res.json();
 
         if (!res.ok) {
@@ -93,18 +68,10 @@ const UpdateBuoyModal = ({
             "error",
             result.message || "Failed to load barangays"
           );
-          setLoadingBarangays(false);
           return;
         }
 
         setBarangays(result.data);
-
-        if (data?.barangay?.id) {
-          setForm((prev) => ({
-            ...prev,
-            barangayId: String(data.barangay.id),
-          }));
-        }
       } catch (error: any) {
         alertsRef.current?.addAlert(
           "error",
@@ -116,17 +83,7 @@ const UpdateBuoyModal = ({
     };
 
     fetchBarangays();
-  }, [alertsRef, data]);
-
-  // ✅ Initialize preview with existing attachment
-  useEffect(() => {
-    if (
-      data?.attributes?.attachment &&
-      typeof data.attributes.attachment === "string"
-    ) {
-      setAttachmentPreview(data.attributes.attachment);
-    }
-  }, [data]);
+  }, [alertsRef]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -134,52 +91,27 @@ const UpdateBuoyModal = ({
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ Handle file change with preview update
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const file = e.target.files[0];
-      setForm({ ...form, attachment: file });
-      // Create preview URL for the new file
-      setAttachmentPreview(URL.createObjectURL(file));
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
       const formData = new FormData();
+      formData.append("river_name", form.riverName);
+      formData.append("wall_height", form.wallHeight);
+      formData.append("river_hectare", form.riverHectare);
+      formData.append("latitude", form.latitude);
+      formData.append("longitude", form.longitude);
+      formData.append("barangay_id", form.barangayId);
+      formData.append("status", form.status);
+      if (form.maintenanceAt)
+        formData.append("maintenance_at", form.maintenanceAt);
 
-      // ✅ Use snake_case names expected by Laravel (only send what's being updated)
-      if (form.riverName) formData.append("river_name", form.riverName);
-      if (form.wallHeight) formData.append("wall_height", form.wallHeight);
-      if (form.riverHectare)
-        formData.append("river_hectare", form.riverHectare);
-      if (form.latitude) formData.append("latitude", form.latitude);
-      if (form.longitude) formData.append("longitude", form.longitude);
-      if (form.barangayId) formData.append("barangay_id", form.barangayId);
-      if (form.status) formData.append("status", form.status);
-
-      // ✅ CRITICAL: Only append attachment if it's a NEW File object
-      // Never send the old string URL back to the server
       if (form.attachment instanceof File) {
         formData.append("attachment", form.attachment);
-        console.log(
-          "Uploading new file:",
-          form.attachment.name,
-          form.attachment.type
-        );
-      } else {
-        console.log("No new file to upload, keeping existing attachment");
       }
 
-      // Laravel PATCH support through _method override
-      formData.append("_method", "PATCH");
-
-      console.log("Submitting form data...");
-
-      const res = await fetch(`${API_BASE_URL}/buoys/${data.id}`, {
-        method: "POST", // Laravel requires POST + _method for FormData
+      const res = await fetch(`${API_BASE_URL}/buoys`, {
+        method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -190,13 +122,11 @@ const UpdateBuoyModal = ({
       const result = await res.json();
 
       if (res.ok) {
-        alertsRef.current?.addAlert("success", "Buoy updated successfully!");
-        onUpdated();
+        alertsRef.current?.addAlert("success", "Buoy added successfully!");
+        onAdded();
         onClose();
       } else {
-        console.error("Update failed:", result);
-
-        // Show backend validation messages if available
+        console.error("Add failed:", result);
         if (result.errors) {
           Object.keys(result.errors).forEach((key) => {
             alertsRef.current?.addAlert("error", result.errors[key][0]);
@@ -204,13 +134,13 @@ const UpdateBuoyModal = ({
         } else {
           alertsRef.current?.addAlert(
             "error",
-            result.message || "Failed to update buoy."
+            result.message || "Failed to add buoy."
           );
         }
       }
     } catch (err: any) {
       console.error("Error:", err);
-      alertsRef.current?.addAlert("error", "Error updating buoy.");
+      alertsRef.current?.addAlert("error", "Error adding buoy.");
     }
   };
 
@@ -227,24 +157,8 @@ const UpdateBuoyModal = ({
 
         {/* Title */}
         <h2 className="text-2xl font-semibold mb-5 text-gray-900 dark:text-white text-center">
-          Update Buoy Information
+          Add New Buoy
         </h2>
-
-        {/* Image Preview */}
-        <div className="w-full mb-5">
-          {attachmentPreview ? (
-            <img
-              src={attachmentPreview}
-              alt="Buoy Attachment"
-              className="w-full h-48 object-cover rounded-lg border border-gray-200 dark:border-gray-700 shadow-md"
-            />
-          ) : (
-            <div className="w-full h-48 flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg border border-gray-300 dark:border-gray-700 text-gray-500 dark:text-gray-400">
-              <ImageOff size={32} className="mb-2" />
-              <span>No Image Available</span>
-            </div>
-          )}
-        </div>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -252,25 +166,12 @@ const UpdateBuoyModal = ({
           <div className="flex gap-3">
             <div className="w-1/2">
               <label className="block text-sm font-medium mb-1">
-                Buoy Code
-              </label>
-              <input
-                type="text"
-                name="buoyCode"
-                value={form.buoyCode || ""}
-                onChange={handleChange}
-                placeholder="Buoy Code"
-                className="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800"
-              />
-            </div>
-            <div className="w-1/2">
-              <label className="block text-sm font-medium mb-1">
                 River Name
               </label>
               <input
                 type="text"
                 name="riverName"
-                value={form.riverName || ""}
+                value={form.riverName}
                 onChange={handleChange}
                 placeholder="River Name"
                 className="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800"
@@ -287,7 +188,7 @@ const UpdateBuoyModal = ({
               <input
                 type="text"
                 name="wallHeight"
-                value={form.wallHeight || ""}
+                value={form.wallHeight}
                 onChange={handleChange}
                 placeholder="Wall Height (m)"
                 className="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800"
@@ -300,7 +201,7 @@ const UpdateBuoyModal = ({
               <input
                 type="text"
                 name="riverHectare"
-                value={form.riverHectare || ""}
+                value={form.riverHectare}
                 onChange={handleChange}
                 placeholder="River Hectare"
                 className="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800"
@@ -315,7 +216,7 @@ const UpdateBuoyModal = ({
               <input
                 type="text"
                 name="latitude"
-                value={form.latitude || ""}
+                value={form.latitude}
                 onChange={handleChange}
                 placeholder="Latitude"
                 className="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800"
@@ -328,7 +229,7 @@ const UpdateBuoyModal = ({
               <input
                 type="text"
                 name="longitude"
-                value={form.longitude || ""}
+                value={form.longitude}
                 onChange={handleChange}
                 placeholder="Longitude"
                 className="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800"
@@ -342,7 +243,7 @@ const UpdateBuoyModal = ({
               <label className="block text-sm font-medium mb-1">Barangay</label>
               <select
                 name="barangayId"
-                value={form.barangayId || ""}
+                value={form.barangayId}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800"
                 disabled={loadingBarangays}
@@ -360,7 +261,7 @@ const UpdateBuoyModal = ({
               <label className="block text-sm font-medium mb-1">Status</label>
               <select
                 name="status"
-                value={form.status || ""}
+                value={form.status}
                 onChange={handleChange}
                 className="w-full p-2 border rounded-md bg-gray-50 dark:bg-gray-800"
               >
@@ -380,10 +281,13 @@ const UpdateBuoyModal = ({
               type="file"
               name="attachment"
               accept="image/*"
-              onChange={handleFileChange}
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  setForm({ ...form, attachment: e.target.files[0] });
+                }
+              }}
               className="block w-full text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-200 focus:outline-none file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-700"
             />
-
             {form.attachment instanceof File && (
               <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                 Selected file: {form.attachment.name}
@@ -397,7 +301,7 @@ const UpdateBuoyModal = ({
               type="submit"
               className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg transition"
             >
-              Save Changes
+              Add Buoy
             </button>
           </div>
         </form>
@@ -406,4 +310,4 @@ const UpdateBuoyModal = ({
   );
 };
 
-export default UpdateBuoyModal;
+export default AddBuoyModal;

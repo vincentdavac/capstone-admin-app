@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { X } from "lucide-react";
-import API_BASE_URL from "../../../config/coreApi";
-import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
+import API_BASE_URL from "../../../../config/coreApi";
+import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
 
 interface Props {
   show: boolean;

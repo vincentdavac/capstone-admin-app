@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   createContext,
   Dispatch,
@@ -9,28 +9,42 @@ import {
 } from "react";
 import API_BASE_URL from "../config/coreApi";
 import CryptoJS from "crypto-js";
+import { createEcho } from "../echo";
+import Echo from "laravel-echo";
 
 interface UserType {
   id?: number;
-  attributes?: {
-    firstName?: string;
-    lastName?: string;
-    email?: string;
-    contactNumber?: string;
-    houseNo?: string;
-    street?: string;
-    barangay?: string;
-    municipality?: string;
-    isAdmin?: string;
-    image?: string;
-    imageUrl?: string;
-    createdDate?: string;
-    createdTime?: string;
-    updatedDate?: string;
-    updatedTime?: string;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  contactNumber?: string;
+  houseNo?: string;
+  street?: string;
+  municipality?: string | null;
+  isActive?: boolean;
+  registrationStatus?: boolean;
+  userType?: string;
+  image?: string;
+  idDocument?: string;
+  verifiedBy?: number;
+  dateVerified?: string;
+  emailVerifiedAt?: string;
+  verifier?: {
+    id: number;
+    name: string;
+  };
+  barangay?: {
+    id: number;
+    name: string;
+    number: number;
+    buoys?: Array<{
+      id: number;
+      buoyCode: string;
+      riverName: string;
+      status: string;
+    }>;
   };
 }
-
 // Define context shape
 interface AppContextType {
   token: string | null;
@@ -41,6 +55,7 @@ interface AppContextType {
   setUser: Dispatch<SetStateAction<UserType | null>>;
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  echoInstance: Echo<any> | null;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -59,6 +74,7 @@ export default function AppProvider({ children }: MyComponentProps) {
   const [token, setToken] = useState<string | null>(null);
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
+  const [echoInstance, setEchoInstance] = useState<Echo<any> | null>(null);
 
   // ✅ Decrypt token once when encryptedToken changes
   useEffect(() => {
@@ -115,8 +131,47 @@ export default function AppProvider({ children }: MyComponentProps) {
     }
 
     getUser();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
+
+  // Initialize Echo once user & token are available
+  useEffect(() => {
+    if (!token || !user) return;
+
+    const echo = createEcho(token);
+    setEchoInstance(echo);
+
+    const pusher = echo.connector.pusher;
+
+    // Connection status monitoring
+    pusher.connection.bind("connected", () =>
+      console.log("✅ Pusher connected")
+    );
+    pusher.connection.bind("connected", () => {
+      console.log(
+        "✅ Pusher connected, socket ID:",
+        pusher.connection.socket_id
+      );
+    });
+    pusher.connection.bind("disconnected", () =>
+      console.log("❌ Pusher disconnected")
+    );
+    pusher.connection.bind("error", (err: any) =>
+      console.error("❌ Pusher error:", err)
+    );
+
+    pusher.connection.bind("state_change", (states: any) =>
+      console.log(
+        "🔄 Pusher state change:",
+        states.previous,
+        "→",
+        states.current
+      )
+    );
+
+    return () => {
+      echo.disconnect();
+    };
+  }, [token, user]);
 
   return (
     <AppContext.Provider
@@ -129,6 +184,7 @@ export default function AppProvider({ children }: MyComponentProps) {
         setUser,
         loading,
         setLoading,
+        echoInstance,
       }}
     >
       {loading ? (

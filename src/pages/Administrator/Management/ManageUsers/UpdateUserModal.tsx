@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import API_BASE_URL from "../../../config/coreApi";
-import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
+import API_BASE_URL from "../../../../config/coreApi";
+import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
 
 interface BarangayData {
   id: number;

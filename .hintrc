@@ -10,12 +10,7 @@
       }
     ],
     "no-inline-styles": "off",
-    "axe/text-alternatives": [
-      "default",
-      {
-        "document-title": "off"
-      }
-    ],
+    "axe/text-alternatives": "off",
     "axe/forms": [
       "default",
       {

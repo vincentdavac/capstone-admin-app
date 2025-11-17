@@ -119,12 +119,12 @@ export default function SignUpForm({ alertsRef }: Props) {
 
     if (image) formData.append("image", image);
 
-  try {
-    const res = await fetch(`${API_BASE_URL}/register`, {
-      method: "POST",
-      headers: { Accept: "application/json" },
-      body: formData,
-    });
+    try {
+      const res = await fetch(`${API_BASE_URL}/admin/register`, {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        body: formData,
+      });
 
       const data = await res.json();
 

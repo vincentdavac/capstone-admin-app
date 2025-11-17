@@ -27,11 +27,11 @@ import Dashboard from "./pages/Dashboard/Dashboard";
 import BarangayDashboard from "./pages/Dashboard/BarangayDashboard";
 import StormSurge from "./pages/Dashboard/riverMonitoring";
 import AlertManagement from "./pages/Dashboard/AlertManagement";
-import ChatSupport from "./pages/Dashboard/ChatSupport";
+import ChatSupport from "./pages/Administrator/Chat/AdminChatSupport";
 
 import ManageUsers from "./pages/Dashboard/ManageUsers";
 import ArchivedUsers from "./pages/Dashboard/ArchivedUsers";
-import BuoyDeployment from "./pages/Management/BuoyDeployment/BuoyDeployment";
+import BuoyDeployment from "./pages/Administrator/Management/BuoyDeployment/BuoyDeployment";
 // import ChatSupport from "./pages/Management/ChatSupport";
 import AlertSystem from "./pages/Management/AlertSystem";
 import CustomSlider from "./pages/Customization/CustomSlider";
@@ -66,7 +66,8 @@ import CustomizationArchive from "./components/admin/customization-archive";
 import { AlertsContainerRef } from "./components/Alert/AlertsContainer";
 import UserRoute from "./middleware/UserRoute";
 import ProtectedRoute from "./middleware/ProtectedRoute";
-import Barangay from "./pages/Management/Barangay/Barangay";
+import Barangay from "./pages/Administrator/Management/Barangay/Barangay";
+import BarangayChatSupport from "./pages/Barangay/Chat/BarangayChatSupport";
 
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -100,15 +101,6 @@ export default function App({ alertsRef }: AppProps) {
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <AlertManagement />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            index
-            path="/admin/chat-support"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <ChatSupport />
               </ProtectedRoute>
             }
           />
@@ -207,7 +199,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/admin/chat-support"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
-                <ChatSupport />
+                <ChatSupport alertsRef={alertsRef} />
               </ProtectedRoute>
             }
           />
@@ -349,7 +341,15 @@ export default function App({ alertsRef }: AppProps) {
           {/* Charts */}
           <Route path="/line-chart" element={<LineChart />} />
           <Route path="/bar-chart" element={<BarChart />} />
+
+          {/*  BARANGAY ROUTES */}
+          <Route
+            path="/barangay/chat-support"
+            element={<BarangayChatSupport alertsRef={alertsRef} />}
+          />
         </Route>
+        
+        
         {/* Add the Forgot Password route */}
         <Route
           path="/admin/forgot-password"
@@ -388,6 +388,7 @@ export default function App({ alertsRef }: AppProps) {
             </UserRoute>
           }
         />
+
         {/* Fallback Route */}
         <Route path="*" element={<NotFound />} />
       </Routes>

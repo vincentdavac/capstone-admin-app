@@ -76,7 +76,7 @@ const navItems: NavItem[] = [
   },
   {
     icon: <MessagesSquare />,
-    name: "Chat support",
+    name: "Admin Chat support",
     path: "/admin/chat-support",
   },
   {
@@ -95,7 +95,11 @@ const navItems: NavItem[] = [
     path: "/admin/archived-users",
   },
 
-
+  {
+    icon: <MessagesSquare />,
+    name: "Barangay Chat support",
+    path: "/barangay/chat-support",
+  },
 
   {
     name: "Management",

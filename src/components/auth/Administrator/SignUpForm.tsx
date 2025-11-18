@@ -213,6 +213,7 @@ export default function SignUpForm({ alertsRef }: Props) {
                 <Input
                   type="email"
                   placeholder="Enter your email"
+                  autoComplete="username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
@@ -225,6 +226,7 @@ export default function SignUpForm({ alertsRef }: Props) {
                 <div className="relative">
                   <Input
                     placeholder="Enter your password"
+                    autoComplete="current-password"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
@@ -248,6 +250,7 @@ export default function SignUpForm({ alertsRef }: Props) {
                 <div className="relative">
                   <Input
                     placeholder="Retype your password"
+                    autoComplete="new-password"
                     type={showPassword ? "text" : "password"}
                     value={password_confirmation}
                     onChange={(e) => setConfirmationPassword(e.target.value)}

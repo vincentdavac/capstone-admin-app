@@ -1,22 +1,38 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useContext, useEffect } from "react";
-import PageBreadcrumb from "../../components/common/PageBreadCrumb";
-import API_BASE_URL from "../../config/coreApi";
-import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
-import { AppContext } from "../../context/AppContext";
+import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
+import API_BASE_URL from "../../../../config/coreApi";
+import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
+import { AppContext } from "../../../../context/AppContext";
 
-import UsersTableHeader from "../../components/Manage User/UsersTableHeader";
-import UsersTable from "../../components/Manage User/UsersTable";
-import UsersPagination from "../../components/Manage User/UsersPagination";
+import UsersTableHeader from "../../../../components/Manage User/UsersTableHeader";
+import UsersTable from "../../../../components/Manage User/UsersTable";
+import UsersPagination from "../../../../components/Manage User/UsersPagination";
 
-import UpdateUserModal from "../Administrator/Management/ManageUsers/UpdateUserModal";
-import ArchiveUserModal from "../Administrator/Management/ManageUsers/ArchiveUserModal";
+import UpdateUserModal from "./UpdateUserModal";
+import ArchiveUserModal from "./ArchiveUserModal";
+
+interface BuoyData {
+  id: number;
+  buoyCode: string;
+  riverName: string;
+  status: string;
+}
 
 interface BarangayData {
   id: number;
   name: string;
+  number?: number | null;
+  buoys?: BuoyData[];
 }
 
-interface UserAttributes {
+interface VerifierData {
+  id: number;
+  name: string;
+}
+
+export interface UserData {
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -25,19 +41,19 @@ interface UserAttributes {
   street: string;
   barangay: BarangayData | null;
   municipality: string | null;
-  isAdmin: boolean;
+  userType: "admin" | "barangay" | "user";
   isActive: boolean;
+  registrationStatus: boolean;
   image: string | null;
-  imageUrl: string | null;
-  createdDate: string | null;
-  createdTime: string | null;
-  updatedDate: string | null;
-  updatedTime: string | null;
-}
-
-export interface UserData {
-  id: number;
-  attributes: UserAttributes;
+  idDocument: string | null;
+  dateVerified: string | null;
+  emailVerifiedAt?: string | null;
+  verifiedBy?: number | null;
+  verifier?: VerifierData | null;
+  createdDate?: string | null;
+  createdTime?: string | null;
+  updatedDate?: string | null;
+  updatedTime?: string | null;
 }
 
 interface Props {
@@ -75,7 +91,7 @@ const ManageUsers = ({ alertsRef }: Props) => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/users`, {
+      const response = await fetch(`${API_BASE_URL}/active-users`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -101,7 +117,7 @@ const ManageUsers = ({ alertsRef }: Props) => {
 
   // --- Filtering and Pagination Logic ---
   const filteredUsers = users.filter((u) => {
-    const { firstName, lastName, email, barangay } = u.attributes;
+    const { firstName, lastName, email, barangay } = u;
     const fullName = `${firstName} ${lastName}`.toLowerCase();
     const brgy = barangay?.name?.toLowerCase() ?? "";
     const term = searchTerm.toLowerCase();
@@ -162,7 +178,7 @@ const ManageUsers = ({ alertsRef }: Props) => {
         onClose={() => setShowUpdate(false)}
         token={token ?? ""}
         userId={selectedUser?.id ?? null}
-        userData={selectedUser?.attributes}
+        userData={selectedUser ?? undefined}
         onUpdated={fetchUsers}
         alertsRef={alertsRef}
       />
@@ -174,7 +190,7 @@ const ManageUsers = ({ alertsRef }: Props) => {
         userId={selectedUser?.id ?? null}
         onArchived={fetchUsers}
         alertsRef={alertsRef}
-        userData={selectedUser?.attributes}
+        userData={selectedUser ?? undefined}
       />
     </div>
   );

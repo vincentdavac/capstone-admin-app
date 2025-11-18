@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "react-router";
 import { AlertsContainerRef } from "../components/Alert/AlertsContainer";
+import { AppContext } from "../context/AppContext";
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -49,30 +50,11 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
+  // ADMIN
   {
     icon: <LayoutDashboard />,
     name: "Dashboard",
     path: "/admin/dashboard",
-  },
-  {
-    icon: <LayoutDashboard />,
-    name: "Barangay Dashboard",
-    path: "/admin/barangay-dashboard",
-  },
-  {
-    icon: <Waves />,
-    name: "River Monitoring",
-    path: "/admin/river-monitoring",
-  },
-  {
-    icon: <Buoy />,
-    name: "Deployed Buoy",
-    path: "/admin/deployed-buoy",
-  },
-  {
-    icon: <Megaphone />,
-    name: "Alert Management",
-    path: "/admin/alert-management",
   },
   {
     icon: <MessagesSquare />,
@@ -80,37 +62,14 @@ const navItems: NavItem[] = [
     path: "/admin/chat-support",
   },
   {
-    icon: <LibraryBig />,
-    name: "Historical Data",
-    path: "/admin/historical-data",
-  },
-  {
-    icon: <LibraryBig />,
+    icon: <ManageUsers />,
     name: "Manage Users",
     path: "/admin/manage-users",
   },
   {
-    icon: <LibraryBig />,
-    name: "Archived Users",
-    path: "/admin/archived-users",
-  },
-
-  {
-    icon: <MessagesSquare />,
-    name: "Barangay Chat support",
-    path: "/barangay/chat-support",
-  },
-
-  {
     name: "Management",
     icon: <Management />,
     subItems: [
-      // {
-      //   name: "Manage users",
-      //   path: "/admin/manage-users",
-      //   icon: <ManageUsers className="w-5 h-5 stroke-[1.5]" />,
-      //   pro: false,
-      // },
       {
         name: "Buoy Deployment",
         path: "/admin/manage-buoys",
@@ -124,6 +83,39 @@ const navItems: NavItem[] = [
         pro: false,
       },
     ],
+  },
+
+  // BARANGAY
+  {
+    icon: <LayoutDashboard />,
+    name: "Barangay Dashboard",
+    path: "/barangay/dashboard",
+  },
+  {
+    icon: <Waves />,
+    name: "River Monitoring",
+    path: "/barangay/river-monitoring",
+  },
+  {
+    icon: <MessagesSquare />,
+    name: "Chat support",
+    path: "/barangay/chat-support",
+  },
+
+  {
+    icon: <Megaphone />,
+    name: "Alert Management",
+    path: "/barangay/alert-management",
+  },
+  {
+    icon: <Buoy />,
+    name: "Deployed Buoy",
+    path: "/barangay/deployed-buoy",
+  },
+  {
+    icon: <LibraryBig />,
+    name: "Historical Data",
+    path: "/barangay/historical-data",
   },
 
   // {
@@ -218,7 +210,7 @@ const othersItems: NavItem[] = [
     subItems: [
       {
         name: "Users",
-        path: "/admin/archive/users",
+        path: "/admin/archived-users",
         icon: <ManageUsers className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
@@ -226,9 +218,35 @@ const othersItems: NavItem[] = [
   },
 ];
 
+// Helper function to filter nav items by user type
+const filterNavItemsByUserType = (items: NavItem[], userType?: string) => {
+  if (!userType) return [];
+  return items
+    .map((item) => {
+      if (item.subItems) {
+        const filteredSubItems = item.subItems.filter((sub) =>
+          sub.path?.startsWith(`/${userType}`)
+        );
+        if (filteredSubItems.length === 0) return null;
+        return { ...item, subItems: filteredSubItems };
+      }
+      if (item.path && item.path.startsWith(`/${userType}`)) return item;
+      return null;
+    })
+    .filter(Boolean) as NavItem[];
+};
+
 const AppSidebar = ({ alertsRef }: Props) => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
+
+  // ✅ Move useContext here
+  const { user } = useContext(AppContext)!;
+  const lastType = user?.userType;
+
+  // Apply filter to your nav items
+  const filteredNavItems = filterNavItemsByUserType(navItems, lastType);
+  const filteredOtherItems = filterNavItemsByUserType(othersItems, lastType);
 
   const handleClick = (e: React.MouseEvent, name: string) => {
     if (name === "Sign In" || name === "Sign Up") {
@@ -476,7 +494,7 @@ const AppSidebar = ({ alertsRef }: Props) => {
                   <HorizontaLDots className="size-6" />
                 )}
               </h2>
-              {renderMenuItems(navItems, "main")}
+              {renderMenuItems(filteredNavItems, "main")}
             </div>
             <div className="">
               <h2
@@ -492,7 +510,7 @@ const AppSidebar = ({ alertsRef }: Props) => {
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(othersItems, "others")}
+              {renderMenuItems(filteredOtherItems, "others")}
             </div>
           </div>
         </nav>

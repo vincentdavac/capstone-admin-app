@@ -4,12 +4,27 @@ import { AlertTriangle, X } from "lucide-react";
 import API_BASE_URL from "../../../../config/coreApi";
 import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
 
+interface BuoyData {
+  id: number;
+  buoyCode: string;
+  riverName: string;
+  status: string;
+}
+
 interface BarangayData {
+  id: number;
+  name: string;
+  number?: number | null;
+  buoys?: BuoyData[];
+}
+
+interface VerifierData {
   id: number;
   name: string;
 }
 
-interface UserAttributes {
+export interface UserData {
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -18,18 +33,27 @@ interface UserAttributes {
   street: string;
   barangay: BarangayData | null;
   municipality: string | null;
-  isAdmin: boolean;
+  userType: "admin" | "barangay" | "user";
   isActive: boolean;
+  registrationStatus: boolean;
   image: string | null;
+  idDocument: string | null;
+  dateVerified: string | null;
+  emailVerifiedAt?: string | null;
+  verifiedBy?: number | null;
+  verifier?: VerifierData | null;
+  createdDate?: string | null;
+  createdTime?: string | null;
+  updatedDate?: string | null;
+  updatedTime?: string | null;
 }
-
 interface Props {
   show: boolean;
   onClose: () => void;
   userId: number | null;
   token: string;
   onArchived?: () => void;
-  userData?: UserAttributes;
+  userData?: UserData;
 
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
@@ -45,7 +69,7 @@ const ArchiveUserModal: React.FC<Props> = ({
 }) => {
   if (!show || !userId) return null;
 
-  const [formData, setFormData] = useState<UserAttributes | null>(null);
+  const [formData, setFormData] = useState<UserData | null>(null);
 
   useEffect(() => {
     if (userData) setFormData(userData);
@@ -53,24 +77,27 @@ const ArchiveUserModal: React.FC<Props> = ({
 
   const handleArchive = async () => {
     try {
-      const res = await fetch(`${API_BASE_URL}/update-user/${userId}`, {
-        method: "PATCH",
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        // ✅ Only send is_active
-        body: JSON.stringify({
-          is_active: 0,
-        }),
-      });
+      const res = await fetch(
+        `${API_BASE_URL}/admin/archived-barangay/${userId}`,
+        {
+          method: "PATCH",
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          // ✅ Only send is_active
+          body: JSON.stringify({
+            is_active: 0,
+          }),
+        }
+      );
 
       if (res.ok) {
         const data = await res.json();
         console.log("User updated successfully:", data);
 
-        // ✅ Trigger alert
+        // Trigger alert
         alertsRef.current?.addAlert(
           "success",
           `User has beena archived successfully!`
@@ -82,10 +109,24 @@ const ArchiveUserModal: React.FC<Props> = ({
         const errorData = await res.json();
         console.error("Failed to update user:", errorData);
 
-        alertsRef.current?.addAlert(
-          "error",
-          "Failed to update user status. Please try again."
-        );
+        // Laravel validation error format { errors: { field: ["msg"] }}
+        if (errorData.errors) {
+          Object.values(errorData.errors).forEach((messages) => {
+            (messages as string[]).forEach((msg) => {
+              alertsRef.current?.addAlert("error", msg);
+            });
+          });
+        } else {
+          // General API error: { status: "error", message: "...", data: null }
+          const errorMessage =
+            typeof errorData.message === "string"
+              ? errorData.message
+              : typeof errorData.data === "string"
+              ? errorData.data
+              : "An error occurred while processing your request.";
+
+          alertsRef.current?.addAlert("error", errorMessage);
+        }
       }
     } catch (error) {
       console.error("Error updating user:", error);

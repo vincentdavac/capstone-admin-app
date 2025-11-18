@@ -56,6 +56,8 @@ interface AppContextType {
   loading: boolean;
   setLoading: Dispatch<SetStateAction<boolean>>;
   echoInstance: Echo<any> | null;
+  isLoggingOut: boolean;
+  setIsLoggingOut: Dispatch<SetStateAction<boolean>>;
 }
 
 // eslint-disable-next-line react-refresh/only-export-components
@@ -75,8 +77,9 @@ export default function AppProvider({ children }: MyComponentProps) {
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
   const [echoInstance, setEchoInstance] = useState<Echo<any> | null>(null);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-  // ✅ Decrypt token once when encryptedToken changes
+  // Decrypt token once when encryptedToken changes
   useEffect(() => {
     if (encryptedToken) {
       try {
@@ -86,15 +89,15 @@ export default function AppProvider({ children }: MyComponentProps) {
       } catch (error) {
         console.error("Failed to decrypt token:", error);
         setToken(null);
-        setLoading(false); // ✅ Stop loading on decrypt error
+        setLoading(false); // Stop loading on decrypt error
       }
     } else {
       setToken(null);
-      setLoading(false); // ✅ Stop loading when no token exists
+      setLoading(false); // Stop loading when no token exists
     }
   }, [encryptedToken]);
 
-  // ✅ Fetch user data with token
+  // Fetch user data with token
   useEffect(() => {
     async function getUser() {
       if (!token) {
@@ -114,19 +117,19 @@ export default function AppProvider({ children }: MyComponentProps) {
 
         if (!res.ok) {
           setUser(null);
-          // ✅ Clear invalid token from localStorage
+          // Clear invalid token from localStorage
           localStorage.removeItem("token");
           setEncryptedToken(null);
         } else {
           const response = await res.json();
           setUser(response.data);
-          console.log("User:", response.data);
+          console.log("User Credentials:", response.data);
         }
       } catch (err) {
         console.error("Failed to fetch user:", err);
         setUser(null);
       } finally {
-        setLoading(false); // ✅ Always stop loading
+        setLoading(false); // Always stop loading
       }
     }
 
@@ -143,32 +146,22 @@ export default function AppProvider({ children }: MyComponentProps) {
     const pusher = echo.connector.pusher;
 
     // Connection status monitoring
-    pusher.connection.bind("connected", () =>
-      console.log("✅ Pusher connected")
-    );
     pusher.connection.bind("connected", () => {
-      console.log(
-        "✅ Pusher connected, socket ID:",
-        pusher.connection.socket_id
-      );
+      console.log("Pusher connected, socket ID:", pusher.connection.socket_id);
     });
+
     pusher.connection.bind("disconnected", () =>
-      console.log("❌ Pusher disconnected")
+      console.log("Pusher disconnected")
     );
     pusher.connection.bind("error", (err: any) =>
-      console.error("❌ Pusher error:", err)
+      console.error("Pusher error:", err)
     );
 
     pusher.connection.bind("state_change", (states: any) =>
-      console.log(
-        "🔄 Pusher state change:",
-        states.previous,
-        "→",
-        states.current
-      )
+      console.log("Pusher state change:", states.previous, "→", states.current)
     );
-
     return () => {
+      pusher.connection.unbind_all(); // VERY IMPORTANT
       echo.disconnect();
     };
   }, [token, user]);
@@ -185,15 +178,20 @@ export default function AppProvider({ children }: MyComponentProps) {
         loading,
         setLoading,
         echoInstance,
+        isLoggingOut,
+        setIsLoggingOut,
       }}
     >
-      {loading ? (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900"></div>
-        </div>
-      ) : (
-        children
-      )}
+      {/* Keep ONE outer wrapper so the DOM tree does not unmount */}
+      <div className="min-h-screen w-full">
+        {loading && (
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-gray-900"></div>
+          </div>
+        )}
+
+        {!loading && children}
+      </div>
     </AppContext.Provider>
   );
 }

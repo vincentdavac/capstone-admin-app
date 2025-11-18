@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/rules-of-hooks */
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 // import { DropdownItem } from "../ui/dropdown/DropdownItem";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { useNavigate } from "react-router";
@@ -11,8 +10,8 @@ interface Props {
 }
 export default function UserDropdown({ alertsRef }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate(); // ✅ init navigate
-  const { user, setEncryptedToken, setToken, setUser } =
+  const navigate = useNavigate();
+  const { user, setEncryptedToken, setToken, setUser, setIsLoggingOut } =
     useContext(AppContext)!;
 
   function toggleDropdown() {
@@ -24,24 +23,31 @@ export default function UserDropdown({ alertsRef }: Props) {
   }
 
   function handleLogout() {
-    localStorage.removeItem("token"); // clear token from storage
+    alertsRef.current?.addAlert("success", "Logged out successfully!");
 
-    // ✅ Update context state immediately
+    const lastType = user?.userType; // capture user type before clearing
+
+    // Prevent route guards from forcing wrong redirects
+    setIsLoggingOut(true);
+
+    // clear stored token
+    localStorage.removeItem("token");
     setEncryptedToken(null);
     setToken(null);
     setUser(null);
 
-    // ✅ Show logout message
-    alertsRef.current?.addAlert("success", "Logged out successfully!");
-
-    useEffect(() => {
-      if (user?.userType === "admin") {
+    // Allow context update before redirect
+    setTimeout(() => {
+      if (lastType === "admin") {
         navigate("/admin/signin", { replace: true });
-      } else if (user?.userType === "barangay") {
+      } else {
         navigate("/barangay/signin", { replace: true });
       }
-    }, [user?.userType, navigate]); // navigate("/admin/signin", { replace: true });
+
+      setIsLoggingOut(false); // reset flag
+    }, 50);
   }
+
   return (
     <div className="relative">
       <button

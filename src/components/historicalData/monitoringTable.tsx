@@ -4,7 +4,7 @@ const monitoringTable = () => {
       <div className="lg:col-span-2 flex flex-col gap-4">
         <div className="w-[1413px] h-[407px] bg-white shadow rounded-lg border border-gray-300 p-4">
           <div className="w-full px-4 flex items-center h-16">
-            <h1 className="text-lg font-semibold">SENSORS MONITORING TABLE</h1>
+            <h1 className="text-xl font-normal text-gray-500 dark:text-white">Surrounding Temperature Monitoring Table</h1>
           </div>
           <hr className="w-full border-t border-gray-300" />
           <div className="w-[1350px] h-[262px] overflow-hidden border rounded-xl shadow-sm mt-10 ml-3">

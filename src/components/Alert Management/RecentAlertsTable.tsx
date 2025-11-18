@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { AlertRow } from './AlertRow'; // Import AlertRow
+import { AlertRow } from './AlertRow'; 
 
 interface RecentAlertsTableProps {
     loading: boolean;
@@ -14,6 +14,7 @@ interface RecentAlertsTableProps {
     startIndex: number;
     setCurrentPage: (page: number) => void;
     handleSelectAlert: (id: number) => void;
+    handleBroadcastAlert: () => void; 
 }
 
 export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
@@ -29,10 +30,16 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
     setCurrentPage,
     handleSelectAlert
 }) => {
-  
+    
+    const handleBroadcastClick = () => {
+        console.log('Broadcast Alert clicked!');
+        alert('Broadcasting Alert...');
+    };
+
     return (
       <div className="space-y-4 lg:pl-8">
         <div className="flex justify-between items-center">
+          {/* Recent Alerts Title */}
           <h3 className="text-xl font-normal text-gray-500 dark:text-white">
             Recent Alerts
           </h3>
@@ -43,11 +50,10 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
             </select>
           </div>
         </div>
-
+        
         {/* Table Container */}
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-x-auto">
           <div className="min-w-full">
-            {/* Table Header */}
             <div
               className="grid text-left text-xs sm:text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 border-b border-gray-200 dark:border-gray-700"
               style={{ gridTemplateColumns: "1fr 0.8fr 1fr 2.5fr 0.5fr" }}
@@ -59,6 +65,7 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
               <div className="p-3 text-center">Action</div>
             </div>
 
+            {/* Table Body (Alerts/Loading/No Alerts) */}
             <div>
               {loading ? (
                 <div className="p-4 text-center text-gray-500 dark:text-gray-400">
@@ -86,16 +93,38 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
           </div>
         </div>
 
-        {/* Table Footer/Pagination */}
         <div className="flex flex-col sm:flex-row items-center justify-between pt-2 space-y-2 sm:space-y-0">
+          {/* Showing Entries Text */}
           <div className="text-sm text-gray-700 dark:text-gray-300">
             Showing {startIndex + 1} to{" "}
             {Math.min(startIndex + itemsPerPage, filteredAlerts.length)}{" "}
             of {filteredAlerts.length} Entries
           </div>
 
-          {/* Pagination Controls */}
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-col space-y-2 items-end"> 
+             {/* 1. Broadcast Alert Button */}
+             <button
+                onClick={handleBroadcastClick} 
+                className="flex items-center space-x-2 px-4 py-2 bg-[#453EFE] text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition duration-150"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 rotate-45"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                >
+                    <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"
+                    />
+                </svg>
+                <span>Broadcast Alert</span>
+            </button>
+            
+            {/* 2. Pagination Number Buttons */}
             <div className="flex space-x-1 sm:space-x-2">
               <button
                 onClick={() =>

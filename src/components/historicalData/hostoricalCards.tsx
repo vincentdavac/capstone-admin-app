@@ -14,7 +14,7 @@ export default function HistoricalCards() {
     <div className="lg:col-span-2 flex flex-col">
       <div className="border-2 border-[#D9D9D9] w-[1480px] h-[1043px] mt-8 rounded md:rounded-xl">
         <div className="w-full px-4 flex items-center h-16 justify-between">
-          <h1 className="text-lg font-semibold">HISTORICAL DATA</h1>
+          <h1 className="text-xl font-normal text-gray-500 dark:text-white">HISTORICAL TABLE</h1>
           <button className="bg-[#FFF] border border-[#453EFE] text-black px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors flex items-center">
             Export CSV
           </button>

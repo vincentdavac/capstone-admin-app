@@ -2,14 +2,12 @@ import { useState } from "react";
 import chart from "./chart";
 import MonitoringTable from "./monitoringTable";
 
-interface Graph {
-  [key: string]: string;
-}
 
 export default function HistoricalCards() {
   const [current, setData] = useState("waterLevel");
   const CurrentChart = chart[current];
-  const [date, setDate] = useState('');
+  // eslint-disable-next-line no-empty-pattern
+  const [] = useState('');
   return (
     <div className="lg:col-span-2 flex flex-col">
       <div className="border-2 border-[#D9D9D9] w-[1480px] h-[1043px] mt-8 rounded md:rounded-xl">

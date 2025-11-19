@@ -81,9 +81,69 @@ const navItems: NavItem[] = [
   },
   {
     icon: <LibraryBig />,
-    name: "Historical Data",
+    name: "Historical CHUCU",
     path: "/admin/historical-data",
   },
+
+
+    {
+    name: "Historical Data",
+    icon: <Management />,
+    subItems: [
+      {
+        name: "Surroundings Temperature Monitoring",
+        path: "/admin/surrounding-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Humidity Monitoring",
+        path: "/admin/humidity-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Water Temperature Monitoring",
+        path: "/admin/water-temperature-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Rain Monitoring",
+        path: "/admin/rain-monitoring-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Atmospheric Pressure Monitoring",
+        path: "/admin/atmospheric-pressure-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Wind Speed Monitoring",
+        path: "/admin/windspeed-monitoring-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Water Depth Monitoring",
+        path: "/admin/water-depth-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Rain Gauge Monitoring",
+        path: "/admin/rain-gauge-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+    ],
+  },
+
+
+
+
   {
     icon: <LibraryBig />,
     name: "Manage Users",
@@ -125,6 +185,8 @@ const navItems: NavItem[] = [
       },
     ],
   },
+
+
 
   // {
   //   name: "Pages",

@@ -9,41 +9,29 @@ const monitoringTable = () => {
           <hr className="w-full border-t border-gray-300" />
           <div className="w-[1350px] h-[262px] overflow-hidden border rounded-xl shadow-sm mt-10 ml-3">
             <table className="table-auto w-full h-full text-sm text-center border-collapse">
-              <thead className="bg-gray-100 text-gray-700">
+              <thead className="text-sm font-light bg-gray-100 text-gray-500">
                 <tr>
-                  <th className="px-4 py-2">Water Level (m)</th>
-                  <th className="px-4 py-2">
-                    Sea Surface Temperature (°C / °F)
-                  </th>
-                  <th className="px-4 py-2">Temperature (°C)</th>
-                  <th className="px-4 py-2">Temperature (°F)</th>
-                  <th className="px-4 py-2">Status</th>
-                  <th className="px-4 py-2">Recorded At</th>
-                  <th className="px-4 py-2">Updated At</th>
+                  <th className="px-4 py-2 text-sm font-normal">Temperature (°C)</th>
+                  <th className="px-4 py-2 text-sm font-normal">Temperature (°F)</th>
+                  <th className="px-4 py-2 text-sm font-normal">Status</th>
+                  <th className="px-4 py-2 text-sm font-normal">Recorded At</th>
+                  <th className="px-4 py-2 text-sm font-normal">Updated At</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-t">
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">
-                    <span className="w-4 h-4 aspect-square rounded-full inline-block bg-blue-400"></span>
-                  </td>
+                  <td className="px-4 py-2 text-sm font-normal">test</td>
+                  <td className="px-4 py-2 text-sm font-normal">test</td>
+                  <td className="px-4 py-2 text-sm font-normal">test</td>
+                  <td className="px-4 py-2 text-sm font-normal">2025-09-07 08:00</td>
+                  <td className="px-4 py-2 text-sm font-normal">2025-09-07 08:05</td>
                 </tr>
                 <tr className="border-t">
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">test</td>
-                  <td className="px-4 py-2">
-                    <span className="w-4 h-4 aspect-square rounded-full inline-block bg-yellow-400"></span>
-                  </td>
+                  <td className="px-4 py-2 text-sm font-normal">test</td>
+                  <td className="px-4 py-2 text-sm font-normal">test</td>
+                  <td className="px-4 py-2 text-sm font-normal">test</td>
+                  <td className="px-4 py-2 text-sm font-normal">2025-09-07 08:05</td>
+                  <td className="px-4 py-2 text-sm font-normal">2025-09-07 08:05</td>
                 </tr>
               </tbody>
             </table>

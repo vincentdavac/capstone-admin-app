@@ -72,6 +72,16 @@ import BarangaySignUp from "./pages/AuthPages/Barangay/BarangaySignUp";
 import BarangaySignIn from "./pages/AuthPages/Barangay/BarangaySignIn";
 import BarangayForgotPassword from "./pages/AuthPages/Barangay/BarangayForgotPassword";
 
+// HIstorical Table
+import SurroundingTable from "./pages/Administrator/Historical Tables/SurroundingTable";
+import HumidityTable from "./pages/Administrator/Historical Tables/HumidityTable";
+import WaterMonitoring from "./pages/Administrator/Historical Tables/WaterMonitoring";
+import RainMonitoring from "./pages/Administrator/Historical Tables/RainMonitoring";
+import AtmosphericPressure from "./pages/Administrator/Historical Tables/AtmosphericPressure";
+import WindSpeed from "./pages/Administrator/Historical Tables/WindSpeed";
+import WaterDepth from "./pages/Administrator/Historical Tables/WaterDepth";
+import RainGauge from "./pages/Administrator/Historical Tables/RainGauge";
+
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
@@ -180,6 +190,78 @@ export default function App({ alertsRef }: AppProps) {
               </ProtectedRoute>
             }
           />
+
+          {/* Historical data */}
+          <Route
+            path="/admin/surrounding-table"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <SurroundingTable />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/humidity-table"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <HumidityTable />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/water-temperature-table"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <WaterMonitoring />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/rain-monitoring-table"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <RainMonitoring />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/atmospheric-pressure-table"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <AtmosphericPressure />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/windspeed-monitoring-table"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <WindSpeed />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/water-depth-table"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <WaterDepth />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/rain-gauge-table"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <RainGauge />
+              </ProtectedRoute>
+            }
+          />
+
+
+
+
+
+
 
           {/* Management */}
           <Route

@@ -1,9 +1,9 @@
-import React, { useState, Fragment, useRef } from "react";
+import React, { useState, Fragment } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import Prototype from "../../preview/Prototype"; // Assuming this is the correct path to the updated Prototype.tsx
+import About from "../../../../preview/About";
 
-// 1. Define the interface for the table items
+// 1. Define the interface first
 interface TableItem {
   id: number;
   title: string;
@@ -11,159 +11,186 @@ interface TableItem {
   status: "Active" | "Inactive";
 }
 
-interface HomepagePrototypeItem extends TableItem {
-  image: string;
-}
-
-// 2. Define your mock data, ensuring it matches the interfaces
-const mockPrototypeDescriptionData: TableItem[] = [
+// 2. Then, define your mock data, ensuring it matches the interface
+const mockAboutData: TableItem[] = [
   {
     id: 1,
-    title: "THE COASTELLA PROTOTYPE",
+    title: "ABOUT US",
     description:
-      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
+      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics.",
     status: "Active",
-  },
-];
-
-const mockHomepagePrototypeData: HomepagePrototypeItem[] = [
-  {
-    id: 1,
-    title: "Solar Controller",
-    description:
-      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
-    status: "Active",
-    image: "/images/preview/prototype-preview.png",
   },
   {
     id: 2,
-    title: "Warning Light",
+    title: "OUR STORY",
     description:
-      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
+      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics.",
     status: "Active",
-    image: "/images/preview/prototype-preview.png",
   },
   {
     id: 3,
-    title: "Rain Sensor",
-    description:
-      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
+    title: "ABOUT US 2",
+    description: "Another mock description.",
     status: "Active",
-    image: "/images/preview/prototype-preview.png",
+  },
+  {
+    id: 4,
+    title: "OUR STORY 2",
+    description: "Another mock description.",
+    status: "Active",
+  },
+  {
+    id: 5,
+    title: "TEST 1",
+    description: "Another mock description.",
+    status: "Inactive",
+  },
+  {
+    id: 6,
+    title: "TEST 2",
+    description: "Another mock description.",
+    status: "Active",
+  },
+  {
+    id: 7,
+    title: "TEST 3",
+    description: "Another mock description.",
+    status: "Inactive",
+  },
+  {
+    id: 8,
+    title: "TEST 4",
+    description: "Another mock description.",
+    status: "Active",
   },
 ];
 
-const CustomizationPrototype: React.FC = () => {
-  const [prototypeDescriptionData, setPrototypeDescriptionData] = useState<
-    TableItem[]
-  >(mockPrototypeDescriptionData);
-  const [homepagePrototypeData, setHomepagePrototypeData] = useState<
-    HomepagePrototypeItem[]
-  >(mockHomepagePrototypeData);
+const mockMVVData: TableItem[] = [
+  {
+    id: 1,
+    title: "OUR MISSION",
+    description:
+      "To provide a sustainable, solar-powered coastal monitoring and alert system that delivers real-time data and early warnings, empowering communities and authorities to enhance safety, disaster preparedness, and marine preservation.",
+    status: "Active",
+  },
+  {
+    id: 2,
+    title: "OUR VISION",
+    description:
+      "To provide a sustainable, solar-powered coastal monitoring and alert system that delivers real-time data and early warnings, empowering communities and authorities to enhance safety, disaster preparedness, and marine preservation.",
+    status: "Active",
+  },
+  {
+    id: 3,
+    title: "OUR VALUES",
+    description:
+      "To provide a sustainable, solar-powered coastal monitoring and alert system that delivers real-time data and early warnings, empowering communities and authorities to enhance safety, disaster preparedness, and marine preservation.",
+    status: "Active",
+  },
+  {
+    id: 4,
+    title: "MISSION 2",
+    description: "Another mock description.",
+    status: "Active",
+  },
+  {
+    id: 5,
+    title: "VISION 2",
+    description: "Another mock description.",
+    status: "Inactive",
+  },
+  {
+    id: 6,
+    title: "VALUES 2",
+    description: "Another mock description.",
+    status: "Active",
+  },
+  {
+    id: 7,
+    title: "TEST 1",
+    description: "Another mock description.",
+    status: "Inactive",
+  },
+];
 
-  const [prototypeDescriptionSearchTerm, setPrototypeDescriptionSearchTerm] =
-    useState("");
-  const [homepagePrototypeSearchTerm, setHomepagePrototypeSearchTerm] =
-    useState("");
+// 3. Finally, use the interface and data within your component
+const CustomizationAbout: React.FC = () => {
+  const [aboutData, setAboutData] = useState<TableItem[]>(mockAboutData);
+  const [mvvData, setMvvData] = useState<TableItem[]>(mockMVVData);
+
+  const [aboutSearchTerm, setAboutSearchTerm] = useState("");
+  const [mvvSearchTerm, setMvvSearchTerm] = useState("");
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [currentUpdateItem, setCurrentUpdateItem] = useState<
-    TableItem | HomepagePrototypeItem | null
-  >(null);
+  const [currentUpdateItem, setCurrentUpdateItem] = useState<TableItem | null>(
+    null
+  );
   const [currentTableType, setCurrentTableType] = useState<string>("");
 
   const [isConfirmArchiveOpen, setIsConfirmArchiveOpen] = useState(false);
   const [isArchiveSuccessOpen, setIsArchiveSuccessOpen] = useState(false);
   const [itemToArchive, setItemToArchive] = useState<{
     id: number;
-    table: "prototypeDescription" | "homepagePrototype";
+    table: "about" | "mvv";
   } | null>(null);
 
-  // New states and ref for Add Modal
-  const [newPrototypeData, setNewPrototypeData] =
-    useState<HomepagePrototypeItem>({
-      id: 0,
-      title: "",
-      description: "",
-      status: "Active",
-      image: "",
-    });
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
   // Pagination states for each table
-  const [prototypeDescriptionCurrentPage, setPrototypeDescriptionCurrentPage] =
-    useState(1);
-  const [homepagePrototypeCurrentPage, setHomepagePrototypeCurrentPage] =
-    useState(1);
+  const [aboutCurrentPage, setAboutCurrentPage] = useState(1);
+  const [mvvCurrentPage, setMvvCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  const handleOpenUpdateModal = (
-    item: TableItem | HomepagePrototypeItem,
-    tableType: string
-  ) => {
+  const handleOpenUpdateModal = (item: TableItem, tableType: string) => {
     setCurrentUpdateItem(item);
     setCurrentTableType(tableType);
     setIsUpdateModalOpen(true);
   };
 
   const handleSaveUpdate = () => {
-    if (currentUpdateItem) {
-      if (currentTableType === "prototypeDescription") {
-        setPrototypeDescriptionData(
-          prototypeDescriptionData.map((item) =>
-            item.id === currentUpdateItem.id ? currentUpdateItem : item
-          ) as TableItem[]
-        );
-      } else if (currentTableType === "homepagePrototype") {
-        setHomepagePrototypeData(
-          homepagePrototypeData.map((item) =>
-            item.id === currentUpdateItem.id
-              ? (currentUpdateItem as HomepagePrototypeItem)
-              : item
-          )
-        );
-      }
+    if (currentUpdateItem && currentTableType === "about") {
+      setAboutData(
+        aboutData.map((item) =>
+          item.id === currentUpdateItem.id ? currentUpdateItem : item
+        )
+      );
+    } else if (currentUpdateItem && currentTableType === "mvv") {
+      setMvvData(
+        mvvData.map((item) =>
+          item.id === currentUpdateItem.id ? currentUpdateItem : item
+        )
+      );
     }
     setIsUpdateModalOpen(false);
     setCurrentUpdateItem(null);
   };
 
-  const handleArchive = (
-    id: number,
-    tableType: "prototypeDescription" | "homepagePrototype"
-  ) => {
+  const handleArchive = (id: number, tableType: "about" | "mvv") => {
     setItemToArchive({ id, table: tableType });
     setIsConfirmArchiveOpen(true);
   };
 
   const handleConfirmArchive = () => {
     if (itemToArchive) {
-      if (itemToArchive.table === "prototypeDescription") {
-        const newPrototypeDescriptionData = prototypeDescriptionData.filter(
+      if (itemToArchive.table === "about") {
+        const newAboutData = aboutData.filter(
           (item) => item.id !== itemToArchive.id
         );
-        setPrototypeDescriptionData(newPrototypeDescriptionData);
+        setAboutData(newAboutData);
         if (
-          newPrototypeDescriptionData.length <=
-            (prototypeDescriptionCurrentPage - 1) * itemsPerPage &&
-          prototypeDescriptionCurrentPage > 1
+          newAboutData.length <= (aboutCurrentPage - 1) * itemsPerPage &&
+          aboutCurrentPage > 1
         ) {
-          setPrototypeDescriptionCurrentPage(
-            prototypeDescriptionCurrentPage - 1
-          );
+          setAboutCurrentPage(aboutCurrentPage - 1);
         }
       } else {
-        const newHomepagePrototypeData = homepagePrototypeData.filter(
+        const newMvvData = mvvData.filter(
           (item) => item.id !== itemToArchive.id
         );
-        setHomepagePrototypeData(newHomepagePrototypeData);
+        setMvvData(newMvvData);
         if (
-          newHomepagePrototypeData.length <=
-            (homepagePrototypeCurrentPage - 1) * itemsPerPage &&
-          homepagePrototypeCurrentPage > 1
+          newMvvData.length <= (mvvCurrentPage - 1) * itemsPerPage &&
+          mvvCurrentPage > 1
         ) {
-          setHomepagePrototypeCurrentPage(homepagePrototypeCurrentPage - 1);
+          setMvvCurrentPage(mvvCurrentPage - 1);
         }
       }
       setIsConfirmArchiveOpen(false);
@@ -172,129 +199,78 @@ const CustomizationPrototype: React.FC = () => {
     }
   };
 
-  const handleAddModalOpen = () => {
-    setNewPrototypeData({
-      id: 0,
-      title: "",
-      description: "",
-      status: "Active",
-      image: "",
-    });
-    setIsAddModalOpen(true);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setNewPrototypeData({
-          ...newPrototypeData,
-          image: reader.result as string,
-        });
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleAddNewPrototype = () => {
-    const newId =
-      homepagePrototypeData.length > 0
-        ? Math.max(...homepagePrototypeData.map((item) => item.id)) + 1
-        : 1;
-    const newItem = { ...newPrototypeData, id: newId };
-    setHomepagePrototypeData([...homepagePrototypeData, newItem]);
-    setIsAddModalOpen(false);
-  };
-
-  const filteredPrototypeDescriptionData = prototypeDescriptionData.filter(
+  const filteredAboutData = aboutData.filter(
     (item) =>
-      item.title
-        .toLowerCase()
-        .includes(prototypeDescriptionSearchTerm.toLowerCase()) ||
-      item.description
-        .toLowerCase()
-        .includes(prototypeDescriptionSearchTerm.toLowerCase())
+      item.title.toLowerCase().includes(aboutSearchTerm.toLowerCase()) ||
+      item.description.toLowerCase().includes(aboutSearchTerm.toLowerCase())
   );
 
-  const filteredHomepagePrototypeData = homepagePrototypeData.filter(
+  const filteredMvvData = mvvData.filter(
     (item) =>
-      item.title
-        .toLowerCase()
-        .includes(homepagePrototypeSearchTerm.toLowerCase()) ||
-      item.description
-        .toLowerCase()
-        .includes(homepagePrototypeSearchTerm.toLowerCase())
+      item.title.toLowerCase().includes(mvvSearchTerm.toLowerCase()) ||
+      item.description.toLowerCase().includes(mvvSearchTerm.toLowerCase())
   );
 
-  // Pagination calculations for Prototype Description table
-  const totalPrototypeDescriptionPages = Math.ceil(
-    filteredPrototypeDescriptionData.length / itemsPerPage
+  // Pagination calculations for About table
+  const totalAboutPages = Math.ceil(filteredAboutData.length / itemsPerPage);
+  const lastAboutItemIndex = aboutCurrentPage * itemsPerPage;
+  const firstAboutItemIndex = lastAboutItemIndex - itemsPerPage;
+  const paginatedAboutData = filteredAboutData.slice(
+    firstAboutItemIndex,
+    lastAboutItemIndex
   );
-  const lastPrototypeDescriptionItemIndex =
-    prototypeDescriptionCurrentPage * itemsPerPage;
-  const firstPrototypeDescriptionItemIndex =
-    lastPrototypeDescriptionItemIndex - itemsPerPage;
-  const paginatedPrototypeDescriptionData =
-    filteredPrototypeDescriptionData.slice(
-      firstPrototypeDescriptionItemIndex,
-      lastPrototypeDescriptionItemIndex
-    );
 
-  // Pagination calculations for Homepage Prototype table
-  const totalHomepagePrototypePages = Math.ceil(
-    filteredHomepagePrototypeData.length / itemsPerPage
-  );
-  const lastHomepagePrototypeItemIndex =
-    homepagePrototypeCurrentPage * itemsPerPage;
-  const firstHomepagePrototypeItemIndex =
-    lastHomepagePrototypeItemIndex - itemsPerPage;
-  const paginatedHomepagePrototypeData = filteredHomepagePrototypeData.slice(
-    firstHomepagePrototypeItemIndex,
-    lastHomepagePrototypeItemIndex
+  // Pagination calculations for MVV table
+  const totalMvvPages = Math.ceil(filteredMvvData.length / itemsPerPage);
+  const lastMvvItemIndex = mvvCurrentPage * itemsPerPage;
+  const firstMvvItemIndex = lastMvvItemIndex - itemsPerPage;
+  const paginatedMvvData = filteredMvvData.slice(
+    firstMvvItemIndex,
+    lastMvvItemIndex
   );
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white transition-colors duration-300">
-      {/* Preview Image Section - Just put your image here */}
+    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
+      {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-light text-gray-600 dark:text-gray-400">
-          Homepage Sliders Preview
+          Homepage About Preview
         </h1>
       </div>
-      {/* Slider Preview Section */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6 transition-colors duration-300">
+
+      {/* About Section Preview */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6">
         <div className="flex justify-center w-full">
           {/* I-wrap ang Slider component at bigyan ng fixed size */}
           <div className="w-full max-w-8xl">
-            <Prototype />
+            <About />
           </div>
         </div>
       </div>
-      {/* Prototype Description Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm transition-colors duration-300">
+
+      {/* About Description Table */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-light text-gray-600 dark:text-gray-400">
-              Prototype Description Table
+              About Description Table
             </h1>
           </div>
         </div>
-        {/* Search - Moved to the left */}
+        {/* Search - MOVED TO LEFT SIDE */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-start">
           <div className="relative w-full sm:max-w-xs">
             <input
               type="text"
               placeholder="Search title or description..."
-              value={prototypeDescriptionSearchTerm}
-              onChange={(e) =>
-                setPrototypeDescriptionSearchTerm(e.target.value)
-              }
+              value={aboutSearchTerm}
+              onChange={(e) => setAboutSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             />
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
           </div>
         </div>
+
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-200 dark:border-gray-700 rounded-lg">
@@ -333,7 +309,7 @@ const CustomizationPrototype: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {paginatedPrototypeDescriptionData.map((item) => (
+              {paginatedAboutData.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -361,9 +337,7 @@ const CustomizationPrototype: React.FC = () => {
                   <td className="px-6 py-4 flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
                     <div className="relative group">
                       <button
-                        onClick={() =>
-                          handleOpenUpdateModal(item, "prototypeDescription")
-                        }
+                        onClick={() => handleOpenUpdateModal(item, "about")}
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
                         <Upload className="w-5 h-5" />
@@ -374,9 +348,7 @@ const CustomizationPrototype: React.FC = () => {
                     </div>
                     <div className="relative group">
                       <button
-                        onClick={() =>
-                          handleArchive(item.id, "prototypeDescription")
-                        }
+                        onClick={() => handleArchive(item.id, "about")}
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
                         <Archive className="w-5 h-5" />
@@ -391,57 +363,38 @@ const CustomizationPrototype: React.FC = () => {
             </tbody>
           </table>
         </div>
-        {/* Pagination */}
+        {/* --- CORRECT PAGINATION --- */}
         <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-gray-700 dark:text-gray-300">
-              Showing {firstPrototypeDescriptionItemIndex + 1} to{" "}
-              {Math.min(
-                lastPrototypeDescriptionItemIndex,
-                filteredPrototypeDescriptionData.length
-              )}{" "}
-              of {filteredPrototypeDescriptionData.length} Entries
+              Showing {firstAboutItemIndex + 1} to{" "}
+              {Math.min(lastAboutItemIndex, filteredAboutData.length)} of{" "}
+              {filteredAboutData.length} Entries
             </div>
             <div className="flex space-x-2">
               <button
-                onClick={() =>
-                  setPrototypeDescriptionCurrentPage(
-                    prototypeDescriptionCurrentPage - 1
-                  )
-                }
-                disabled={prototypeDescriptionCurrentPage === 1}
+                onClick={() => setAboutCurrentPage(aboutCurrentPage - 1)}
+                disabled={aboutCurrentPage === 1}
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Previous
               </button>
-              {Array.from(
-                { length: totalPrototypeDescriptionPages },
-                (_, index) => (
-                  <button
-                    key={index + 1}
-                    onClick={() =>
-                      setPrototypeDescriptionCurrentPage(index + 1)
-                    }
-                    className={`px-3 py-1 text-sm rounded-lg ${
-                      prototypeDescriptionCurrentPage === index + 1
-                        ? "bg-[#453EFE] text-white"
-                        : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                )
-              )}
+              {Array.from({ length: totalAboutPages }, (_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => setAboutCurrentPage(index + 1)}
+                  className={`px-3 py-1 text-sm rounded-lg ${
+                    aboutCurrentPage === index + 1
+                      ? "bg-[#453EFE] text-white"
+                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
               <button
-                onClick={() =>
-                  setPrototypeDescriptionCurrentPage(
-                    prototypeDescriptionCurrentPage + 1
-                  )
-                }
-                disabled={
-                  prototypeDescriptionCurrentPage ===
-                  totalPrototypeDescriptionPages
-                }
+                onClick={() => setAboutCurrentPage(aboutCurrentPage + 1)}
+                disabled={aboutCurrentPage === totalAboutPages}
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Next
@@ -451,48 +404,26 @@ const CustomizationPrototype: React.FC = () => {
         </div>
       </div>
 
-      {/* Homepage Prototype Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm mt-6 transition-colors duration-300">
+      {/* Mission Vision Values Table */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm mt-6">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-light text-gray-600 dark:text-gray-400">
-              Homepage Prototype Table
+              Mission Vision Values Table
             </h1>
           </div>
         </div>
-        {/* Search and Add Button - Flipped the order to be Search (Left) and Button (Right) */}
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          {/* Search (Left) */}
-          <div className="relative w-full sm:max-w-md order-2 sm:order-1">
+        {/* Search - MOVED TO LEFT SIDE */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-start">
+          <div className="relative w-full sm:max-w-xs">
             <input
               type="text"
               placeholder="Search title or description..."
-              value={homepagePrototypeSearchTerm}
-              onChange={(e) => setHomepagePrototypeSearchTerm(e.target.value)}
+              value={mvvSearchTerm}
+              onChange={(e) => setMvvSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             />
-            <svg
-              className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-          </div>
-          {/* Add Button (Right) */}
-          <div className="flex-shrink-0 order-1 sm:order-2">
-            <button
-              onClick={handleAddModalOpen}
-              className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
-            >
-              + Add Prototype
-            </button>
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
           </div>
         </div>
 
@@ -506,12 +437,6 @@ const CustomizationPrototype: React.FC = () => {
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap"
                 >
                   Record ID
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap"
-                >
-                  Image
                 </th>
                 <th
                   scope="col"
@@ -540,20 +465,13 @@ const CustomizationPrototype: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {paginatedHomepagePrototypeData.map((item) => (
+              {paginatedMvvData.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 whitespace-nowrap">
                     {item.id}
-                  </td>
-                  <td className="px-6 py-4">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-16 h-auto object-cover rounded-lg"
-                    />
                   </td>
                   <td className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap">
                     {item.title}
@@ -575,23 +493,18 @@ const CustomizationPrototype: React.FC = () => {
                   <td className="px-6 py-4 flex flex-col sm:flex-row items-center space-y-2 sm:space-y-0 sm:space-x-2">
                     <div className="relative group">
                       <button
-                        onClick={() =>
-                          handleOpenUpdateModal(item, "homepagePrototype")
-                        }
+                        onClick={() => handleOpenUpdateModal(item, "mvv")}
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
                         <Upload className="w-5 h-5" />
                       </button>
                       <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition">
-                        UPDATE
-                      </span
->
+                        Update
+                      </span>
                     </div>
                     <div className="relative group">
                       <button
-                        onClick={() =>
-                          handleArchive(item.id, "homepagePrototype")
-                        }
+                        onClick={() => handleArchive(item.id, "mvv")}
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
                         <Archive className="w-5 h-5" />
@@ -606,54 +519,38 @@ const CustomizationPrototype: React.FC = () => {
             </tbody>
           </table>
         </div>
-        {/* Pagination */}
+        {/* --- CORRECT PAGINATION --- */}
         <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-gray-700 dark:text-gray-300">
-              Showing {firstHomepagePrototypeItemIndex + 1} to{" "}
-              {Math.min(
-                lastHomepagePrototypeItemIndex,
-                filteredHomepagePrototypeData.length
-              )}{" "}
-              of {filteredHomepagePrototypeData.length} Entries
+              Showing {firstMvvItemIndex + 1} to{" "}
+              {Math.min(lastMvvItemIndex, filteredMvvData.length)} of{" "}
+              {filteredMvvData.length} Entries
             </div>
             <div className="flex space-x-2">
               <button
-                onClick={() =>
-                  setHomepagePrototypeCurrentPage(
-                    homepagePrototypeCurrentPage - 1
-                  )
-                }
-                disabled={homepagePrototypeCurrentPage === 1}
+                onClick={() => setMvvCurrentPage(mvvCurrentPage - 1)}
+                disabled={mvvCurrentPage === 1}
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Previous
               </button>
-              {Array.from(
-                { length: totalHomepagePrototypePages },
-                (_, index) => (
-                  <button
-                    key={index + 1}
-                    onClick={() => setHomepagePrototypeCurrentPage(index + 1)}
-                    className={`px-3 py-1 text-sm rounded-lg ${
-                      homepagePrototypeCurrentPage === index + 1
-                        ? "bg-[#453EFE] text-white"
-                        : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                )
-              )}
+              {Array.from({ length: totalMvvPages }, (_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => setMvvCurrentPage(index + 1)}
+                  className={`px-3 py-1 text-sm rounded-lg ${
+                    mvvCurrentPage === index + 1
+                      ? "bg-[#453EFE] text-white"
+                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
               <button
-                onClick={() =>
-                  setHomepagePrototypeCurrentPage(
-                    homepagePrototypeCurrentPage + 1
-                  )
-                }
-                disabled={
-                  homepagePrototypeCurrentPage === totalHomepagePrototypePages
-                }
+                onClick={() => setMvvCurrentPage(mvvCurrentPage + 1)}
+                disabled={mvvCurrentPage === totalMvvPages}
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Next
@@ -680,7 +577,7 @@ const CustomizationPrototype: React.FC = () => {
             leaveTo="opacity-0"
           >
             <div
-              className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50"
+              className="fixed inset-0 bg-black bg-opacity-25"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
             />
           </Transition.Child>
@@ -702,9 +599,7 @@ const CustomizationPrototype: React.FC = () => {
                 >
                   <div className="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {currentTableType === "homepagePrototype"
-                        ? "UPDATE PROTOTYPE"
-                        : "UPDATE  DESCRIPTION"}
+                      UPDATE {currentUpdateItem?.title}
                     </h3>
                     <button
                       type="button"
@@ -837,185 +732,6 @@ const CustomizationPrototype: React.FC = () => {
         </Dialog>
       </Transition>
 
-      {/* Add Modal */}
-      {isAddModalOpen && (
-        <div
-          className="fixed inset-0 flex items-center justify-center p-4 z-10"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
-        >
-          <div
-            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md overflow-hidden transform transition-all"
-            style={{ borderRadius: "15px" }}
-          >
-            <div className="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                Add Prototype
-              </h3>
-              <button
-                type="button"
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-                onClick={() => setIsAddModalOpen(false)}
-              >
-                <svg
-                  className="h-6 w-6"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
-            </div>
-            <div className="p-6">
-              <div className="space-y-4">
-                {/* Title Input */}
-                <div>
-                  <label
-                    htmlFor="add-title"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                  >
-                    Title
-                  </label>
-                  <input
-                    type="text"
-                    id="add-title"
-                    name="title"
-                    value={newPrototypeData.title}
-                    onChange={(e) =>
-                      setNewPrototypeData({
-                        ...newPrototypeData,
-                        title: e.target.value,
-                      })
-                    }
-                    className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                    style={{ borderRadius: "12px" }}
-                  />
-                </div>
-
-                {/* Description Input */}
-                <div>
-                  <label
-                    htmlFor="add-description"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                  >
-                    Description
-                  </label>
-                  <textarea
-                    id="add-description"
-                    name="description"
-                    rows={3}
-                    value={newPrototypeData.description}
-                    onChange={(e) =>
-                      setNewPrototypeData({
-                        ...newPrototypeData,
-                        description: e.target.value,
-                      })
-                    }
-                    className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                    style={{ borderRadius: "12px" }}
-                  ></textarea>
-                </div>
-
-                {/* Image Input */}
-                <div>
-                  <label
-                    htmlFor="add-image"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                  >
-                    Image
-                  </label>
-                  <div className="relative">
-                    <input
-                      type="text"
-                      id="add-image"
-                      name="image"
-                      value={newPrototypeData.image ? "Image uploaded" : ""}
-                      readOnly
-                      className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                      style={{
-                        borderRadius: "12px",
-                        paddingRight: newPrototypeData.image ? "1rem" : "9rem",
-                      }}
-                    />
-                    <input
-                      type="file"
-                      ref={fileInputRef}
-                      className="hidden"
-                      onChange={handleFileChange}
-                      accept="image/*"
-                    />
-                    {!newPrototypeData.image && (
-                      <button
-                        type="button"
-                        className="absolute left-1 top-1/2 -translate-y-1/2 px-3 py-1.5 text-xs text-white bg-[#453EFE] rounded hover:bg-indigo-700 transition"
-                        onClick={() => fileInputRef.current?.click()}
-                        style={{ borderRadius: "10px" }}
-                      >
-                        Upload a file
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Status Dropdown */}
-                <div>
-                  <label
-                    htmlFor="add-status"
-                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                  >
-                    Status
-                  </label>
-                  <div className="relative">
-                    <select
-                      id="add-status"
-                      name="status"
-                      value={newPrototypeData.status}
-                      onChange={(e) =>
-                        setNewPrototypeData({
-                          ...newPrototypeData,
-                          status: e.target.value as "Active" | "Inactive",
-                        })
-                      }
-                      className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent appearance-none dark:bg-gray-700 dark:text-white"
-                      style={{ borderRadius: "12px" }}
-                    >
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                    </select>
-                    <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                      <svg
-                        className="h-4 w-4 fill-current text-[#453EFE]"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                      >
-                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700">
-              <button
-                type="button"
-                className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-                onClick={handleAddNewPrototype}
-                style={{ borderRadius: "10px" }}
-              >
-                Add
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Archive Confirmation Modal */}
       <Transition appear show={isConfirmArchiveOpen} as={Fragment}>
         <Dialog
@@ -1033,7 +749,7 @@ const CustomizationPrototype: React.FC = () => {
             leaveTo="opacity-0"
           >
             <div
-              className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50"
+              className="fixed inset-0 bg-black bg-opacity-25"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
             />
           </Transition.Child>
@@ -1135,7 +851,7 @@ const CustomizationPrototype: React.FC = () => {
             leaveTo="opacity-0"
           >
             <div
-              className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50"
+              className="fixed inset-0 bg-black bg-opacity-25"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
             />
           </Transition.Child>
@@ -1187,14 +903,23 @@ const CustomizationPrototype: React.FC = () => {
                       strokeWidth="2"
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      className="lucide lucide-circle-check text-[#453EFE]"
+                      className="lucide lucide-check-circle text-green-500"
                     >
-                      <circle cx="12" cy="12" r="10" />
-                      <path d="m9 12 2 2 4-4" />
+                      <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                      <polyline points="22 4 12 14.01 9 11.01" />
                     </svg>
                     <h4 className="mt-4 text-lg font-semibold text-gray-900 dark:text-white">
-                      Archived Successfully!
+                      Successfully Archived!
                     </h4>
+                  </div>
+                  <div className="mt-6 flex justify-center">
+                    <button
+                      type="button"
+                      className="px-6 py-2 rounded-lg text-white bg-[#453EFE] hover:bg-indigo-700 transition-colors"
+                      onClick={() => setIsArchiveSuccessOpen(false)}
+                    >
+                      Close
+                    </button>
                   </div>
                 </Dialog.Panel>
               </Transition.Child>
@@ -1206,4 +931,4 @@ const CustomizationPrototype: React.FC = () => {
   );
 };
 
-export default CustomizationPrototype;
+export default CustomizationAbout;

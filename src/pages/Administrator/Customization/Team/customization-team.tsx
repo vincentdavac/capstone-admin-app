@@ -1,7 +1,7 @@
 import React, { useState, Fragment, useRef } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import Team from "../../preview/Team";
+import Team from "../../../../preview/Team";
 
 // 1. Define the interfaces for the table items
 interface TableItem {
@@ -65,11 +65,11 @@ const CustomizationTeam: React.FC = () => {
   const [teamDescriptionData, setTeamDescriptionData] = useState<TableItem[]>(
     mockTeamDescriptionData
   );
-  const [homepageTeamData, setHomepageTeamData] = useState<HomepageTeamItem[]>(
-    mockHomepageTeamData
-  );
+  const [homepageTeamData, setHomepageTeamData] =
+    useState<HomepageTeamItem[]>(mockHomepageTeamData);
 
-  const [teamDescriptionSearchTerm, setTeamDescriptionSearchTerm] = useState("");
+  const [teamDescriptionSearchTerm, setTeamDescriptionSearchTerm] =
+    useState("");
   const [homepageTeamSearchTerm, setHomepageTeamSearchTerm] = useState("");
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -107,7 +107,8 @@ const CustomizationTeam: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Pagination states for each table
-  const [teamDescriptionCurrentPage, setTeamDescriptionCurrentPage] = useState(1);
+  const [teamDescriptionCurrentPage, setTeamDescriptionCurrentPage] =
+    useState(1);
   const [homepageTeamCurrentPage, setHomepageTeamCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
@@ -269,7 +270,8 @@ const CustomizationTeam: React.FC = () => {
   const totalTeamDescriptionPages = Math.ceil(
     filteredTeamDescriptionData.length / itemsPerPage
   );
-  const lastTeamDescriptionItemIndex = teamDescriptionCurrentPage * itemsPerPage;
+  const lastTeamDescriptionItemIndex =
+    teamDescriptionCurrentPage * itemsPerPage;
   const firstTeamDescriptionItemIndex =
     lastTeamDescriptionItemIndex - itemsPerPage;
   const paginatedTeamDescriptionData = filteredTeamDescriptionData.slice(
@@ -420,7 +422,9 @@ const CustomizationTeam: React.FC = () => {
                     </div>
                     <div className="relative group">
                       <button
-                        onClick={() => handleArchive(item.id, "teamDescription")}
+                        onClick={() =>
+                          handleArchive(item.id, "teamDescription")
+                        }
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
                         <Archive className="w-5 h-5" />
@@ -456,27 +460,26 @@ const CustomizationTeam: React.FC = () => {
               >
                 Previous
               </button>
-              {Array.from(
-                { length: totalTeamDescriptionPages },
-                (_, index) => (
-                  <button
-                    key={index + 1}
-                    onClick={() => setTeamDescriptionCurrentPage(index + 1)}
-                    className={`px-3 py-1 text-sm rounded-lg ${
-                      teamDescriptionCurrentPage === index + 1
-                        ? "bg-[#453EFE] text-white"
-                        : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                )
-              )}
+              {Array.from({ length: totalTeamDescriptionPages }, (_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => setTeamDescriptionCurrentPage(index + 1)}
+                  className={`px-3 py-1 text-sm rounded-lg ${
+                    teamDescriptionCurrentPage === index + 1
+                      ? "bg-[#453EFE] text-white"
+                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
               <button
                 onClick={() =>
                   setTeamDescriptionCurrentPage(teamDescriptionCurrentPage + 1)
                 }
-                disabled={teamDescriptionCurrentPage === totalTeamDescriptionPages}
+                disabled={
+                  teamDescriptionCurrentPage === totalTeamDescriptionPages
+                }
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Next
@@ -621,8 +624,7 @@ const CustomizationTeam: React.FC = () => {
                       </button>
                       <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition">
                         Archive
-                      </span
->
+                      </span>
                     </div>
                   </td>
                 </tr>
@@ -759,10 +761,15 @@ const CustomizationTeam: React.FC = () => {
                               type="text"
                               id="update-name"
                               name="name"
-                              value={(currentUpdateItem as HomepageTeamItem)?.name || ""}
+                              value={
+                                (currentUpdateItem as HomepageTeamItem)?.name ||
+                                ""
+                              }
                               onChange={(e) =>
                                 setCurrentUpdateItem((prev) =>
-                                  prev ? { ...prev, name: e.target.value } : null
+                                  prev
+                                    ? { ...prev, name: e.target.value }
+                                    : null
                                 )
                               }
                               className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
@@ -781,10 +788,15 @@ const CustomizationTeam: React.FC = () => {
                               type="text"
                               id="update-role"
                               name="role"
-                              value={(currentUpdateItem as HomepageTeamItem)?.role || ""}
+                              value={
+                                (currentUpdateItem as HomepageTeamItem)?.role ||
+                                ""
+                              }
                               onChange={(e) =>
                                 setCurrentUpdateItem((prev) =>
-                                  prev ? { ...prev, role: e.target.value } : null
+                                  prev
+                                    ? { ...prev, role: e.target.value }
+                                    : null
                                 )
                               }
                               className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
@@ -804,10 +816,15 @@ const CustomizationTeam: React.FC = () => {
                               id="update-image-url"
                               name="image-url"
                               placeholder="Enter Image URL"
-                              value={(currentUpdateItem as HomepageTeamItem)?.image || ""}
+                              value={
+                                (currentUpdateItem as HomepageTeamItem)
+                                  ?.image || ""
+                              }
                               onChange={(e) =>
                                 setCurrentUpdateItem((prev) =>
-                                  prev ? { ...prev, image: e.target.value } : null
+                                  prev
+                                    ? { ...prev, image: e.target.value }
+                                    : null
                                 )
                               }
                               className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent mb-2 dark:bg-gray-700 dark:text-white"
@@ -835,7 +852,10 @@ const CustomizationTeam: React.FC = () => {
                                   Current Image Preview:
                                 </p>
                                 <img
-                                  src={(currentUpdateItem as HomepageTeamItem)?.image}
+                                  src={
+                                    (currentUpdateItem as HomepageTeamItem)
+                                      ?.image
+                                  }
                                   alt="Current Member"
                                   className="h-20 w-20 object-cover rounded-full"
                                 />
@@ -857,10 +877,14 @@ const CustomizationTeam: React.FC = () => {
                               type="text"
                               id="update-title"
                               name="title"
-                              value={(currentUpdateItem as TableItem)?.title || ""}
+                              value={
+                                (currentUpdateItem as TableItem)?.title || ""
+                              }
                               onChange={(e) =>
                                 setCurrentUpdateItem((prev) =>
-                                  prev ? { ...prev, title: e.target.value } : null
+                                  prev
+                                    ? { ...prev, title: e.target.value }
+                                    : null
                                 )
                               }
                               className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
@@ -879,7 +903,10 @@ const CustomizationTeam: React.FC = () => {
                               id="update-description"
                               name="description"
                               rows={3}
-                              value={(currentUpdateItem as TableItem)?.description || ""}
+                              value={
+                                (currentUpdateItem as TableItem)?.description ||
+                                ""
+                              }
                               onChange={(e) =>
                                 setCurrentUpdateItem((prev) =>
                                   prev
@@ -908,7 +935,9 @@ const CustomizationTeam: React.FC = () => {
                             name="status"
                             value={
                               (
-                                currentUpdateItem as TableItem | HomepageTeamItem
+                                currentUpdateItem as
+                                  | TableItem
+                                  | HomepageTeamItem
                               )?.status || "Active"
                             }
                             onChange={(e) =>
@@ -1204,7 +1233,10 @@ const CustomizationTeam: React.FC = () => {
                           name="name"
                           value={newTeamData.name}
                           onChange={(e) =>
-                            setNewTeamData({ ...newTeamData, name: e.target.value })
+                            setNewTeamData({
+                              ...newTeamData,
+                              name: e.target.value,
+                            })
                           }
                           className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
                           style={{ borderRadius: "12px" }}
@@ -1224,7 +1256,10 @@ const CustomizationTeam: React.FC = () => {
                           name="role"
                           value={newTeamData.role}
                           onChange={(e) =>
-                            setNewTeamData({ ...newTeamData, role: e.target.value })
+                            setNewTeamData({
+                              ...newTeamData,
+                              role: e.target.value,
+                            })
                           }
                           className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
                           style={{ borderRadius: "12px" }}
@@ -1245,7 +1280,10 @@ const CustomizationTeam: React.FC = () => {
                           placeholder="Enter Image URL"
                           value={newTeamData.image}
                           onChange={(e) =>
-                            setNewTeamData({ ...newTeamData, image: e.target.value })
+                            setNewTeamData({
+                              ...newTeamData,
+                              image: e.target.value,
+                            })
                           }
                           className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent mb-2 dark:bg-gray-700 dark:text-white"
                           style={{ borderRadius: "12px" }}
@@ -1337,8 +1375,8 @@ const CustomizationTeam: React.FC = () => {
       {/* Archive Confirmation Modal and Success Modal (The rest of the modals are omitted for brevity but should be included in your file) */}
       {/* ... (Existing Archive Confirmation Modal and Success Modal should be here) */}
 
-       {/* Archive Confirmation Modal */}
-       <Transition appear show={isConfirmArchiveOpen} as={Fragment}>
+      {/* Archive Confirmation Modal */}
+      <Transition appear show={isConfirmArchiveOpen} as={Fragment}>
         <Dialog
           as="div"
           className="relative z-10"

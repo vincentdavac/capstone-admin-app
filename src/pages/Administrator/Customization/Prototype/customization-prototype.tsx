@@ -1,9 +1,9 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useRef } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import Feedback from "../../preview/Feedback";
+import Prototype from "../../../../preview/Prototype"; // Assuming this is the correct path to the updated Prototype.tsx
 
-// 1. Define the interfaces for the table items
+// 1. Define the interface for the table items
 interface TableItem {
   id: number;
   title: string;
@@ -11,67 +11,65 @@ interface TableItem {
   status: "Active" | "Inactive";
 }
 
-interface HomepageFeedbackItem {
-  id: number;
-  name: string;
-  role: string;
-  description: string;
-  status: "Active" | "Inactive";
+interface HomepagePrototypeItem extends TableItem {
+  image: string;
 }
 
 // 2. Define your mock data, ensuring it matches the interfaces
-const mockFeedbackDescriptionData: TableItem[] = [
+const mockPrototypeDescriptionData: TableItem[] = [
   {
     id: 1,
-    title: "VOICES FROM OUR COMMUNITY",
+    title: "THE COASTELLA PROTOTYPE",
     description:
-      "Join us on our mission to save lives. Become a part of the Coastella community by sharing your stories.",
+      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
     status: "Active",
   },
 ];
 
-const mockHomepageFeedbackData: HomepageFeedbackItem[] = [
+const mockHomepagePrototypeData: HomepagePrototypeItem[] = [
   {
     id: 1,
-    name: "Alex Johnson",
-    role: "Local Fisherman",
+    title: "Solar Controller",
     description:
-      "The new early warning system has been a game-changer for my daily work. I feel safer knowing I'll be alerted to any potential danger, and the information is always accurate.",
+      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
     status: "Active",
+    image: "/images/preview/prototype-preview.png",
   },
   {
     id: 2,
-    name: "Maria Reyes",
-    role: "Community Leader",
+    title: "Warning Light",
     description:
-      "This system has empowered our community, giving us the tools to respond proactively to threats and keep our families safe. It's a true testament to how technology can serve the people.",
+      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
     status: "Active",
+    image: "/images/preview/prototype-preview.png",
   },
   {
     id: 3,
-    name: "Ramon Cruz",
-    role: "Marine Biologist",
+    title: "Rain Sensor",
     description:
-      "The real-time data on environmental conditions has been invaluable for my research. It helps us track changes and understand how to better protect our precious marine ecosystems.",
+      "Coastal Operations Monitoring and Alert System through Solar-Powered Tracking of Environmental Conditions, Levels of water, Location, and Analytics",
     status: "Active",
+    image: "/images/preview/prototype-preview.png",
   },
 ];
 
-const CustomizationFeedbacks: React.FC = () => {
-  const [feedbackDescriptionData, setFeedbackDescriptionData] = useState<TableItem[]>(
-    mockFeedbackDescriptionData
-  );
-  const [homepageFeedbackData, setHomepageFeedbackData] = useState<HomepageFeedbackItem[]>(
-    mockHomepageFeedbackData
-  );
+const CustomizationPrototype: React.FC = () => {
+  const [prototypeDescriptionData, setPrototypeDescriptionData] = useState<
+    TableItem[]
+  >(mockPrototypeDescriptionData);
+  const [homepagePrototypeData, setHomepagePrototypeData] = useState<
+    HomepagePrototypeItem[]
+  >(mockHomepagePrototypeData);
 
-  const [feedbackDescriptionSearchTerm] = useState("");
-  const [homepageFeedbackSearchTerm, setHomepageFeedbackSearchTerm] = useState("");
+  const [prototypeDescriptionSearchTerm, setPrototypeDescriptionSearchTerm] =
+    useState("");
+  const [homepagePrototypeSearchTerm, setHomepagePrototypeSearchTerm] =
+    useState("");
 
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [currentUpdateItem, setCurrentUpdateItem] = useState<
-    TableItem | HomepageFeedbackItem | null
+    TableItem | HomepagePrototypeItem | null
   >(null);
   const [currentTableType, setCurrentTableType] = useState<string>("");
 
@@ -79,27 +77,29 @@ const CustomizationFeedbacks: React.FC = () => {
   const [isArchiveSuccessOpen, setIsArchiveSuccessOpen] = useState(false);
   const [itemToArchive, setItemToArchive] = useState<{
     id: number;
-    table: "feedbackDescription" | "homepageFeedback";
+    table: "prototypeDescription" | "homepagePrototype";
   } | null>(null);
 
-  // New states for Add Modal
-  const [newFeedbackData, setNewFeedbackData] =
-    useState<HomepageFeedbackItem>({
+  // New states and ref for Add Modal
+  const [newPrototypeData, setNewPrototypeData] =
+    useState<HomepagePrototypeItem>({
       id: 0,
-      name: "",
-      role: "",
+      title: "",
       description: "",
       status: "Active",
+      image: "",
     });
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Pagination states for each table
-  const [feedbackDescriptionCurrentPage, setFeedbackDescriptionCurrentPage] =
+  const [prototypeDescriptionCurrentPage, setPrototypeDescriptionCurrentPage] =
     useState(1);
-  const [homepageFeedbackCurrentPage, setHomepageFeedbackCurrentPage] = useState(1);
+  const [homepagePrototypeCurrentPage, setHomepagePrototypeCurrentPage] =
+    useState(1);
   const itemsPerPage = 5;
 
   const handleOpenUpdateModal = (
-    item: TableItem | HomepageFeedbackItem,
+    item: TableItem | HomepagePrototypeItem,
     tableType: string
   ) => {
     setCurrentUpdateItem(item);
@@ -109,17 +109,17 @@ const CustomizationFeedbacks: React.FC = () => {
 
   const handleSaveUpdate = () => {
     if (currentUpdateItem) {
-      if (currentTableType === "feedbackDescription") {
-        setFeedbackDescriptionData(
-          feedbackDescriptionData.map((item) =>
+      if (currentTableType === "prototypeDescription") {
+        setPrototypeDescriptionData(
+          prototypeDescriptionData.map((item) =>
             item.id === currentUpdateItem.id ? currentUpdateItem : item
           ) as TableItem[]
         );
-      } else if (currentTableType === "homepageFeedback") {
-        setHomepageFeedbackData(
-          homepageFeedbackData.map((item) =>
+      } else if (currentTableType === "homepagePrototype") {
+        setHomepagePrototypeData(
+          homepagePrototypeData.map((item) =>
             item.id === currentUpdateItem.id
-              ? (currentUpdateItem as HomepageFeedbackItem)
+              ? (currentUpdateItem as HomepagePrototypeItem)
               : item
           )
         );
@@ -131,7 +131,7 @@ const CustomizationFeedbacks: React.FC = () => {
 
   const handleArchive = (
     id: number,
-    tableType: "feedbackDescription" | "homepageFeedback"
+    tableType: "prototypeDescription" | "homepagePrototype"
   ) => {
     setItemToArchive({ id, table: tableType });
     setIsConfirmArchiveOpen(true);
@@ -139,29 +139,31 @@ const CustomizationFeedbacks: React.FC = () => {
 
   const handleConfirmArchive = () => {
     if (itemToArchive) {
-      if (itemToArchive.table === "feedbackDescription") {
-        const newFeedbackDescriptionData = feedbackDescriptionData.filter(
+      if (itemToArchive.table === "prototypeDescription") {
+        const newPrototypeDescriptionData = prototypeDescriptionData.filter(
           (item) => item.id !== itemToArchive.id
         );
-        setFeedbackDescriptionData(newFeedbackDescriptionData);
+        setPrototypeDescriptionData(newPrototypeDescriptionData);
         if (
-          newFeedbackDescriptionData.length <=
-            (feedbackDescriptionCurrentPage - 1) * itemsPerPage &&
-          feedbackDescriptionCurrentPage > 1
+          newPrototypeDescriptionData.length <=
+            (prototypeDescriptionCurrentPage - 1) * itemsPerPage &&
+          prototypeDescriptionCurrentPage > 1
         ) {
-          setFeedbackDescriptionCurrentPage(feedbackDescriptionCurrentPage - 1);
+          setPrototypeDescriptionCurrentPage(
+            prototypeDescriptionCurrentPage - 1
+          );
         }
       } else {
-        const newHomepageFeedbackData = homepageFeedbackData.filter(
+        const newHomepagePrototypeData = homepagePrototypeData.filter(
           (item) => item.id !== itemToArchive.id
         );
-        setHomepageFeedbackData(newHomepageFeedbackData);
+        setHomepagePrototypeData(newHomepagePrototypeData);
         if (
-          newHomepageFeedbackData.length <=
-            (homepageFeedbackCurrentPage - 1) * itemsPerPage &&
-          homepageFeedbackCurrentPage > 1
+          newHomepagePrototypeData.length <=
+            (homepagePrototypeCurrentPage - 1) * itemsPerPage &&
+          homepagePrototypeCurrentPage > 1
         ) {
-          setHomepageFeedbackCurrentPage(homepageFeedbackCurrentPage - 1);
+          setHomepagePrototypeCurrentPage(homepagePrototypeCurrentPage - 1);
         }
       }
       setIsConfirmArchiveOpen(false);
@@ -171,95 +173,128 @@ const CustomizationFeedbacks: React.FC = () => {
   };
 
   const handleAddModalOpen = () => {
-    setNewFeedbackData({
+    setNewPrototypeData({
       id: 0,
-      name: "",
-      role: "",
+      title: "",
       description: "",
       status: "Active",
+      image: "",
     });
     setIsAddModalOpen(true);
   };
 
-  const handleAddNewFeedback = () => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewPrototypeData({
+          ...newPrototypeData,
+          image: reader.result as string,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleAddNewPrototype = () => {
     const newId =
-      homepageFeedbackData.length > 0
-        ? Math.max(...homepageFeedbackData.map((item) => item.id)) + 1
+      homepagePrototypeData.length > 0
+        ? Math.max(...homepagePrototypeData.map((item) => item.id)) + 1
         : 1;
-    const newItem = { ...newFeedbackData, id: newId };
-    setHomepageFeedbackData([...homepageFeedbackData, newItem]);
+    const newItem = { ...newPrototypeData, id: newId };
+    setHomepagePrototypeData([...homepagePrototypeData, newItem]);
     setIsAddModalOpen(false);
   };
 
-  const filteredFeedbackDescriptionData = feedbackDescriptionData.filter(
+  const filteredPrototypeDescriptionData = prototypeDescriptionData.filter(
     (item) =>
       item.title
         .toLowerCase()
-        .includes(feedbackDescriptionSearchTerm.toLowerCase()) ||
+        .includes(prototypeDescriptionSearchTerm.toLowerCase()) ||
       item.description
         .toLowerCase()
-        .includes(feedbackDescriptionSearchTerm.toLowerCase())
+        .includes(prototypeDescriptionSearchTerm.toLowerCase())
   );
 
-  const filteredHomepageFeedbackData = homepageFeedbackData.filter(
+  const filteredHomepagePrototypeData = homepagePrototypeData.filter(
     (item) =>
-      item.name.toLowerCase().includes(homepageFeedbackSearchTerm.toLowerCase()) ||
-      item.role.toLowerCase().includes(homepageFeedbackSearchTerm.toLowerCase()) ||
-      item.description.toLowerCase().includes(homepageFeedbackSearchTerm.toLowerCase())
+      item.title
+        .toLowerCase()
+        .includes(homepagePrototypeSearchTerm.toLowerCase()) ||
+      item.description
+        .toLowerCase()
+        .includes(homepagePrototypeSearchTerm.toLowerCase())
   );
 
-  // Pagination calculations for Feedback Description table
-  const totalFeedbackDescriptionPages = Math.ceil(
-    filteredFeedbackDescriptionData.length / itemsPerPage
+  // Pagination calculations for Prototype Description table
+  const totalPrototypeDescriptionPages = Math.ceil(
+    filteredPrototypeDescriptionData.length / itemsPerPage
   );
-  const lastFeedbackDescriptionItemIndex = feedbackDescriptionCurrentPage * itemsPerPage;
-  const firstFeedbackDescriptionItemIndex =
-    lastFeedbackDescriptionItemIndex - itemsPerPage;
-  const paginatedFeedbackDescriptionData = filteredFeedbackDescriptionData.slice(
-    firstFeedbackDescriptionItemIndex,
-    lastFeedbackDescriptionItemIndex
-  );
+  const lastPrototypeDescriptionItemIndex =
+    prototypeDescriptionCurrentPage * itemsPerPage;
+  const firstPrototypeDescriptionItemIndex =
+    lastPrototypeDescriptionItemIndex - itemsPerPage;
+  const paginatedPrototypeDescriptionData =
+    filteredPrototypeDescriptionData.slice(
+      firstPrototypeDescriptionItemIndex,
+      lastPrototypeDescriptionItemIndex
+    );
 
-  // Pagination calculations for Homepage Feedback table
-  const totalHomepageFeedbackPages = Math.ceil(
-    filteredHomepageFeedbackData.length / itemsPerPage
+  // Pagination calculations for Homepage Prototype table
+  const totalHomepagePrototypePages = Math.ceil(
+    filteredHomepagePrototypeData.length / itemsPerPage
   );
-  const lastHomepageFeedbackItemIndex = homepageFeedbackCurrentPage * itemsPerPage;
-  const firstHomepageFeedbackItemIndex = lastHomepageFeedbackItemIndex - itemsPerPage;
-  const paginatedHomepageFeedbackData = filteredHomepageFeedbackData.slice(
-    firstHomepageFeedbackItemIndex,
-    lastHomepageFeedbackItemIndex
+  const lastHomepagePrototypeItemIndex =
+    homepagePrototypeCurrentPage * itemsPerPage;
+  const firstHomepagePrototypeItemIndex =
+    lastHomepagePrototypeItemIndex - itemsPerPage;
+  const paginatedHomepagePrototypeData = filteredHomepagePrototypeData.slice(
+    firstHomepagePrototypeItemIndex,
+    lastHomepagePrototypeItemIndex
   );
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
-      {/* Preview Image Section */}
+    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white transition-colors duration-300">
+      {/* Preview Image Section - Just put your image here */}
       <div className="mb-6">
         <h1 className="text-2xl font-light text-gray-600 dark:text-gray-400">
-          Homepage Feedbacks Preview
+          Homepage Sliders Preview
         </h1>
       </div>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-2 mb-6">
+      {/* Slider Preview Section */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6 transition-colors duration-300">
         <div className="flex justify-center w-full">
           {/* I-wrap ang Slider component at bigyan ng fixed size */}
-          <div className="w-full max-w-10xl">
-            <Feedback />
+          <div className="w-full max-w-8xl">
+            <Prototype />
           </div>
         </div>
       </div>
-
-      {/* Feedbacks Description Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+      {/* Prototype Description Table */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm transition-colors duration-300">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-light text-gray-600 dark:text-gray-400">
-              Feedbacks Description Table
+              Prototype Description Table
             </h1>
           </div>
         </div>
-        
-        {/* INALIS ANG SEARCH BAR DITO (search-related div block) */}
-
+        {/* Search - Moved to the left */}
+        <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-start">
+          <div className="relative w-full sm:max-w-xs">
+            <input
+              type="text"
+              placeholder="Search title or description..."
+              value={prototypeDescriptionSearchTerm}
+              onChange={(e) =>
+                setPrototypeDescriptionSearchTerm(e.target.value)
+              }
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+            />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+          </div>
+        </div>
         {/* Table */}
         <div className="overflow-x-auto">
           <table className="min-w-full border border-gray-200 dark:border-gray-700 rounded-lg">
@@ -298,7 +333,7 @@ const CustomizationFeedbacks: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {paginatedFeedbackDescriptionData.map((item) => (
+              {paginatedPrototypeDescriptionData.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -327,7 +362,7 @@ const CustomizationFeedbacks: React.FC = () => {
                     <div className="relative group">
                       <button
                         onClick={() =>
-                          handleOpenUpdateModal(item, "feedbackDescription")
+                          handleOpenUpdateModal(item, "prototypeDescription")
                         }
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
@@ -335,13 +370,12 @@ const CustomizationFeedbacks: React.FC = () => {
                       </button>
                       <span className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 px-2 py-1 text-xs text-white bg-gray-800 rounded opacity-0 group-hover:opacity-100 transition">
                         UPDATE
-                      </span
-                      >
+                      </span>
                     </div>
                     <div className="relative group">
                       <button
                         onClick={() =>
-                          handleArchive(item.id, "feedbackDescription")
+                          handleArchive(item.id, "prototypeDescription")
                         }
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
@@ -361,31 +395,35 @@ const CustomizationFeedbacks: React.FC = () => {
         <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-gray-700 dark:text-gray-300">
-              Showing {firstFeedbackDescriptionItemIndex + 1} to{" "}
+              Showing {firstPrototypeDescriptionItemIndex + 1} to{" "}
               {Math.min(
-                lastFeedbackDescriptionItemIndex,
-                filteredFeedbackDescriptionData.length
+                lastPrototypeDescriptionItemIndex,
+                filteredPrototypeDescriptionData.length
               )}{" "}
-              of {filteredFeedbackDescriptionData.length} Entries
+              of {filteredPrototypeDescriptionData.length} Entries
             </div>
             <div className="flex space-x-2">
               <button
                 onClick={() =>
-                  setFeedbackDescriptionCurrentPage(feedbackDescriptionCurrentPage - 1)
+                  setPrototypeDescriptionCurrentPage(
+                    prototypeDescriptionCurrentPage - 1
+                  )
                 }
-                disabled={feedbackDescriptionCurrentPage === 1}
+                disabled={prototypeDescriptionCurrentPage === 1}
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Previous
               </button>
               {Array.from(
-                { length: totalFeedbackDescriptionPages },
+                { length: totalPrototypeDescriptionPages },
                 (_, index) => (
                   <button
                     key={index + 1}
-                    onClick={() => setFeedbackDescriptionCurrentPage(index + 1)}
+                    onClick={() =>
+                      setPrototypeDescriptionCurrentPage(index + 1)
+                    }
                     className={`px-3 py-1 text-sm rounded-lg ${
-                      feedbackDescriptionCurrentPage === index + 1
+                      prototypeDescriptionCurrentPage === index + 1
                         ? "bg-[#453EFE] text-white"
                         : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
                     }`}
@@ -396,9 +434,14 @@ const CustomizationFeedbacks: React.FC = () => {
               )}
               <button
                 onClick={() =>
-                  setFeedbackDescriptionCurrentPage(feedbackDescriptionCurrentPage + 1)
+                  setPrototypeDescriptionCurrentPage(
+                    prototypeDescriptionCurrentPage + 1
+                  )
                 }
-                disabled={feedbackDescriptionCurrentPage === totalFeedbackDescriptionPages}
+                disabled={
+                  prototypeDescriptionCurrentPage ===
+                  totalPrototypeDescriptionPages
+                }
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Next
@@ -408,37 +451,47 @@ const CustomizationFeedbacks: React.FC = () => {
         </div>
       </div>
 
-      {/* Homepage Feedback Table */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm mt-6">
+      {/* Homepage Prototype Table */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm mt-6 transition-colors duration-300">
         <div className="p-6 border-b border-gray-200 dark:border-gray-700">
           <div className="flex justify-between items-center">
             <h1 className="text-2xl font-light text-gray-600 dark:text-gray-400">
-              Homepage Feedback Table
+              Homepage Prototype Table
             </h1>
           </div>
         </div>
-        {/* Search and Add Button Controls - SWAPPED ORDER */}
+        {/* Search and Add Button - Flipped the order to be Search (Left) and Button (Right) */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-          
-          {/* Search bar is now on the left */}
-          <div className="relative w-full sm:max-w-md">
+          {/* Search (Left) */}
+          <div className="relative w-full sm:max-w-md order-2 sm:order-1">
             <input
               type="text"
-              placeholder="Search name, role, or description"
-              value={homepageFeedbackSearchTerm}
-              onChange={(e) => setHomepageFeedbackSearchTerm(e.target.value)}
+              placeholder="Search title or description..."
+              value={homepagePrototypeSearchTerm}
+              onChange={(e) => setHomepagePrototypeSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
             />
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <svg
+              className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
           </div>
-
-          {/* Add Feedback button is now on the right */}
-          <div className="flex-shrink-0">
+          {/* Add Button (Right) */}
+          <div className="flex-shrink-0 order-1 sm:order-2">
             <button
               onClick={handleAddModalOpen}
               className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
             >
-              + Add Feedback
+              + Add Prototype
             </button>
           </div>
         </div>
@@ -458,13 +511,13 @@ const CustomizationFeedbacks: React.FC = () => {
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap"
                 >
-                  Name
+                  Image
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider whitespace-nowrap"
                 >
-                  Role
+                  Title
                 </th>
                 <th
                   scope="col"
@@ -487,7 +540,7 @@ const CustomizationFeedbacks: React.FC = () => {
               </tr>
             </thead>
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-              {paginatedHomepageFeedbackData.map((item) => (
+              {paginatedHomepagePrototypeData.map((item) => (
                 <tr
                   key={item.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
@@ -495,11 +548,15 @@ const CustomizationFeedbacks: React.FC = () => {
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-gray-300 whitespace-nowrap">
                     {item.id}
                   </td>
-                  <td className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap">
-                    {item.name}
+                  <td className="px-6 py-4">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-16 h-auto object-cover rounded-lg"
+                    />
                   </td>
-                  <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 min-w-[200px] whitespace-normal">
-                    {item.role}
+                  <td className="px-6 py-4 text-sm font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+                    {item.title}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 min-w-[200px] whitespace-normal">
                     {item.description}
@@ -519,7 +576,7 @@ const CustomizationFeedbacks: React.FC = () => {
                     <div className="relative group">
                       <button
                         onClick={() =>
-                          handleOpenUpdateModal(item, "homepageFeedback")
+                          handleOpenUpdateModal(item, "homepagePrototype")
                         }
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
@@ -532,7 +589,7 @@ const CustomizationFeedbacks: React.FC = () => {
                     <div className="relative group">
                       <button
                         onClick={() =>
-                          handleArchive(item.id, "homepageFeedback")
+                          handleArchive(item.id, "homepagePrototype")
                         }
                         className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg shadow-sm transition"
                       >
@@ -552,41 +609,50 @@ const CustomizationFeedbacks: React.FC = () => {
         <div className="px-6 py-3 border-t border-gray-200 dark:border-gray-700">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="text-sm text-gray-700 dark:text-gray-300">
-              Showing {firstHomepageFeedbackItemIndex + 1} to{" "}
+              Showing {firstHomepagePrototypeItemIndex + 1} to{" "}
               {Math.min(
-                lastHomepageFeedbackItemIndex,
-                filteredHomepageFeedbackData.length
+                lastHomepagePrototypeItemIndex,
+                filteredHomepagePrototypeData.length
               )}{" "}
-              of {filteredHomepageFeedbackData.length} Entries
+              of {filteredHomepagePrototypeData.length} Entries
             </div>
             <div className="flex space-x-2">
               <button
                 onClick={() =>
-                  setHomepageFeedbackCurrentPage(homepageFeedbackCurrentPage - 1)
+                  setHomepagePrototypeCurrentPage(
+                    homepagePrototypeCurrentPage - 1
+                  )
                 }
-                disabled={homepageFeedbackCurrentPage === 1}
+                disabled={homepagePrototypeCurrentPage === 1}
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Previous
               </button>
-              {Array.from({ length: totalHomepageFeedbackPages }, (_, index) => (
-                <button
-                  key={index + 1}
-                  onClick={() => setHomepageFeedbackCurrentPage(index + 1)}
-                  className={`px-3 py-1 text-sm rounded-lg ${
-                    homepageFeedbackCurrentPage === index + 1
-                      ? "bg-[#453EFE] text-white"
-                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
+              {Array.from(
+                { length: totalHomepagePrototypePages },
+                (_, index) => (
+                  <button
+                    key={index + 1}
+                    onClick={() => setHomepagePrototypeCurrentPage(index + 1)}
+                    className={`px-3 py-1 text-sm rounded-lg ${
+                      homepagePrototypeCurrentPage === index + 1
+                        ? "bg-[#453EFE] text-white"
+                        : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                )
+              )}
               <button
                 onClick={() =>
-                  setHomepageFeedbackCurrentPage(homepageFeedbackCurrentPage + 1)
+                  setHomepagePrototypeCurrentPage(
+                    homepagePrototypeCurrentPage + 1
+                  )
                 }
-                disabled={homepageFeedbackCurrentPage === totalHomepageFeedbackPages}
+                disabled={
+                  homepagePrototypeCurrentPage === totalHomepagePrototypePages
+                }
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Next
@@ -613,7 +679,7 @@ const CustomizationFeedbacks: React.FC = () => {
             leaveTo="opacity-0"
           >
             <div
-              className="fixed inset-0 bg-black bg-opacity-25"
+              className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
             />
           </Transition.Child>
@@ -635,9 +701,9 @@ const CustomizationFeedbacks: React.FC = () => {
                 >
                   <div className="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {currentTableType === "homepageFeedback"
-                        ? "UPDATE FEEDBACK"
-                        : "UPDATE DESCRIPTION"}
+                      {currentTableType === "homepagePrototype"
+                        ? "UPDATE PROTOTYPE"
+                        : "UPDATE  DESCRIPTION"}
                     </h3>
                     <button
                       type="button"
@@ -663,336 +729,23 @@ const CustomizationFeedbacks: React.FC = () => {
                   </div>
                   <div className="p-6">
                     <div className="space-y-4">
-                      {currentTableType === "homepageFeedback" ? (
-                        <>
-                          {/* Name Input */}
-                          <div>
-                            <label
-                              htmlFor="update-name"
-                              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                            >
-                              Name
-                            </label>
-                            <input
-                              type="text"
-                              id="update-name"
-                              name="name"
-                              value={(currentUpdateItem as HomepageFeedbackItem)?.name || ""}
-                              onChange={(e) =>
-                                setCurrentUpdateItem((prev) =>
-                                  prev ? { ...prev, name: e.target.value } : null
-                                )
-                              }
-                              className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                              style={{ borderRadius: "12px" }}
-                            />
-                          </div>
-                          {/* Role Input */}
-                          <div>
-                            <label
-                              htmlFor="update-role"
-                              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                            >
-                              Role
-                            </label>
-                            <input
-                              type="text"
-                              id="update-role"
-                              name="role"
-                              value={(currentUpdateItem as HomepageFeedbackItem)?.role || ""}
-                              onChange={(e) =>
-                                setCurrentUpdateItem((prev) =>
-                                  prev ? { ...prev, role: e.target.value } : null
-                                )
-                              }
-                              className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                              style={{ borderRadius: "12px" }}
-                            />
-                          </div>
-                          {/* Description Input */}
-                          <div>
-                            <label
-                              htmlFor="update-description"
-                              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                            >
-                              Description
-                            </label>
-                            <textarea
-                              id="update-description"
-                              name="description"
-                              rows={3}
-                              value={(currentUpdateItem as HomepageFeedbackItem)?.description || ""}
-                              onChange={(e) =>
-                                setCurrentUpdateItem((prev) =>
-                                  prev
-                                    ? { ...prev, description: e.target.value }
-                                    : null
-                                )
-                              }
-                              className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                              style={{ borderRadius: "12px" }}
-                            ></textarea>
-                          </div>
-                          {/* Status Dropdown */}
-                          <div>
-                            <label
-                              htmlFor="update-status"
-                              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                            >
-                              Status
-                            </label>
-                            <div className="relative">
-                              <select
-                                id="update-status"
-                                name="status"
-                                value={(currentUpdateItem as HomepageFeedbackItem)?.status || "Active"}
-                                onChange={(e) =>
-                                  setCurrentUpdateItem((prev) =>
-                                    prev
-                                      ? {
-                                          ...prev,
-                                          status: e.target.value as
-                                            | "Active"
-                                            | "Inactive",
-                                        }
-                                      : null
-                                  )
-                                }
-                                className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent appearance-none dark:bg-gray-700 dark:text-white"
-                                style={{ borderRadius: "12px" }}
-                              >
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                              </select>
-                              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                                <svg
-                                  className="h-4 w-4 fill-current text-[#453EFE]"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          {/* Title Input */}
-                          <div>
-                            <label
-                              htmlFor="update-title"
-                              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                            >
-                              Title
-                            </label>
-                            <input
-                              type="text"
-                              id="update-title"
-                              name="title"
-                              value={(currentUpdateItem as TableItem)?.title || ""}
-                              onChange={(e) =>
-                                setCurrentUpdateItem((prev) =>
-                                  prev ? { ...prev, title: e.target.value } : null
-                                )
-                              }
-                              className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                              style={{ borderRadius: "12px" }}
-                            />
-                          </div>
-                          {/* Description Input */}
-                          <div>
-                            <label
-                              htmlFor="update-description"
-                              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                            >
-                              Description
-                            </label>
-                            <textarea
-                              id="update-description"
-                              name="description"
-                              rows={3}
-                              value={(currentUpdateItem as TableItem)?.description || ""}
-                              onChange={(e) =>
-                                setCurrentUpdateItem((prev) =>
-                                  prev
-                                    ? { ...prev, description: e.target.value }
-                                    : null
-                                )
-                              }
-                              className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                              style={{ borderRadius: "12px" }}
-                            ></textarea>
-                          </div>
-                          {/* Status Dropdown */}
-                          <div>
-                            <label
-                              htmlFor="update-status"
-                              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                            >
-                              Status
-                            </label>
-                            <div className="relative">
-                              <select
-                                id="update-status"
-                                name="status"
-                                value={(currentUpdateItem as TableItem)?.status || "Active"}
-                                onChange={(e) =>
-                                  setCurrentUpdateItem((prev) =>
-                                    prev
-                                      ? {
-                                          ...prev,
-                                          status: e.target.value as
-                                            | "Active"
-                                            | "Inactive",
-                                        }
-                                      : null
-                                  )
-                                }
-                                className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent appearance-none dark:bg-gray-700 dark:text-white"
-                                style={{ borderRadius: "12px" }}
-                              >
-                                <option value="Active">Active</option>
-                                <option value="Inactive">Inactive</option>
-                              </select>
-                              <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
-                                <svg
-                                  className="h-4 w-4 fill-current text-[#453EFE]"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  viewBox="0 0 20 20"
-                                >
-                                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
-                                </svg>
-                              </div>
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                  <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700">
-                    <button
-                      type="button"
-                      className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-                      onClick={handleSaveUpdate}
-                      style={{ borderRadius: "10px" }}
-                    >
-                      Update
-                    </button>
-                  </div>
-                </Dialog.Panel>
-              </Transition.Child>
-            </div>
-          </div>
-        </Dialog>
-      </Transition>
-
-      {/* Add Feedback Modal */}
-      <Transition appear show={isAddModalOpen} as={Fragment}>
-        <Dialog
-          as="div"
-          className="relative z-10"
-          onClose={() => setIsAddModalOpen(false)}
-        >
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-300"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-200"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div
-              className="fixed inset-0 bg-black bg-opacity-25"
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
-            />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="flex min-h-full items-center justify-center p-4 text-left">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-300"
-                enterFrom="opacity-0 scale-95"
-                enterTo="opacity-100 scale-100"
-                leave="ease-in duration-200"
-                leaveFrom="opacity-100 scale-100"
-                leaveTo="opacity-0 scale-95"
-              >
-                <Dialog.Panel
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md overflow-hidden transform transition-all"
-                  style={{ borderRadius: "15px" }}
-                >
-                  <div className="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      Add Feedback
-                    </h3>
-                    <button
-                      type="button"
-                      className="text-gray-400 hover:text-gray-600 transition-colors"
-                      onClick={() => setIsAddModalOpen(false)}
-                    >
-                      <svg
-                        className="h-6 w-6"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                  <div className="p-6">
-                    <div className="space-y-4">
-                      {/* Name Input */}
+                      {/* Title Input */}
                       <div>
                         <label
-                          htmlFor="add-name"
+                          htmlFor="update-title"
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                         >
-                          Name
+                          Title
                         </label>
                         <input
                           type="text"
-                          id="add-name"
-                          name="name"
-                          value={newFeedbackData.name}
+                          id="update-title"
+                          name="title"
+                          value={currentUpdateItem?.title || ""}
                           onChange={(e) =>
-                            setNewFeedbackData({
-                              ...newFeedbackData,
-                              name: e.target.value,
-                            })
-                          }
-                          className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
-                          style={{ borderRadius: "12px" }}
-                        />
-                      </div>
-                      {/* Role Input */}
-                      <div>
-                        <label
-                          htmlFor="add-role"
-                          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                        >
-                          Role
-                        </label>
-                        <input
-                          type="text"
-                          id="add-role"
-                          name="role"
-                          value={newFeedbackData.role}
-                          onChange={(e) =>
-                            setNewFeedbackData({
-                              ...newFeedbackData,
-                              role: e.target.value,
-                            })
+                            setCurrentUpdateItem((prev) =>
+                              prev ? { ...prev, title: e.target.value } : null
+                            )
                           }
                           className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
                           style={{ borderRadius: "12px" }}
@@ -1001,21 +754,22 @@ const CustomizationFeedbacks: React.FC = () => {
                       {/* Description Input */}
                       <div>
                         <label
-                          htmlFor="add-description"
+                          htmlFor="update-description"
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                         >
                           Description
                         </label>
                         <textarea
-                          id="add-description"
+                          id="update-description"
                           name="description"
                           rows={3}
-                          value={newFeedbackData.description}
+                          value={currentUpdateItem?.description || ""}
                           onChange={(e) =>
-                            setNewFeedbackData({
-                              ...newFeedbackData,
-                              description: e.target.value,
-                            })
+                            setCurrentUpdateItem((prev) =>
+                              prev
+                                ? { ...prev, description: e.target.value }
+                                : null
+                            )
                           }
                           className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
                           style={{ borderRadius: "12px" }}
@@ -1024,21 +778,27 @@ const CustomizationFeedbacks: React.FC = () => {
                       {/* Status Dropdown */}
                       <div>
                         <label
-                          htmlFor="add-status"
+                          htmlFor="update-status"
                           className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                         >
                           Status
                         </label>
                         <div className="relative">
                           <select
-                            id="add-status"
+                            id="update-status"
                             name="status"
-                            value={newFeedbackData.status}
+                            value={currentUpdateItem?.status || "Active"}
                             onChange={(e) =>
-                              setNewFeedbackData({
-                                ...newFeedbackData,
-                                status: e.target.value as "Active" | "Inactive",
-                              })
+                              setCurrentUpdateItem((prev) =>
+                                prev
+                                  ? {
+                                      ...prev,
+                                      status: e.target.value as
+                                        | "Active"
+                                        | "Inactive",
+                                    }
+                                  : null
+                              )
                             }
                             className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent appearance-none dark:bg-gray-700 dark:text-white"
                             style={{ borderRadius: "12px" }}
@@ -1063,10 +823,10 @@ const CustomizationFeedbacks: React.FC = () => {
                     <button
                       type="button"
                       className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
-                      onClick={handleAddNewFeedback}
+                      onClick={handleSaveUpdate}
                       style={{ borderRadius: "10px" }}
                     >
-                      Add
+                      UPDATE
                     </button>
                   </div>
                 </Dialog.Panel>
@@ -1075,6 +835,185 @@ const CustomizationFeedbacks: React.FC = () => {
           </div>
         </Dialog>
       </Transition>
+
+      {/* Add Modal */}
+      {isAddModalOpen && (
+        <div
+          className="fixed inset-0 flex items-center justify-center p-4 z-10"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
+        >
+          <div
+            className="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md overflow-hidden transform transition-all"
+            style={{ borderRadius: "15px" }}
+          >
+            <div className="px-6 py-4 flex justify-between items-center border-b border-gray-200 dark:border-gray-700">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                Add Prototype
+              </h3>
+              <button
+                type="button"
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+                onClick={() => setIsAddModalOpen(false)}
+              >
+                <svg
+                  className="h-6 w-6"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  aria-hidden="true"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                {/* Title Input */}
+                <div>
+                  <label
+                    htmlFor="add-title"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    id="add-title"
+                    name="title"
+                    value={newPrototypeData.title}
+                    onChange={(e) =>
+                      setNewPrototypeData({
+                        ...newPrototypeData,
+                        title: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    style={{ borderRadius: "12px" }}
+                  />
+                </div>
+
+                {/* Description Input */}
+                <div>
+                  <label
+                    htmlFor="add-description"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
+                    Description
+                  </label>
+                  <textarea
+                    id="add-description"
+                    name="description"
+                    rows={3}
+                    value={newPrototypeData.description}
+                    onChange={(e) =>
+                      setNewPrototypeData({
+                        ...newPrototypeData,
+                        description: e.target.value,
+                      })
+                    }
+                    className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    style={{ borderRadius: "12px" }}
+                  ></textarea>
+                </div>
+
+                {/* Image Input */}
+                <div>
+                  <label
+                    htmlFor="add-image"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
+                    Image
+                  </label>
+                  <div className="relative">
+                    <input
+                      type="text"
+                      id="add-image"
+                      name="image"
+                      value={newPrototypeData.image ? "Image uploaded" : ""}
+                      readOnly
+                      className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
+                      style={{
+                        borderRadius: "12px",
+                        paddingRight: newPrototypeData.image ? "1rem" : "9rem",
+                      }}
+                    />
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      className="hidden"
+                      onChange={handleFileChange}
+                      accept="image/*"
+                    />
+                    {!newPrototypeData.image && (
+                      <button
+                        type="button"
+                        className="absolute left-1 top-1/2 -translate-y-1/2 px-3 py-1.5 text-xs text-white bg-[#453EFE] rounded hover:bg-indigo-700 transition"
+                        onClick={() => fileInputRef.current?.click()}
+                        style={{ borderRadius: "10px" }}
+                      >
+                        Upload a file
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+                {/* Status Dropdown */}
+                <div>
+                  <label
+                    htmlFor="add-status"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >
+                    Status
+                  </label>
+                  <div className="relative">
+                    <select
+                      id="add-status"
+                      name="status"
+                      value={newPrototypeData.status}
+                      onChange={(e) =>
+                        setNewPrototypeData({
+                          ...newPrototypeData,
+                          status: e.target.value as "Active" | "Inactive",
+                        })
+                      }
+                      className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent appearance-none dark:bg-gray-700 dark:text-white"
+                      style={{ borderRadius: "12px" }}
+                    >
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
+                    <div className="absolute inset-y-0 right-0 flex items-center px-2 pointer-events-none">
+                      <svg
+                        className="h-4 w-4 fill-current text-[#453EFE]"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 dark:border-gray-700">
+              <button
+                type="button"
+                className="bg-[#453EFE] text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+                onClick={handleAddNewPrototype}
+                style={{ borderRadius: "10px" }}
+              >
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Archive Confirmation Modal */}
       <Transition appear show={isConfirmArchiveOpen} as={Fragment}>
@@ -1093,7 +1032,7 @@ const CustomizationFeedbacks: React.FC = () => {
             leaveTo="opacity-0"
           >
             <div
-              className="fixed inset-0 bg-black bg-opacity-25"
+              className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
             />
           </Transition.Child>
@@ -1195,7 +1134,7 @@ const CustomizationFeedbacks: React.FC = () => {
             leaveTo="opacity-0"
           >
             <div
-              className="fixed inset-0 bg-black bg-opacity-25"
+              className="fixed inset-0 bg-black bg-opacity-25 dark:bg-opacity-50"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.2)" }}
             />
           </Transition.Child>
@@ -1266,4 +1205,4 @@ const CustomizationFeedbacks: React.FC = () => {
   );
 };
 
-export default CustomizationFeedbacks;
+export default CustomizationPrototype;

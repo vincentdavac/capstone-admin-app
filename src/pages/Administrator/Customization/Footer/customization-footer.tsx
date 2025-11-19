@@ -2,7 +2,7 @@
 import React, { useState, Fragment } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import Footer from "../../preview/Footer";
+import Footer from "../../../../preview/Footer";
 
 // 1. Define the interfaces for the table items
 interface TableItem {

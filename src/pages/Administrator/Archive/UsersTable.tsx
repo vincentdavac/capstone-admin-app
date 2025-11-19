@@ -1,5 +1,5 @@
 import React from "react";
-import { Archive, Fullscreen } from "lucide-react";
+import { ArchiveRestore } from "lucide-react";
 
 interface BuoyData {
   id: number;
@@ -57,7 +57,6 @@ const UsersTable: React.FC<UsersTableProps> = ({
   currentUsers,
   loading,
   startIndex,
-  handleUpdateClick,
   handleArchiveClick,
 }) => {
   return (
@@ -146,12 +145,12 @@ const UsersTable: React.FC<UsersTableProps> = ({
                   <td className="px-4 py-2 whitespace-nowrap">
                     <span
                       className={`px-3 py-0.5 inline-flex text-xs font-medium rounded-full ${
-                        a.isActive
+                        a.registrationStatus
                           ? "bg-green-100 text-green-700"
                           : "bg-red-100 text-red-700"
                       }`}
                     >
-                      {a.isActive ? "Active" : "Inactive"}
+                      {a.registrationStatus ? "Activated" : "Inactive"}
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
@@ -162,16 +161,10 @@ const UsersTable: React.FC<UsersTableProps> = ({
 
                   <td className="px-6 py-4 flex flex-row gap-2">
                     <button
-                      onClick={() => handleUpdateClick(u)}
-                      className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
-                    >
-                      <Fullscreen className="w-5 h-5" />
-                    </button>
-                    <button
                       onClick={() => handleArchiveClick(u)}
                       className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
                     >
-                      <Archive className="w-5 h-5" />
+                      <ArchiveRestore className="w-5 h-5" />
                     </button>
                   </td>
                 </tr>

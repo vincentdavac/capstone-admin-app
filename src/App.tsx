@@ -185,7 +185,7 @@ export default function App({ alertsRef }: AppProps) {
 
           {/* Historical data */}
           <Route
-            path="/admin/surrounding-table"
+            path="/barangay/surrounding-table"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <SurroundingTable />
@@ -193,7 +193,7 @@ export default function App({ alertsRef }: AppProps) {
             }
           />
           <Route
-            path="/admin/humidity-table"
+            path="/barangay/humidity-table"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <HumidityTable />
@@ -201,7 +201,7 @@ export default function App({ alertsRef }: AppProps) {
             }
           />
           <Route
-            path="/admin/water-temperature-table"
+            path="/barangay/water-temperature-table"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <WaterMonitoring />
@@ -209,7 +209,7 @@ export default function App({ alertsRef }: AppProps) {
             }
           />
           <Route
-            path="/admin/rain-monitoring-table"
+            path="/barangay/rain-monitoring-table"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <RainMonitoring />
@@ -217,7 +217,7 @@ export default function App({ alertsRef }: AppProps) {
             }
           />
           <Route
-            path="/admin/atmospheric-pressure-table"
+            path="/barangay/atmospheric-pressure-table"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <AtmosphericPressure />
@@ -225,7 +225,7 @@ export default function App({ alertsRef }: AppProps) {
             }
           />
           <Route
-            path="/admin/windspeed-monitoring-table"
+            path="/barangay/windspeed-monitoring-table"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <WindSpeed />
@@ -233,7 +233,7 @@ export default function App({ alertsRef }: AppProps) {
             }
           />
           <Route
-            path="/admin/water-depth-table"
+            path="/barangay/water-depth-table"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <WaterDepth />
@@ -241,7 +241,7 @@ export default function App({ alertsRef }: AppProps) {
             }
           />
           <Route
-            path="/admin/rain-gauge-table"
+            path="/barangay/rain-gauge-table"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <RainGauge />

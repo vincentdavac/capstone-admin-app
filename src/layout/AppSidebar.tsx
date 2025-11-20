@@ -112,10 +112,59 @@ const navItems: NavItem[] = [
     name: "Deployed Buoy",
     path: "/barangay/deployed-buoy",
   },
-  {
-    icon: <LibraryBig />,
+   {
     name: "Historical Data",
-    path: "/barangay/historical-data",
+    icon: <Management />,
+    subItems: [
+      {
+        name: "Surroundings Temperature Monitoring",
+        path: "/barangay/surrounding-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Humidity Monitoring",
+        path: "/barangay/humidity-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Water Temperature Monitoring",
+        path: "/barangay/water-temperature-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Rain Monitoring",
+        path: "/barangay/rain-monitoring-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Atmospheric Pressure Monitoring",
+        path: "/barangay/atmospheric-pressure-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Wind Speed Monitoring",
+        path: "/barangay/windspeed-monitoring-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Water Depth Monitoring",
+        path: "/barangay/water-depth-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Rain Gauge Monitoring",
+        path: "/barangay/rain-gauge-table",
+        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+    ],
   },
 
   // {

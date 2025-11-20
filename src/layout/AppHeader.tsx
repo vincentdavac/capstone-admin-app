@@ -90,12 +90,12 @@ const AppHeader: React.FC<Props> = ({ alertsRef }) => {
           <Link to="/" className="lg:hidden">
             <img
               className="dark:hidden w-50 h-auto"
-              src="/logo_with_name.svg"
+              src="/light-with-name.svg"
               alt="Logo"
             />
             <img
               className="hidden dark:block w-50 h-auto"
-              src="/logo_with_name_dark.svg"
+              src="/dark-with-name.svg"
               alt="Logo"
             />
           </Link>

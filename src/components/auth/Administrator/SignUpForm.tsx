@@ -374,7 +374,7 @@ export default function SignUpForm({ alertsRef }: Props) {
                 <Checkbox
                   className="w-5 h-5"
                   checked={isChecked}
-                  disabled={!termsAcknowledged} // ✅ disable until terms seen
+                  disabled={!termsAcknowledged}
                   onChange={setIsChecked}
                 />
                 <p className="inline-block font-normal text-gray-500 dark:text-gray-400">
@@ -430,78 +430,243 @@ export default function SignUpForm({ alertsRef }: Props) {
         </div>
       </div>
 
-      {/* 🚀 Terms Modal */}
+      {/* Terms and Conditions Modal */}
       {isTermsOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
-            <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">
-              Terms and Conditions
-            </h2>
-            <div className="mb-6 space-y-2 text-sm text-gray-600 dark:text-gray-300 max-h-60 overflow-y-auto">
-              <p>1. You must provide accurate information when registering.</p>
-              <p>2. Do not share your account credentials with others.</p>
-              <p>3. Respect other users and avoid abusive behavior.</p>
-              <p>4. We may suspend accounts that violate our policies.</p>
-            </div>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setIsTermsOpen(false)}
-                className="px-4 py-2 text-sm text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-white"
-              >
-                Close
-              </button>
-              <button
-                onClick={() => {
-                  setTermsAcknowledged(true);
-                  setIsChecked(true); // ✅ auto-check checkbox
-                  setIsTermsOpen(false);
-                }}
-                className="px-4 py-2 text-sm text-white rounded-lg bg-brand-500 hover:bg-brand-600"
-              >
-                Accept
-              </button>
+          <div className="group relative w-full max-w-4xl mx-4 max-h-[90vh]">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            
+            <div className="relative rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm shadow-lg p-6 max-h-[80vh] flex flex-col">
+              <h2 className="mb-4 text-xl font-bold text-white text-center">
+                Terms and Conditions
+              </h2>
+              <div className="mb-6 space-y-4 text-sm text-white/90 overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div>
+                  <h3 className="font-semibold">1. Acceptance of Terms</h3>
+                  <p>By accessing, browsing, or using the X-STREAM website or application, you agree to these Terms and Conditions and all applicable laws and regulations. If you do not agree with any part of these terms, you are not permitted to use the platform.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">2. Purpose of the Platform</h3>
+                  <p>X-STREAM is a research-based river monitoring and alert system designed to provide real-time data and support disaster preparedness. The website serves as an information and monitoring platform where authorized users can:</p>
+                  <ul className="ml-4 list-disc">
+                    <li>View live river condition data collected by X-STREAM sensors and buoys.</li>
+                    <li>Access alerts and updates provided by disaster responders or administrators.</li>
+                    <li>Communicate and manage data related to river monitoring activities.</li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">3. Authorized Use</h3>
+                  <p>Users agree to:</p>
+                  <ul className="ml-4 list-disc">
+                    <li>Use the platform only for lawful and intended purposes.</li>
+                    <li>Respect all applicable data privacy and security regulations.</li>
+                    <li>Avoid actions that could disrupt the operation of the system, such as unauthorized access, tampering, or misuse of data.</li>
+                  </ul>
+                  <p>Unauthorized attempts to modify, damage, or interfere with the system's operations may result in restricted access and possible legal action.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">4. Data Accuracy and Limitations</h3>
+                  <p>While X-STREAM strives to provide accurate and real-time data, it does not guarantee that all sensor readings or transmitted information are free from error. Environmental conditions, connectivity issues, or hardware limitations may affect data accuracy and availability. X-STREAM is a Capstone Project and should not be used as the sole basis for critical emergency decisions.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">5. User Accounts and Responsibilities</h3>
+                  <p>Authorized users (such as administrators and responders) may be provided with login credentials. You are responsible for maintaining the confidentiality of your account information and for all actions performed under your account. You agree to immediately notify the X-STREAM team of any unauthorized access or suspicious activity.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">6. Intellectual Property</h3>
+                  <p>All content on the X-STREAM website, including the system design, layout, text, images, logos, and software, is the intellectual property of the X-STREAM project team. No part of the platform may be reproduced, distributed, or used for commercial purposes without prior written permission.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">7. Limitation of Liability</h3>
+                  <p>X-STREAM and its developers are not liable for any:</p>
+                  <ul className="ml-4 list-disc">
+                    <li>Damages or losses arising from system downtime, data inaccuracy, or technical issues.</li>
+                    <li>Consequences resulting from delayed alerts or incomplete information.</li>
+                  </ul>
+                  <p>The system is intended for educational and research purposes and not as a replacement for official government disaster monitoring systems.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">8. Privacy Policy</h3>
+                  <p>We respect your privacy. Any data collected or stored by the system (such as sensor data, user information, or communication logs) will be handled in accordance with our Privacy Policy, which explains how information is used and protected.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">9. Modifications to the Terms</h3>
+                  <p>X-STREAM reserves the right to modify or update these Terms and Conditions at any time. Users will be informed of any significant changes, and continued use of the website after updates means acceptance of the revised terms.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">10. Contact Information</h3>
+                  <p>For questions, feedback, or concerns regarding these Terms and Conditions, you may contact the X-STREAM Project Team at:</p>
+                  <p>Email: xstream.2k25@gmail.com<br />
+                  Phone Number: 0995-331-3742</p>
+                </div>
+                
+                <div className="p-3 mt-4 bg-white/20 rounded-lg">
+                  <h4 className="font-semibold">Disclaimer:</h4>
+                  <p>This system is part of an academic project under the University of Caloocan City. It is intended for research, educational, and prototype demonstration purposes only.</p>
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 pt-4 mt-auto border-t border-white/20">
+                <button
+                  onClick={() => setIsTermsOpen(false)}
+                  className="px-4 py-2 text-sm text-white/90 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg hover:bg-white/30 transition-all duration-300"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    setTermsAcknowledged(true);
+                    setIsChecked(true);
+                    setIsTermsOpen(false);
+                  }}
+                  className="px-4 py-2 text-sm text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-all duration-300"
+                >
+                  Accept Terms
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
 
-      {/* 🚀 Privacy Policy Modal */}
+      {/* Privacy Policy Modal */}
       {isPrivacyOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="w-full max-w-lg p-6 bg-white rounded-lg shadow-lg dark:bg-gray-800">
-            <h2 className="mb-4 text-lg font-semibold text-gray-800 dark:text-white">
-              Privacy Policy
-            </h2>
-            <div className="mb-6 space-y-2 text-sm text-gray-600 dark:text-gray-300 max-h-60 overflow-y-auto">
-              <p>
-                We value your privacy. This policy explains how we collect, use,
-                and protect your personal information.
-              </p>
-              <p>1. We collect only necessary data to provide our services.</p>
-              <p>
-                2. We will not sell your personal information to third parties.
-              </p>
-              <p>
-                3. Your data is stored securely and used only as outlined here.
-              </p>
-            </div>
-            <div className="flex justify-end gap-3">
-              <button
-                onClick={() => setIsPrivacyOpen(false)}
-                className="px-4 py-2 text-sm text-gray-700 bg-gray-200 rounded-lg hover:bg-gray-300 dark:bg-gray-700 dark:text-white"
-              >
-                Close
-              </button>
-              <button
-                onClick={() => {
-                  setTermsAcknowledged(true);
-                  setIsChecked(true); // ✅ auto-check checkbox
-                  setIsPrivacyOpen(false);
-                }}
-                className="px-4 py-2 text-sm text-white rounded-lg bg-brand-500 hover:bg-brand-600"
-              >
-                Accept
-              </button>
+          <div className="group relative w-full max-w-4xl mx-4 max-h-[90vh]">
+            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+            
+            <div className="relative rounded-xl border border-white/20 bg-white/10 backdrop-blur-sm shadow-lg p-6 max-h-[80vh] flex flex-col">
+              <h2 className="mb-4 text-xl font-bold text-white text-center">
+                Privacy Policy
+              </h2>
+              <div className="mb-6 space-y-4 text-sm text-white/90 overflow-y-auto pr-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+                <div>
+                  <h3 className="font-semibold">1. Information We Collect</h3>
+                  <p>X-STREAM may collect the following types of data:</p>
+                  <p className="ml-4"><strong>a. Personal Information</strong><br />
+                  When authorized users (e.g., administrators, responders, or project members) access the system, we may collect:</p>
+                  <ul className="ml-8 list-disc">
+                    <li>Name and contact details</li>
+                    <li>Login credentials or account information</li>
+                    <li>Communication or activity logs</li>
+                  </ul>
+                  
+                  <p className="ml-4 mt-2"><strong>b. Environmental and System Data</strong></p>
+                  <ul className="ml-8 list-disc">
+                    <li>Real-time river and environmental readings from sensors and devices</li>
+                    <li>Location and status of monitoring stations</li>
+                    <li>Alerts and system notifications</li>
+                  </ul>
+                  
+                  <p className="ml-4 mt-2"><strong>c. Technical Data</strong></p>
+                  <ul className="ml-8 list-disc">
+                    <li>Device type, browser, and access time</li>
+                    <li>IP address and session activity</li>
+                  </ul>
+                  <p>These are collected to improve platform performance and security.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">2. How We Use Collected Information</h3>
+                  <p>We use the collected information to:</p>
+                  <ul className="ml-4 list-disc">
+                    <li>Provide real-time monitoring and alert services</li>
+                    <li>Maintain system accuracy and reliability</li>
+                    <li>Manage and secure user accounts</li>
+                    <li>Conduct research and analysis for environmental studies</li>
+                    <li>Improve system functionality and user experience</li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">3. Data Sharing and Disclosure</h3>
+                  <p>We do not sell, rent, or trade your personal information. Data may only be shared under the following conditions:</p>
+                  <ul className="ml-4 list-disc">
+                    <li>With authorized project members for research and analysis</li>
+                    <li>When required by law or official government requests</li>
+                    <li>To ensure public safety in case of environmental or emergency alerts</li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">4. Data Security</h3>
+                  <p>We use appropriate technical and organizational measures to protect your information from unauthorized access, alteration, or disclosure. However, no system is entirely secure. Users are encouraged to:</p>
+                  <ul className="ml-4 list-disc">
+                    <li>Keep their account credentials private</li>
+                    <li>Log out after using the system</li>
+                    <li>Report any suspicious activity to the X-STREAM team</li>
+                  </ul>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">5. Data Retention</h3>
+                  <p>Data collected through the X-STREAM system will be retained only for as long as necessary to fulfill its research and monitoring purposes. After project completion, data may be anonymized or deleted following institutional research guidelines.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">6. Cookies and Analytics</h3>
+                  <p>Our website may use cookies or analytics tools to monitor website performance and user engagement. You may disable cookies through your browser settings, but some features of the platform may not function properly as a result.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">7. Third-Party Links</h3>
+                  <p>The X-STREAM website may contain links to external sites (e.g., partner institutions or government agencies). We are not responsible for the privacy practices or content of these external websites.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">8. User Rights</h3>
+                  <p>Depending on your role and level of access, you have the right to:</p>
+                  <ul className="ml-4 list-disc">
+                    <li>Request access to or correction of your personal data</li>
+                    <li>Request deletion of your account or stored data (if applicable)</li>
+                    <li>Withdraw consent for certain data uses</li>
+                  </ul>
+                  <p>Requests can be sent to our project email below.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">9. Updates to This Policy</h3>
+                  <p>We may update this Privacy Policy from time to time to reflect new features, technologies, or legal requirements. All updates will be posted on this page, and continued use of the platform constitutes acceptance of the revised policy.</p>
+                </div>
+                
+                <div>
+                  <h3 className="font-semibold">10. Contact Us</h3>
+                  <p>For questions, feedback, or privacy-related concerns, you may contact the X-STREAM Project Team at:</p>
+                  <p>Email: xstream.2k25@gmail.com<br />
+                  Phone Number: 0995-331-3742</p>
+                </div>
+                
+                <div className="p-3 mt-4 bg-white/20 rounded-lg">
+                  <h4 className="font-semibold">Disclaimer:</h4>
+                  <p>This system is part of an academic project under the University of Caloocan City. It is intended for research, educational, and prototype demonstration purposes only.</p>
+                </div>
+              </div>
+              <div className="flex justify-end gap-3 pt-4 mt-auto border-t border-white/20">
+                <button
+                  onClick={() => setIsPrivacyOpen(false)}
+                  className="px-4 py-2 text-sm text-white/90 bg-white/20 backdrop-blur-sm border border-white/30 rounded-lg hover:bg-white/30 transition-all duration-300"
+                >
+                  Close
+                </button>
+                <button
+                  onClick={() => {
+                    setTermsAcknowledged(true);
+                    setIsChecked(true);
+                    setIsPrivacyOpen(false);
+                  }}
+                  className="px-4 py-2 text-sm text-white bg-brand-500 rounded-lg hover:bg-brand-600 transition-all duration-300"
+                >
+                  Accept Policy
+                </button>
+              </div>
             </div>
           </div>
         </div>

@@ -1,7 +1,8 @@
 import api_endpoint from "../config/coreApi";
 const getAllAlerts = {
-  get: async () => {
-    const url = `${api_endpoint}/get-all-alerts`;
+  get: async (brgyId:number) => {
+     if (!brgyId) throw new Error("User ID is required");
+    const url = `${api_endpoint}/get-all-alerts?barangay_id=${brgyId}`;
     try {
       const response = await fetch(url, {
         headers: {

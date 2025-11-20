@@ -3,8 +3,9 @@ import { User, MessageSquare, AlertTriangle, Droplets } from "lucide-react";
 import { ThemeProvider } from "../../components/Barangay Dashboard/ThemeContext";
 import { StatCard } from "../../components/Barangay Dashboard/StatCard";
 import { WaterDepthChart } from "../../components/Barangay Dashboard/WaterDepthChart";
-
 const BarangayDashboardContent: React.FC = () => {
+
+
   return (
     <div className="min-h-screen p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* 4 KPI Cards */}

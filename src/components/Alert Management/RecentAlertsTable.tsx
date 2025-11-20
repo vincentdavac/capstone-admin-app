@@ -14,7 +14,7 @@ interface RecentAlertsTableProps {
     startIndex: number;
     setCurrentPage: (page: number) => void;
     handleSelectAlert: (id: number) => void;
-    handleBroadcastAlert: () => void; 
+    handleBroadcast: () => void; 
 }
 
 export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
@@ -28,12 +28,15 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
     selectedAlertId,
     startIndex,
     setCurrentPage,
-    handleSelectAlert
+    handleSelectAlert,
+    handleBroadcast
 }) => {
     
     const handleBroadcastClick = () => {
         console.log('Broadcast Alert clicked!');
+        handleBroadcast();
         alert('Broadcasting Alert...');
+        
     };
 
     return (
@@ -105,6 +108,7 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
              {/* 1. Broadcast Alert Button */}
              <button
                 onClick={handleBroadcastClick} 
+                 disabled={!selectedAlertId}
                 className="flex items-center space-x-2 px-4 py-2 bg-[#453EFE] text-white font-medium rounded-lg shadow-md hover:bg-blue-700 transition duration-150"
             >
                 <svg

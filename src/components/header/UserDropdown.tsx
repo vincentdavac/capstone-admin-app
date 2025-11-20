@@ -11,8 +11,7 @@ interface Props {
 export default function UserDropdown({ alertsRef }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { user, setEncryptedToken, setToken, setUser, setIsLoggingOut } =
-    useContext(AppContext)!;
+  const { user, setEncryptedToken, setToken, setUser, setIsLoggingOut } =useContext(AppContext)!;
 
   function toggleDropdown() {
     setIsOpen(!isOpen);

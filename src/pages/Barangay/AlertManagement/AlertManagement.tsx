@@ -3,7 +3,6 @@ import { fetchAlertsAlerts } from "../../../api_hooks/fetchAllAlerts";
 import { useBroadcastAlert } from "../../../core_api_fetching/broadCastAlert";
 import { useAlert } from "../../../context/AlertContext";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-
 import { CustomAlertLevel } from "../../../components/Alert Management/CustomAlertLevel";
 import { RecentAlertsTable } from "../../../components/Alert Management/RecentAlertsTable";
 
@@ -12,6 +11,7 @@ const AlertManagement: React.FC = () => {
   const { alertsGet, loading, error } = fetchAlertsAlerts();
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedAlertId, setSelectedAlertId] = useState<number | null>(null);
+  const { broadcastToSelected } = useBroadcastAlert();
   useBroadcastAlert();
 
   const itemsPerPage = 5;
@@ -25,6 +25,10 @@ const AlertManagement: React.FC = () => {
 
   const handleSelectAlert = (id: number) => {
     setSelectedAlertId(id);
+  };
+  const handleBroadcast = async () => {
+    await broadcastToSelected(selectedAlertId);
+    setSelectedAlertId(null);
   };
 
   const filteredAlerts = alertsGet || [];
@@ -138,6 +142,7 @@ const AlertManagement: React.FC = () => {
               startIndex={startIndex}
               setCurrentPage={setCurrentPage}
               handleSelectAlert={handleSelectAlert}
+              handleBroadcast={handleBroadcast}
             />
           </div>
         </div>

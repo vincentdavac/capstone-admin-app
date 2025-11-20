@@ -1,7 +1,7 @@
 import React, { useState, Fragment } from "react";
 import { Archive, Upload, Search } from "lucide-react";
 import { Dialog, Transition } from "@headlessui/react";
-import FAQ from "../../preview/FAQs"; // Assuming the path is correct
+import FAQ from "../../../../preview/FAQs"; // Assuming the path is correct
 
 // 1. Define the interface for the table items
 interface TableItem {
@@ -56,9 +56,8 @@ const CustomizationFaqs: React.FC = () => {
   const [faqDescriptionData, setFaqDescriptionData] = useState<TableItem[]>(
     mockFAQDescriptionData
   );
-  const [homepageFAQsData, setHomepageFAQsData] = useState<HomepageFAQItem[]>(
-    mockHomepageFAQsData
-  );
+  const [homepageFAQsData, setHomepageFAQsData] =
+    useState<HomepageFAQItem[]>(mockHomepageFAQsData);
 
   const [faqDescriptionSearchTerm, setFaqDescriptionSearchTerm] = useState("");
   const [homepageFAQSearchTerm, setHomepageFAQSearchTerm] = useState("");
@@ -114,7 +113,9 @@ const CustomizationFaqs: React.FC = () => {
       if (currentTableType === "faqDescription") {
         setFaqDescriptionData(
           faqDescriptionData.map((item) =>
-            item.id === currentUpdateItem.id ? (currentUpdateItem as TableItem) : item
+            item.id === currentUpdateItem.id
+              ? (currentUpdateItem as TableItem)
+              : item
           )
         );
       } else if (currentTableType === "homepageFAQ") {
@@ -424,27 +425,26 @@ const CustomizationFaqs: React.FC = () => {
               >
                 Previous
               </button>
-              {Array.from(
-                { length: totalFaqDescriptionPages },
-                (_, index) => (
-                  <button
-                    key={index + 1}
-                    onClick={() => setFaqDescriptionCurrentPage(index + 1)}
-                    className={`px-3 py-1 text-sm rounded-lg ${
-                      faqDescriptionCurrentPage === index + 1
-                        ? "bg-[#453EFE] text-white"
-                        : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
-                    }`}
-                  >
-                    {index + 1}
-                  </button>
-                )
-              )}
+              {Array.from({ length: totalFaqDescriptionPages }, (_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => setFaqDescriptionCurrentPage(index + 1)}
+                  className={`px-3 py-1 text-sm rounded-lg ${
+                    faqDescriptionCurrentPage === index + 1
+                      ? "bg-[#453EFE] text-white"
+                      : "bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300"
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
               <button
                 onClick={() =>
                   setFaqDescriptionCurrentPage(faqDescriptionCurrentPage + 1)
                 }
-                disabled={faqDescriptionCurrentPage === totalFaqDescriptionPages}
+                disabled={
+                  faqDescriptionCurrentPage === totalFaqDescriptionPages
+                }
                 className="px-3 py-1 text-sm rounded-lg text-gray-600 dark:text-gray-400 disabled:opacity-50"
               >
                 Next
@@ -711,10 +711,15 @@ const CustomizationFaqs: React.FC = () => {
                               type="text"
                               id="update-question"
                               name="question"
-                              value={(currentUpdateItem as HomepageFAQItem)?.question || ""}
+                              value={
+                                (currentUpdateItem as HomepageFAQItem)
+                                  ?.question || ""
+                              }
                               onChange={(e) =>
                                 setCurrentUpdateItem((prev) =>
-                                  prev ? { ...prev, question: e.target.value } : null
+                                  prev
+                                    ? { ...prev, question: e.target.value }
+                                    : null
                                 )
                               }
                               className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
@@ -733,7 +738,10 @@ const CustomizationFaqs: React.FC = () => {
                               id="update-description"
                               name="description"
                               rows={3}
-                              value={(currentUpdateItem as HomepageFAQItem)?.description || ""}
+                              value={
+                                (currentUpdateItem as HomepageFAQItem)
+                                  ?.description || ""
+                              }
                               onChange={(e) =>
                                 setCurrentUpdateItem((prev) =>
                                   prev
@@ -760,10 +768,14 @@ const CustomizationFaqs: React.FC = () => {
                               type="text"
                               id="update-title"
                               name="title"
-                              value={(currentUpdateItem as TableItem)?.title || ""}
+                              value={
+                                (currentUpdateItem as TableItem)?.title || ""
+                              }
                               onChange={(e) =>
                                 setCurrentUpdateItem((prev) =>
-                                  prev ? { ...prev, title: e.target.value } : null
+                                  prev
+                                    ? { ...prev, title: e.target.value }
+                                    : null
                                 )
                               }
                               className="w-full px-3 py-2 border border-[#453EFE] rounded-lg focus:ring-2 focus:ring-[#453EFE] focus:border-transparent dark:bg-gray-700 dark:text-white"
@@ -782,7 +794,10 @@ const CustomizationFaqs: React.FC = () => {
                               id="update-description"
                               name="description"
                               rows={3}
-                              value={(currentUpdateItem as TableItem)?.description || ""}
+                              value={
+                                (currentUpdateItem as TableItem)?.description ||
+                                ""
+                              }
                               onChange={(e) =>
                                 setCurrentUpdateItem((prev) =>
                                   prev
@@ -810,9 +825,8 @@ const CustomizationFaqs: React.FC = () => {
                             id="update-status"
                             name="status"
                             value={
-                              (
-                                currentUpdateItem as TableItem | HomepageFAQItem
-                              )?.status || "Active"
+                              (currentUpdateItem as TableItem | HomepageFAQItem)
+                                ?.status || "Active"
                             }
                             onChange={(e) =>
                               setCurrentUpdateItem((prev) =>

@@ -1,54 +1,43 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext } from "react";
-import { Upload, Fullscreen, Plus } from "lucide-react";
-import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
+import { Upload, Plus, Archive } from "lucide-react";
 import API_BASE_URL from "../../../../config/coreApi";
 import { AppContext } from "../../../../context/AppContext";
 import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
 
-import ViewBarangayModal from "./ViewBarangayModal";
-import UpdateBarangayModal from "./UpdateBarangayModal";
-import AddBarangayModal from "./AddBarangayModal";
+import ArchiveSlider from "./ArchiveSlider";
+import UpdateSlider from "./UpdateSlider";
+import AddSlider from "./AddSlider";
 
 // 🧩 Interfaces
-interface Attributes {
-  barangayCode: string;
-  name: string;
-  number: number;
-  riverWallHeight: number;
-  squareMeter: number;
-  hectare: number;
-  whiteLevelAlert: number;
-  blueLevelAlert: number;
-  redLevelAlert: number;
-  description: string;
-  attachment: string;
-  createdDate: string;
-  createdTime: string;
-  updatedDate: string;
-  updatedTime: string;
-}
 
-interface Barangay {
+export interface SliderData {
   id: number;
-  attributes: Attributes;
+  attributes: {
+    title: string;
+    description: string;
+    isArchive: boolean;
+    image: string;
+    createdDate: string;
+    createdTime: string;
+    updatedDate: string;
+    updatedTime: string;
+  };
 }
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
-const Barangay = ({ alertsRef }: Props) => {
+const TableSlider = ({ alertsRef }: Props) => {
   const { token } = useContext(AppContext)!;
 
   // 🔹 State
-  const [barangays, setBarangays] = useState<Barangay[]>([]);
+  const [data, setData] = useState<SliderData[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedBarangay, setSelectedBarangay] = useState<Barangay | null>(
-    null
-  );
-  const [showView, setShowView] = useState(false);
+  const [selectedData, setSelectedData] = useState<SliderData | null>(null);
+  const [showArchive, setShowArchive] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
   const [showAdd, setShowAdd] = useState(false);
 
@@ -57,11 +46,10 @@ const Barangay = ({ alertsRef }: Props) => {
   const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
 
-  // ✅ Fetch Barangays
-  const fetchBarangays = async () => {
+  const fetchSlider = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/barangays`, {
+      const res = await fetch(`${API_BASE_URL}/sliders`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -69,52 +57,52 @@ const Barangay = ({ alertsRef }: Props) => {
       });
       const data = await res.json();
       if (res.ok && data.data) {
-        setBarangays(data.data);
+        setData(data.data);
       } else {
-        console.error("Failed to fetch barangays:", data);
+        console.error("Failed to fetch sliders:", data);
       }
     } catch (error) {
-      console.error("Error fetching barangays:", error);
+      console.error("Error fetching sliders:", error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (token) fetchBarangays();
+    if (token) fetchSlider();
   }, [token]);
 
-  // 🔍 Filter by name or code
-  const filteredBarangays = barangays.filter((b) => {
+  // 🔍 Filter by river name or code
+  const filteredBuoys = data.filter((s) => {
     const term = searchTerm.toLowerCase();
-    const { barangayCode, name } = b.attributes;
+    const { title, description, createdDate } = s.attributes;
     return (
-      barangayCode.toLowerCase().includes(term) ||
-      name.toLowerCase().includes(term)
+      title.toLowerCase().includes(term) ||
+      description.toLowerCase().includes(term) ||
+      createdDate.toLowerCase().includes(term)
     );
   });
 
-  const totalPages = Math.ceil(filteredBarangays.length / itemsPerPage);
-  const currentBarangays = filteredBarangays.slice(
+  const totalPages = Math.ceil(filteredBuoys.length / itemsPerPage);
+  const currentBuoys = filteredBuoys.slice(
     startIndex,
     startIndex + itemsPerPage
   );
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white">
-      <PageBreadcrumb pageTitle="Barangay Management" />
-
+    <div className=" bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         {/* Search and Add Button */}
         <div className="p-6 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
           <input
             type="text"
-            placeholder="Search by barangay name or code..."
+            placeholder="Search by code, river name, or status..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="h-11 w-full sm:w-96 rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent px-4 text-sm text-gray-800 dark:text-white focus:ring-2 focus:ring-[#453EFE] focus:border-[#453EFE]"
           />
 
+          {/* Add Buoy Button */}
           <button
             onClick={() => setShowAdd(true)}
             className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
@@ -130,12 +118,10 @@ const Barangay = ({ alertsRef }: Props) => {
               <tr>
                 {[
                   "No.",
-                  "Barangay Code",
-                  "Attachment",
-                  "Name",
-                  "River Wall Height",
-                  "Hectare",
-                  "Alerts (W/B/R)",
+                  "Image",
+                  "Title",
+                  "Description",
+                  "Status",
                   "Actions",
                 ].map((h) => (
                   <th
@@ -147,25 +133,26 @@ const Barangay = ({ alertsRef }: Props) => {
                 ))}
               </tr>
             </thead>
-
             <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
               {loading ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-10">
+                  <td colSpan={9} className="text-center py-10">
                     <div className="flex justify-center items-center gap-2 text-gray-500">
                       <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
                       Loading data...
                     </div>
                   </td>
                 </tr>
-              ) : currentBarangays.length === 0 ? (
+              ) : currentBuoys.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="text-center py-10 text-gray-500">
-                    No barangay records found.
+                  <td colSpan={9} className="py-10 text-gray-500">
+                    <div className="flex items-center justify-center h-full">
+                      No buoy records found.
+                    </div>
                   </td>
                 </tr>
               ) : (
-                currentBarangays.map((b, i) => {
+                currentBuoys.map((b, i) => {
                   const a = b.attributes;
                   return (
                     <tr
@@ -175,45 +162,59 @@ const Barangay = ({ alertsRef }: Props) => {
                       <td className="px-6 py-4 text-sm">
                         {startIndex + i + 1}
                       </td>
-                      <td className="px-6 py-4 text-sm">{a.barangayCode}</td>
-                      <td className="px-6 py-4">
-                        {a.attachment ? (
-                          <img
-                            src={a.attachment}
-                            alt={a.name}
-                            className="w-10 h-10 rounded-md object-cover"
-                          />
-                        ) : (
-                          "N/A"
-                        )}
+                      <td className="px-6 py-4 text-sm text-gray-900 dark:text-white whitespace-nowrap">
+                        <img
+                          src={a.image ?? "N/A"}
+                          alt="Feedback"
+                          className="w-10 h-10 rounded-md object-cover" // smaller and neat image
+                        />
                       </td>
-                      <td className="px-6 py-4 text-sm">{a.name}</td>
-                      <td className="px-6 py-4 text-sm">{a.riverWallHeight}</td>
-                      <td className="px-6 py-4 text-sm">{a.hectare}</td>
+                      <td
+                        className="px-6 py-4 text-sm max-w-xs truncate"
+                        title={a.title}
+                      >
+                        {a.title}
+                      </td>
+
+                      <td
+                        className="px-6 py-4 text-sm max-w-sm truncate"
+                        title={a.description}
+                      >
+                        {a.description}
+                      </td>
+
                       <td className="px-6 py-4 text-sm">
-                        <span className="text-gray-700 dark:text-gray-300">
-                          {a.whiteLevelAlert}/{a.blueLevelAlert}/
-                          {a.redLevelAlert}
+                        <span
+                          className={`px-3 py-0.5 inline-flex text-xs font-medium rounded-full ${
+                            a.isArchive === false
+                              ? "bg-green-100 text-green-700" // Not archived
+                              : a.isArchive === true
+                              ? "bg-red-100 text-red-700" // Archived
+                              : "bg-gray-100 text-gray-600"
+                          }`}
+                        >
+                          {a.isArchive ? "Archived" : "Active"}
                         </span>
                       </td>
+
                       <td className="px-6 py-4 flex gap-2">
                         <button
                           onClick={() => {
-                            setSelectedBarangay(b);
-                            setShowView(true);
-                          }}
-                          className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
-                        >
-                          <Fullscreen className="w-5 h-5" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            setSelectedBarangay(b);
+                            setSelectedData(b);
                             setShowUpdate(true);
                           }}
                           className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
                         >
                           <Upload className="w-5 h-5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setSelectedData(b);
+                            setShowArchive(true);
+                          }}
+                          className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
+                        >
+                          <Archive className="w-5 h-5" />
                         </button>
                       </td>
                     </tr>
@@ -228,8 +229,8 @@ const Barangay = ({ alertsRef }: Props) => {
         <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
           <span className="text-sm text-gray-600 dark:text-gray-400">
             Showing {startIndex + 1}–
-            {Math.min(startIndex + itemsPerPage, filteredBarangays.length)} of{" "}
-            {filteredBarangays.length}
+            {Math.min(startIndex + itemsPerPage, filteredBuoys.length)} of{" "}
+            {filteredBuoys.length}
           </span>
           <div className="flex space-x-2">
             {[...Array(totalPages)].map((_, i) => (
@@ -249,37 +250,40 @@ const Barangay = ({ alertsRef }: Props) => {
         </div>
       </div>
 
-      {/* 🧩 Modals */}
-      {showView && selectedBarangay && (
-        <ViewBarangayModal
-          show={showView}
-          onClose={() => setShowView(false)}
-          data={selectedBarangay}
-        />
-      )}
-
-      {showUpdate && selectedBarangay && (
-        <UpdateBarangayModal
-          show={showUpdate}
-          onClose={() => setShowUpdate(false)}
-          data={selectedBarangay}
-          token={token ?? ""}
-          alertsRef={alertsRef}
-          onUpdated={fetchBarangays}
-        />
-      )}
-
       {showAdd && (
-        <AddBarangayModal
+        <AddSlider
           show={showAdd}
           onClose={() => setShowAdd(false)}
           token={token ?? ""}
           alertsRef={alertsRef}
-          onAdded={fetchBarangays}
+          onAdded={fetchSlider}
+        />
+      )}
+
+      {showUpdate && selectedData && (
+        <UpdateSlider
+          show={showUpdate}
+          onClose={() => setShowUpdate(false)}
+          data={selectedData}
+          token={token ?? ""}
+          alertsRef={alertsRef}
+          onUpdated={fetchSlider}
+        />
+      )}
+
+      {/* 🧩 Modals */}
+      {showArchive && selectedData && (
+        <ArchiveSlider
+          show={showArchive}
+          onClose={() => setShowArchive(false)}
+          token={token ?? ""}
+          userId={selectedData.id}
+          alertsRef={alertsRef}
+          onArchived={fetchSlider}
         />
       )}
     </div>
   );
 };
 
-export default Barangay;
+export default TableSlider;

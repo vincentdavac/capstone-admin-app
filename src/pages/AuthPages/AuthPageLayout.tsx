@@ -1,5 +1,4 @@
 import React from "react";
-import GridShape from "../../components/common/GridShape";
 import { Link } from "react-router";
 import ThemeTogglerTwo from "../../components/common/ThemeTogglerTwo";
 
@@ -12,21 +11,40 @@ export default function AuthLayout({
     <div className="relative p-6 bg-white z-1 dark:bg-gray-900 sm:p-0">
       <div className="relative flex flex-col justify-center w-full h-screen lg:flex-row dark:bg-gray-900 sm:p-0">
         {children}
-       <div className="items-center hidden w-full h-full lg:w-1/2 bg-gradient-to-r from-[#1E6FA3] to-[#5DCFD9] dark:bg-white/5 lg:grid">
-          <div className="relative flex items-center justify-center z-1">
-            {/* <!-- ===== Common Grid Shape Start ===== --> */}
-            <GridShape />
-            <div className="flex flex-col items-center max-w-xs">
-              <Link to="/" className="block mb-4">
+        <div className="items-center hidden w-full h-full lg:w-1/2 lg:grid relative overflow-hidden">
+          {/* Gradient Background */}
+          <div 
+            className="absolute inset-0 z-0"
+            style={{
+              background: `linear-gradient(180deg, #1E3A8A 0%, #3B82F6 50%, #60A5FA 100%)`,
+            }}
+          />
+          
+          <div 
+            className="absolute inset-0 z-0 opacity-100"
+            style={{
+              backgroundImage: `url('${import.meta.env.BASE_URL}wave.svg')`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+            }}
+            aria-hidden="true"
+          />
+
+          <div className="relative flex items-center justify-center z-10">
+            <div className="flex flex-col items-center max-w-md">
+              <Link to="/" className="block mb-6">
                 <img
-                  width={231}
-                  height={48}
-                  src="/logo_with_name.svg"
+                  width={300} 
+                  height={62} 
+                  src="/light-with-name.svg"
                   alt="Logo"
+                  loading="lazy"
+                  className="drop-shadow-lg"
                 />
               </Link>
-              <p className="text-center text-[#FFFFFF] dark:text-white/60">
-                A Rive Monitoring System
+              <p className="text-center text-[#FFFFFF] dark:text-white/60 text-lg font-light">
+                A River Monitoring and Alert System.
               </p>
             </div>
           </div>

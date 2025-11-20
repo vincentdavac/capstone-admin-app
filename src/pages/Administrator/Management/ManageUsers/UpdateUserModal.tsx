@@ -3,12 +3,27 @@ import { X } from "lucide-react";
 import API_BASE_URL from "../../../../config/coreApi";
 import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
 
+interface BuoyData {
+  id: number;
+  buoyCode: string;
+  riverName: string;
+  status: string;
+}
+
 interface BarangayData {
+  id: number;
+  name: string;
+  number?: number | null;
+  buoys?: BuoyData[];
+}
+
+interface VerifierData {
   id: number;
   name: string;
 }
 
-interface UserAttributes {
+export interface UserData {
+  id: number;
   firstName: string;
   lastName: string;
   email: string;
@@ -17,17 +32,26 @@ interface UserAttributes {
   street: string;
   barangay: BarangayData | null;
   municipality: string | null;
-  isAdmin: boolean;
+  userType: "admin" | "barangay" | "user";
   isActive: boolean;
+  registrationStatus: boolean;
   image: string | null;
+  idDocument: string | null;
+  dateVerified: string | null;
+  emailVerifiedAt?: string | null;
+  verifiedBy?: number | null;
+  verifier?: VerifierData | null;
+  createdDate?: string | null;
+  createdTime?: string | null;
+  updatedDate?: string | null;
+  updatedTime?: string | null;
 }
-
 interface Props {
   show: boolean;
   onClose: () => void;
   token: string;
   userId: number | null;
-  userData?: UserAttributes;
+  userData?: UserData;
   onUpdated?: () => void;
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
@@ -41,7 +65,7 @@ const UpdateUserModal: React.FC<Props> = ({
   onUpdated,
   alertsRef,
 }) => {
-  const [formData, setFormData] = useState<UserAttributes | null>(null);
+  const [formData, setFormData] = useState<UserData | null>(null);
 
   useEffect(() => {
     if (userData) setFormData(userData);
@@ -211,12 +235,18 @@ const UpdateUserModal: React.FC<Props> = ({
           <div className="flex gap-3">
             <div className="w-1/2">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Role
+                User Type
               </label>
               <input
                 readOnly
                 disabled
-                value={formData.isAdmin ? "Admin" : "User"}
+                value={
+                  formData.userType === "admin"
+                    ? "Admin"
+                    : formData.userType === "barangay"
+                    ? "Barangay Official"
+                    : "User"
+                }
                 placeholder="Barangay"
                 className="w-full p-2 border border-gray-300 rounded-md bg-gray-100 dark:bg-gray-800 text-gray-600"
               />

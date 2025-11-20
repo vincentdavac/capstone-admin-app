@@ -26,10 +26,10 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import BarangayDashboard from "./pages/Dashboard/BarangayDashboard";
 import StormSurge from "./pages/Dashboard/riverMonitoring";
-import AlertManagement from "./pages/Dashboard/AlertManagement";
+import AlertManagement from "./pages/Barangay/AlertManagement/AlertManagement";
 import ChatSupport from "./pages/Administrator/Chat/AdminChatSupport";
 
-import ManageUsers from "./pages/Dashboard/ManageUsers";
+import ManageUsers from "./pages/Administrator/Management/ManageUsers/ManageUsers";
 import ArchivedUsers from "./pages/Dashboard/ArchivedUsers";
 import BuoyDeployment from "./pages/Administrator/Management/BuoyDeployment/BuoyDeployment";
 // import ChatSupport from "./pages/Management/ChatSupport";
@@ -41,15 +41,15 @@ import CustomTeam from "./pages/Customization/CustomTeam";
 import CustomFAQs from "./pages/Customization/CustomFAQs";
 import CustomFeedback from "./pages/Customization/CustomFeedback";
 import CustomFooter from "./pages/Customization/CustomFooter";
-import ArchiveSlider from "./pages/Archive/ArchiveSlider";
-import ArchiveAboutUs from "./pages/Archive/ArchiveAboutUs";
-import ArchivePrototype from "./pages/Archive/ArchivePrototype";
-import ArchiveTeam from "./pages/Archive/ArchiveTeam";
-import ArchiveFAQs from "./pages/Archive/ArchiveFAQs";
-import ArchiveFeeback from "./pages/Archive/ArchiveFeeback";
-import ArchiveFooter from "./pages/Archive/ArchiveFooter";
-import ArchiveUsers from "./pages/Archive/ArchiveUsers";
-import ArchiveBuoys from "./pages/Archive/ArchiveBuoys";
+import ArchiveSlider from "./pages/Barangay/Archive/ArchiveSlider";
+import ArchiveAboutUs from "./pages/Barangay/Archive/ArchiveAboutUs";
+import ArchivePrototype from "./pages/Barangay/Archive/ArchivePrototype";
+import ArchiveTeam from "./pages/Barangay/Archive/ArchiveTeam";
+import ArchiveFAQs from "./pages/Barangay/Archive/ArchiveFAQs";
+import ArchiveFeeback from "./pages/Barangay/Archive/ArchiveFeeback";
+import ArchiveFooter from "./pages/Barangay/Archive/ArchiveFooter";
+import ArchiveUsers from "./pages/Barangay/Archive/ArchiveUsers";
+import ArchiveBuoys from "./pages/Barangay/Archive/ArchiveBuoys";
 import Loader from "./common/Loader";
 import DeployedBuoy from "./pages/Dashboard/deployedBuoy";
 import HistoricalDashboard from "./pages/Dashboard/historicalDashboard";
@@ -110,7 +110,7 @@ export default function App({ alertsRef }: AppProps) {
         <Route element={<AppLayout alertsRef={alertsRef} />}>
           <Route
             index
-            path="/admin/alert-management"
+            path="/barangay/alert-management"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <AlertManagement />
@@ -139,7 +139,7 @@ export default function App({ alertsRef }: AppProps) {
 
           <Route
             index
-            path="/admin/deployed-buoy"
+            path="/barangay/deployed-buoy"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <DeployedBuoy />
@@ -157,7 +157,7 @@ export default function App({ alertsRef }: AppProps) {
           />
           <Route
             index
-            path="/admin/barangay-dashboard"
+            path="/barangay/dashboard"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <BarangayDashboard />
@@ -166,7 +166,7 @@ export default function App({ alertsRef }: AppProps) {
           />
           <Route
             index
-            path="/admin/river-monitoring"
+            path="/barangay/river-monitoring"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <StormSurge />
@@ -175,7 +175,7 @@ export default function App({ alertsRef }: AppProps) {
           />
           <Route
             index
-            path="/admin/historical-data"
+            path="/barangay/historical-data"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <HistoricalDashboard />

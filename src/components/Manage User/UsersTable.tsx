@@ -1,33 +1,48 @@
-import React from 'react';
-import { Archive, Fullscreen } from 'lucide-react';
+import React from "react";
+import { Archive, Fullscreen } from "lucide-react";
+
+interface BuoyData {
+  id: number;
+  buoyCode: string;
+  riverName: string;
+  status: string;
+}
 
 interface BarangayData {
-    id: number;
-    name: string;
+  id: number;
+  name: string;
+  number?: number | null;
+  buoys?: BuoyData[];
 }
 
-interface UserAttributes {
-    firstName: string;
-    lastName: string;
-    email: string;
-    contactNumber: string;
-    houseNo: string;
-    street: string;
-    barangay: BarangayData | null;
-    municipality: string | null;
-    isAdmin: boolean;
-    isActive: boolean;
-    image: string | null;
-    imageUrl: string | null;
-    createdDate: string | null;
-    createdTime: string | null;
-    updatedDate: string | null;
-    updatedTime: string | null;
+interface VerifierData {
+  id: number;
+  name: string;
 }
 
-interface UserData {
-    id: number;
-    attributes: UserAttributes;
+export interface UserData {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  contactNumber: string;
+  houseNo: string;
+  street: string;
+  barangay: BarangayData | null;
+  municipality: string | null;
+  userType: "admin" | "barangay" | "user";
+  isActive: boolean;
+  registrationStatus: boolean;
+  image: string | null;
+  idDocument: string | null;
+  dateVerified: string | null;
+  emailVerifiedAt?: string | null;
+  verifiedBy?: number | null;
+  verifier?: VerifierData | null;
+  createdDate?: string | null;
+  createdTime?: string | null;
+  updatedDate?: string | null;
+  updatedTime?: string | null;
 }
 
 interface UsersTableProps {
@@ -38,12 +53,12 @@ interface UsersTableProps {
   handleArchiveClick: (u: UserData) => void;
 }
 
-const UsersTable: React.FC<UsersTableProps> = ({ 
-    currentUsers, 
-    loading, 
-    startIndex, 
-    handleUpdateClick, 
-    handleArchiveClick 
+const UsersTable: React.FC<UsersTableProps> = ({
+  currentUsers,
+  loading,
+  startIndex,
+  handleUpdateClick,
+  handleArchiveClick,
 }) => {
   return (
     <div className="overflow-x-auto">
@@ -74,7 +89,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
               Status
             </th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">
-              Role
+              User Type
             </th>
             <th className="px-6 py-3 text-left text-sm font-medium text-gray-600 dark:text-gray-400">
               Actions
@@ -100,7 +115,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
             </tr>
           ) : (
             currentUsers.map((u, i) => {
-              const a = u.attributes;
+              const a = u;
               return (
                 <tr
                   key={u.id}
@@ -140,8 +155,11 @@ const UsersTable: React.FC<UsersTableProps> = ({
                     </span>
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
-                    {a.isAdmin ? "Admin" : "User"}
+                    {a.userType
+                      ? a.userType.charAt(0).toUpperCase() + a.userType.slice(1)
+                      : ""}
                   </td>
+
                   <td className="px-6 py-4 flex flex-row gap-2">
                     <button
                       onClick={() => handleUpdateClick(u)}

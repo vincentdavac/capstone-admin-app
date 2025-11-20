@@ -147,6 +147,7 @@ export default function SignInForm({ alertsRef }: Props) {
                 </Label>
                 <Input
                   placeholder="info@gmail.com"
+                  autoComplete="current-password"
                   type="email"
                   value={formData.email}
                   onChange={(e) =>
@@ -168,6 +169,7 @@ export default function SignInForm({ alertsRef }: Props) {
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
                     value={formData.password}
+                    autoComplete="current-password"
                     onChange={(e) =>
                       setFormData({
                         ...formData,

@@ -26,43 +26,35 @@ import { ScrollToTop } from "./components/common/ScrollToTop";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import BarangayDashboard from "./pages/Dashboard/BarangayDashboard";
 import StormSurge from "./pages/Dashboard/riverMonitoring";
-import AlertManagement from "./pages/Dashboard/AlertManagement";
+import AlertManagement from "./pages/Barangay/AlertManagement/AlertManagement";
 import ChatSupport from "./pages/Administrator/Chat/AdminChatSupport";
 
-import ManageUsers from "./pages/Dashboard/ManageUsers";
-import ArchivedUsers from "./pages/Dashboard/ArchivedUsers";
+import ManageUsers from "./pages/Administrator/ManageUsers/ManageUsers";
+import ArchivedUsers from "./pages/Administrator/Archive/ArchivedUsers";
 import BuoyDeployment from "./pages/Administrator/Management/BuoyDeployment/BuoyDeployment";
 // import ChatSupport from "./pages/Management/ChatSupport";
 import AlertSystem from "./pages/Management/AlertSystem";
-import CustomSlider from "./pages/Customization/CustomSlider";
-import CustomAboutUs from "./pages/Customization/CustomAboutUs";
-import CustomPrototype from "./pages/Customization/CustomPrototype";
-import CustomTeam from "./pages/Customization/CustomTeam";
-import CustomFAQs from "./pages/Customization/CustomFAQs";
-import CustomFeedback from "./pages/Customization/CustomFeedback";
-import CustomFooter from "./pages/Customization/CustomFooter";
-import ArchiveSlider from "./pages/Archive/ArchiveSlider";
-import ArchiveAboutUs from "./pages/Archive/ArchiveAboutUs";
-import ArchivePrototype from "./pages/Archive/ArchivePrototype";
-import ArchiveTeam from "./pages/Archive/ArchiveTeam";
-import ArchiveFAQs from "./pages/Archive/ArchiveFAQs";
-import ArchiveFeeback from "./pages/Archive/ArchiveFeeback";
-import ArchiveFooter from "./pages/Archive/ArchiveFooter";
-import ArchiveUsers from "./pages/Archive/ArchiveUsers";
-import ArchiveBuoys from "./pages/Archive/ArchiveBuoys";
+import ArchiveSlider from "./pages/Barangay/Archive/ArchiveSlider";
+import ArchiveAboutUs from "./pages/Barangay/Archive/ArchiveAboutUs";
+import ArchivePrototype from "./pages/Barangay/Archive/ArchivePrototype";
+import ArchiveTeam from "./pages/Barangay/Archive/ArchiveTeam";
+import ArchiveFAQs from "./pages/Barangay/Archive/ArchiveFAQs";
+import ArchiveFeeback from "./pages/Barangay/Archive/ArchiveFeeback";
+import ArchiveFooter from "./pages/Barangay/Archive/ArchiveFooter";
+import ArchiveUsers from "./pages/Barangay/Archive/ArchiveUsers";
+import ArchiveBuoys from "./pages/Barangay/Archive/ArchiveBuoys";
 import Loader from "./common/Loader";
 import DeployedBuoy from "./pages/Dashboard/deployedBuoy";
 import HistoricalDashboard from "./pages/Dashboard/historicalDashboard";
 
 // Add these imports for your customization components
-import CustomizationSlider from "./components/admin/customization-slider";
-import CustomizationAbout from "./components/admin/customization-about";
-import CustomizationPrototype from "./components/admin/customization-prototype";
-import CustomizationFaqs from "./components/admin/customization-faqs";
-import CustomizationTeam from "./components/admin/customization-team";
-import CustomizationFooter from "./components/admin/customization-footer";
-import CustomizationFeedbacks from "./components/admin/customization-feedbacks";
-import CustomizationArchive from "./components/admin/customization-archive";
+import CustomizationSlider from "./pages/Administrator/Customization/Slider/customization-slider";
+import CustomizationAbout from "./pages/Administrator/Customization/About/customization-about";
+import CustomizationPrototype from "./pages/Administrator/Customization/Prototype/customization-prototype";
+import CustomizationFaqs from "./pages/Administrator/Customization/FAQs/customization-faqs";
+import CustomizationTeam from "./pages/Administrator/Customization/Team/customization-team";
+import CustomizationFooter from "./pages/Administrator/Customization/Footer/customization-footer";
+import CustomizationFeedbacks from "./pages/Administrator/Customization/Feedback/customization-feedbacks";
 import { AlertsContainerRef } from "./components/Alert/AlertsContainer";
 import UserRoute from "./middleware/UserRoute";
 import ProtectedRoute from "./middleware/ProtectedRoute";
@@ -100,7 +92,7 @@ export default function App({ alertsRef }: AppProps) {
         <Route element={<AppLayout alertsRef={alertsRef} />}>
           <Route
             index
-            path="/admin/alert-management"
+            path="/barangay/alert-management"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <AlertManagement />
@@ -129,7 +121,7 @@ export default function App({ alertsRef }: AppProps) {
 
           <Route
             index
-            path="/admin/deployed-buoy"
+            path="/barangay/deployed-buoy"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <DeployedBuoy />
@@ -147,7 +139,7 @@ export default function App({ alertsRef }: AppProps) {
           />
           <Route
             index
-            path="/admin/barangay-dashboard"
+            path="/barangay/dashboard"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <BarangayDashboard />
@@ -156,7 +148,7 @@ export default function App({ alertsRef }: AppProps) {
           />
           <Route
             index
-            path="/admin/river-monitoring"
+            path="/barangay/river-monitoring"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <StormSurge />
@@ -165,7 +157,7 @@ export default function App({ alertsRef }: AppProps) {
           />
           <Route
             index
-            path="/admin/historical-data"
+            path="/barangay/historical-data"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <HistoricalDashboard />
@@ -214,65 +206,6 @@ export default function App({ alertsRef }: AppProps) {
               </ProtectedRoute>
             }
           />
-
-          {/* Customization */}
-          <Route
-            path="/admin/customization/sliders"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <CustomSlider />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/customization/about-us"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <CustomAboutUs />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/customization/prototype"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <CustomPrototype />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/customization/teams"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <CustomTeam />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/customization/faqs"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <CustomFAQs />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/customization/feedbacks"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <CustomFeedback />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/admin/customization/footer"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <CustomFooter />
-              </ProtectedRoute>
-            }
-          />
-
           {/* Archive */}
           <Route path="/admin/archive/users" element={<ArchiveUsers />} />
           <Route path="/admin/archive/buoys" element={<ArchiveBuoys />} />
@@ -296,7 +229,7 @@ export default function App({ alertsRef }: AppProps) {
           {/* Customization Routes - ADD THESE */}
           <Route
             path="/admin/customization-slider"
-            element={<CustomizationSlider />}
+            element={<CustomizationSlider alertsRef={alertsRef} />}
           />
           <Route
             path="/admin/customization-about"
@@ -322,11 +255,6 @@ export default function App({ alertsRef }: AppProps) {
             path="/admin/customization-feedbacks"
             element={<CustomizationFeedbacks />}
           />
-          <Route
-            path="/admin/customization-archive"
-            element={<CustomizationArchive />}
-          />
-
           {/* Forms */}
           <Route path="/form-elements" element={<FormElements />} />
 

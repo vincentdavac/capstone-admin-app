@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect, useContext } from "react";
-import { Archive, Fullscreen, Plus } from "lucide-react";
+import { Upload, Fullscreen, Plus } from "lucide-react";
 import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
 import API_BASE_URL from "../../../../config/coreApi";
 import { AppContext } from "../../../../context/AppContext";
@@ -236,7 +236,7 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
                           }}
                           className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
                         >
-                          <Archive className="w-5 h-5" />
+                          <Upload className="w-5 h-5" />
                         </button>
                       </td>
                     </tr>

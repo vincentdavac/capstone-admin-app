@@ -8,7 +8,7 @@ type GLTFResult = {
 };
 
 function Model() {
-  const { scene } = useGLTF("/no_weights.glb") as GLTFResult;
+  const { scene } = useGLTF("/latest buoy prototype 1120.glb") as GLTFResult;
   const ref = useRef<THREE.Group>(null);
   const { camera } = useThree();
 
@@ -47,6 +47,7 @@ export default function ModelViewer() {
     <Canvas
       camera={{ fov: 45, near: 0.1, far: 1000 }}
       style={{
+        // Removed explicit background color to inherit from parent (which handles dark mode)
         background: "transparent",
         width: "100%",
         height: "100%",

@@ -1,17 +1,19 @@
 import ModelViewer from "../../components/model-viewer/ModelViewer";
+
 const buoyControl = () => {
   return (
-    <>
-      <div className="z-10 flex w-full max-w-sm items-center justify-center rounded-xl bg-[#EEEEEE] p-4 shadow-lg sm:max-w-md md:h-[500px] md:w-[619px]">
+    <div className="flex flex-col w-full items-center">
+      <div className="flex w-full items-center justify-center rounded-xl bg-gray-100 dark:bg-gray-700 p-4 shadow-lg min-h-[300px] max-h-[500px] lg:h-[500px]">
         <ModelViewer />
       </div>
-     <div className="z-10 flex w-full max-w-sm sm:max-w-md md:h-[87px] md:w-[619px] mt-5 items-center justify-center rounded-xl bg-white border border-[#DDDDDD]">
-        <button className="flex items-center gap-3 px-6 py-3 border border-[#59FF00] rounded-[8px]">
+
+      <div className="flex w-full h-[87px] mt-4 items-center justify-center rounded-xl bg-white dark:bg-gray-800 border border-[#DDDDDD] dark:border-gray-700 shadow-md">
+        <button className="flex items-center gap-3 px-6 py-3 border border-[#59FF00] rounded-[8px] bg-white hover:bg-gray-50 transition-colors dark:bg-gray-800 dark:hover:bg-gray-700 dark:border-green-400">
             <span className="w-5 h-5 bg-[#59FF00] rounded-full"></span>
-            <span className="font-medium text-black">Lights On/Off</span>
+            <span className="font-medium text-black dark:text-white">Lights On/Off</span>
         </button>
     </div>
-    </>
+    </div>
   );
 };
 export default buoyControl;

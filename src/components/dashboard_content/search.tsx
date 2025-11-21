@@ -3,7 +3,7 @@ const searchBuoyDashboard = () => {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center mb-4 gap-3 sm:gap-45">
       <div className="relative w-full sm:w-60 lg:w-[946px]">
-        <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-[999]">
+        <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
           <Icons name="search" className="w-5 h-5 text-gray-400" />
         </span>
         <input

@@ -14,7 +14,7 @@ import ForecastCard from "../../components/dashboard_content/forecast";
 import {insertingAlerts } from "../../api_hooks/dashboardHooks";
 
 export default function Dashboard() {
-  // insertingAlerts();
+  insertingAlerts();
   // useEffect(() => {
   //   const sendAlert = async () => {
   //     try {

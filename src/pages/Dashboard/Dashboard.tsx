@@ -2,7 +2,7 @@ import SearchBuoyDashboard from "../../components/dashboard_content/search";
 import DashboardCards from "../../components/dashboard_content/cards";
 import DangerLevel from "../../components/dashboard_content/danger_level";
 import MapDashboard from "../../components/dashboard_content/map";
-import ForecastCard from "../../components/dashboard_content/forecast";
+// import ForecastCard from "../../components/dashboard_content/forecast";
 // import setAlert from "../../core_api_fetching/insertingAlert";
 // import setSurroundingAlert from "../../core_api_fetching/setSurroundingTemp";
 // import setHumidityAlert from "../../core_api_fetching/humidityAlert";
@@ -11,7 +11,7 @@ import ForecastCard from "../../components/dashboard_content/forecast";
 // import setRainAlert from "../../core_api_fetching/setRainAlert";
 // import setWaterPressureAlert from "../../core_api_fetching/setWaterPressureAlert";
 // import insertHistorical from "../../core_api_fetching/setHistorical";
-import {insertingAlerts } from "../../api_hooks/dashboardHooks";
+// import {insertingAlerts } from "../../api_hooks/dashboardHooks";
 
 export default function Dashboard() {
   // insertingAlerts();
@@ -100,13 +100,13 @@ export default function Dashboard() {
       <div className="mt-[10px] ml-[3px]">
         <SearchBuoyDashboard />
       </div>
-      <div className="flex gap-10">
+      <div className="flex flex-col lg:flex-row gap-10">
         <MapDashboard />
         <DangerLevel />
       </div>
-      <div className="mt-5 ">
+      {/* <div className="mt-5 ">
         <ForecastCard />
-      </div>
+      </div> */}
     </div>
   );
 }

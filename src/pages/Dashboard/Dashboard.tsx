@@ -11,7 +11,7 @@ import MapDashboard from "../../components/dashboard_content/map";
 // import setRainAlert from "../../core_api_fetching/setRainAlert";
 // import setWaterPressureAlert from "../../core_api_fetching/setWaterPressureAlert";
 // import insertHistorical from "../../core_api_fetching/setHistorical";
-// import {insertingAlerts } from "../../api_hooks/dashboardHooks";
+import {insertingAlerts } from "../../api_hooks/dashboardHooks";
 
 export default function Dashboard() {
   insertingAlerts();

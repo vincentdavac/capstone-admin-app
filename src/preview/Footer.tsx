@@ -1,90 +1,87 @@
-import { FacebookIcon, YoutubeIcon } from "lucide-react";
+import { FacebookIcon } from "lucide-react";
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-white text-[#023E8A] dark:bg-gray-900 dark:text-blue-200 rounded-lg shadow-lg">
+    <footer className="w-full bg-white text-[#023E8A]">
       <div className="container mx-auto px-4 py-12">
+        {/* Main Content */}
         <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
+          {/* Left Column - Brand Info */}
           <div className="space-y-4">
+            {/* <h3
+              className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] sm:text-3xl md:text-5xl"
+              // style={{ fontFamily: "'Playfair Display', serif" }}
+            >
+              COASTELLA
+            </h3> */}
+
             <img
-              src="/logo/Logo.png"
-              alt="Coastella Logo"
-              className="w-60 h-auto max-w-full"
+              src={`/logo/lightmode.svg`}
+              alt="logo"
+              className="dark:hidden w-60 h-auto"
             />
             <p className="text-lg">Stay Informed, Stay Safe, Stay Ahead</p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-10">
+          {/* Middle Columns - Links */}
+          <div className="grid grid-cols-2 gap-10">
+            {/* Quick Links */}
             <div>
-              <h4 className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] dark:text-blue-400 sm:text-3xl md:text-xl">
+              <h4 className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] sm:text-3xl md:text-xl">
                 QUICK LINKS
               </h4>
               <ul className="space-y-2">
                 <li>
-                  <a
-                    href="#homepage-slider"
-                    className="hover:underline text-base sm:text-lg"
-                  >
+                  <a href="#homepage-slider" className="hover:underline">
                     Home
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#homepage-about"
-                    className="hover:underline text-base sm:text-lg"
-                  >
-                    About Coastella
+                  <a href="#homepage-about" className="hover:underline">
+                    About X-Stream
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#homepage-team"
-                    className="hover:underline text-base sm:text-lg"
-                  >
+                  <a href="#homepage-team" className="hover:underline">
                     Meet the Team
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#homepage-prototype"
-                    className="hover:underline text-base sm:text-lg"
-                  >
+                  <a href="#homepage-prototype" className="hover:underline">
                     Prototype
                   </a>
                 </li>
                 <li>
-                  <a
-                    href="#homepage-faqs"
-                    className="hover:underline text-base sm:text-lg"
-                  >
+                  <a href="#homepage-faqs" className="hover:underline">
                     FAQs
                   </a>
                 </li>
               </ul>
             </div>
 
+            {/* Resources */}
             <div>
-              <h4 className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] dark:text-blue-400 sm:text-3xl md:text-xl">
+              <h4 className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] sm:text-3xl md:text-xl">
                 RESOURCES
               </h4>
               <ul className="space-y-3">
                 <li>
-                  <a href="#" className="hover:underline text-base sm:text-lg">
+                  <a href="#" className="hover:underline">
                     Project Documentation
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:underline text-base sm:text-lg">
+                  <a href="#" className="hover:underline">
                     Research Paper
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:underline text-base sm:text-lg">
+                  <a href="#" className="hover:underline">
                     Contact Form
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="hover:underline text-base sm:text-lg">
+                  <a href="#" className="hover:underline">
                     Privacy Policy
                   </a>
                 </li>
@@ -92,18 +89,19 @@ export default function Footer() {
             </div>
           </div>
 
+          {/* Right Column - Contact Info */}
           <div>
-            <h4 className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] dark:text-blue-400 sm:text-3xl md:text-xl">
+            <h4 className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] sm:text-3xl md:text-xl">
               CONTACT INFORMATION
             </h4>
             <ul className="space-y-3">
-              <li className="text-base sm:text-lg">
+              <li>
                 Email:{" "}
                 <a
-                  href="mailto:coastella.2025@gmail.com"
-                  className="hover:underline break-all"
+                  href="mailto:xstream.2k25@gmail.com"
+                  className="hover:underline"
                 >
-                  coastella.2025@gmail.com
+                  xstream.2k25@gmail.com
                 </a>
               </li>
               <li className="flex items-center space-x-4">
@@ -112,30 +110,43 @@ export default function Footer() {
                     href="https://www.facebook.com/profile.php?id=61578909728047&mibextid=wwXIfr&rdid=1523AyOq6ApgOBmF&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F179nv48zN7%2F%3Fmibextid%3DwwXIfr#"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="Visit our Facebook page"
-                    className="hover:opacity-80 transition-opacity"
                   >
                     <FacebookIcon size={20} />
                   </a>
                   <a
-                    href="https://www.youtube.com/@coastella.2025"
+                    href="https://www.youtube.com/@XStream-o3g"
                     target="_blank"
                     rel="noopener noreferrer"
-                    aria-label="Visit our YouTube channel"
-                    className="hover:opacity-80 transition-opacity"
                   >
-                    <YoutubeIcon size={20} />
+                    {/* YouTube Icon gamit lucide-react */}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M23.498 6.186a2.974 2.974 0 0 0-2.093-2.106C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.405.58A2.974 2.974 0 0 0 .502 6.186C0 8.1 0 12 0 12s0 3.9.502 5.814a2.974 2.974 0 0 0 2.093 2.106C4.495 20.5 12 20.5 12 20.5s7.505 0 9.405-.58a2.974 2.974 0 0 0 2.093-2.106C24 15.9 24 12 24 12s0-3.9-.502-5.814zM9.75 15.568V8.432L15.818 12 9.75 15.568z" />
+                    </svg>
                   </a>
+                  {/* <a href="#">
+                    <InstagramIcon size={20} />
+                  </a>
+                  <a href="#">
+                    <TwitterIcon size={20} />
+                  </a> */}
                 </div>
               </li>
             </ul>
           </div>
         </div>
 
-        <div className="mt-16 border-t border-gray-200 dark:border-gray-700 pt-6">
+        {/* Copyright Section */}
+        <div className="mt-16 border-t border-gray-200 pt-6">
           <div className="flex flex-col items-center space-y-2 text-center">
-            <p className="font-light text-base sm:text-lg">
-              © 2025 Coastella | Coastal Operations Monitoring and Alert System
+            <p className="font-light">
+              © 2025 X-STREAM | River Monitoring and Alert System. All rights
+              reserved.
             </p>
           </div>
         </div>

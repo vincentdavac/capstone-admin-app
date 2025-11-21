@@ -13,20 +13,20 @@ export default function AuthLayout({
         {children}
         <div className="items-center hidden w-full h-full lg:w-1/2 lg:grid relative overflow-hidden">
           {/* Gradient Background */}
-          <div 
+          <div
             className="absolute inset-0 z-0"
             style={{
               background: `linear-gradient(180deg, #1E3A8A 0%, #3B82F6 50%, #60A5FA 100%)`,
             }}
           />
-          
-          <div 
+
+          <div
             className="absolute inset-0 z-0 opacity-100"
             style={{
               backgroundImage: `url('${import.meta.env.BASE_URL}wave.svg')`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
             }}
             aria-hidden="true"
           />
@@ -35,8 +35,8 @@ export default function AuthLayout({
             <div className="flex flex-col items-center max-w-md">
               <Link to="/" className="block mb-6">
                 <img
-                  width={300} 
-                  height={62} 
+                  width={300}
+                  height={62}
                   src="/light-with-name.svg"
                   alt="Logo"
                   loading="lazy"

@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ChevronDownIcon, ChevronUpIcon } from 'lucide-react';
+import { useState } from "react";
+import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 
 type FAQItemProps = {
   question: string;
@@ -9,31 +9,26 @@ type FAQItemProps = {
 const FAQItem = ({ question, answer }: FAQItemProps) => {
   const [isOpen, setIsOpen] = useState(false);
   return (
-    // ADDED DARK MODE: dark:border-gray-700
-    <div className="border-b border-gray-200 dark:border-gray-700 py-4">
+    <div className="border-b border-gray-200 py-4">
       <button
         className="flex w-full items-center justify-between text-left focus:outline-none"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
       >
         <span
-          // ADDED DARK MODE: dark:text-blue-200
-          className="text-lg font-medium text-[#023E8A] dark:text-blue-200"
+          className="text-lg font-medium text-[#023E8A]"
           style={{ fontFamily: "'Montserrat', sans-serif" }}
         >
           {question}
         </span>
         {isOpen ? (
-          // ADDED DARK MODE: dark:text-blue-300
-          <ChevronUpIcon size={20} className="flex-shrink-0 text-[#023E8A] dark:text-blue-300" />
+          <ChevronUpIcon size={20} className="flex-shrink-0 text-[#023E8A]" />
         ) : (
-          // ADDED DARK MODE: dark:text-blue-300
-          <ChevronDownIcon size={20} className="flex-shrink-0 text-[#023E8A] dark:text-blue-300" />
+          <ChevronDownIcon size={20} className="flex-shrink-0 text-[#023E8A]" />
         )}
       </button>
       <div
-        // ADDED DARK MODE: dark:text-gray-300
-        className={`mt-2 text-[#023E8A] dark:text-gray-300 ${isOpen ? 'block' : 'hidden'}`}
+        className={`mt-2 text-[#023E8A] ${isOpen ? "block" : "hidden"}`}
         style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 200 }}
       >
         <p>{answer}</p>
@@ -45,67 +40,54 @@ const FAQItem = ({ question, answer }: FAQItemProps) => {
 export default function FAQs() {
   const faqs = [
     {
-      question: 'What exactly is COASTELLA?',
+      question: "What is the main purpose of X-STREAM?",
       answer:
-        "COASTELLA stands for 'Coastal Observation and Alert System for Tracking Environment, Levels of water, Location, and Analytics.' It is a solar-powered, IoT-based buoy system equipped with sensors to monitor coastal conditions and detect signs of natural disasters. It provides real-time updates through a web and mobile platform, helping authorities deliver timely alerts.",
+        "X-STREAM is designed to provide real-time river monitoring and early alerts to help disaster responders and local communities prepare for and respond quickly to possible flooding or river-related hazards.",
     },
     {
-      question: 'What types of natural disasters can COASTELLA detect?',
+      question: "How does X-STREAM monitor river conditions?",
       answer:
-        'COASTELLA has the capability to detect some of the severe threats such as tsunamis, tropical cyclones and storm surges. Its sensors monitor key parameters like rainfall, temperature, air and water pressure, wind speed, wave pattern and water levels. That is how we can be prepared before nature surprises us!',
+        "The system uses solar-powered buoys equipped with sensors that measure rainfall, wind speed, temperature, humidity and water level. These sensors collect and send the data in real time.",
     },
     {
-      question:
-        'How does COASTELLA help during disasters like typhoons or storm surges?',
+      question: "How is the data from X-STREAM accessed?",
       answer:
-        'In the event of a disaster, COASTELLA becomes very useful in providing disaster monitoring authorities including the City Disaster Risk Reduction and Management Department of Caloocan and Navotas with real time data of water levels, wave activity and other coastal conditions. By providing early and reliable information, they can issue timely alerts and mobilize responders quickly to provide assistance to the communities as early as possible.',
+        "All sensor readings are sent wirelessly to Firebase, where the data is stored and updated in real time. It is then displayed through the X-STREAM web and mobile application, allowing users to view river conditions, and receives alerts anytime.",
     },
     {
-      question: 'How does COASTELLA send alerts and updates?',
+      question: "How does X-STREAM send alerts during emergencies?",
       answer:
-        'Data is being gathered via the sensors of the COASTELLA buoy and sent directly to the Firebase database. This data can then be accessed by authorized personnel through the web and mobile interface of the system in order to check the situation in real time and issue timely alerts and updates as needed.',
+        "When dangerous river conditions are detected, the system can automatically send SMS notifications, activate alarms and lights on the buoy, and display alerts on the web and mobile dashboard to warn the disaster responders and users.",
     },
     {
-      question: 'Who can access the data collected by COASTELLA?',
+      question: "How does the X-STREAM buoy stay powered?",
       answer:
-        'It is only authorized to the City Disaster Risk Reduction and Management Department of Caloocan and Navotas that have access to the data of COASTELLA. This is to make sure that information is managed securely and only applied to create timely alerts and coordinate rapid responses in case of an Emergency.',
-    },
-    {
-      question: 'How is COASTELLA different from existing warning systems?',
-      answer:
-        'COASTELLA is characterized by the fact that it provides real-time and automatic surveillance with the help of its IoT-enabled network of buoys and sensors. As compared to the existing warning systems which may be based on manual detection or delayed information, COASTELLA updates in real time. It is solar-powered so it can operate continuously providing updates via web and mobile apps, which can respond more quickly.',
-    },
-    {
-      question: 'What inspired you to create COASTELLA?',
-      answer:
-        'The inspiration behind the creation of COASTELLA stems from the critical need to validate data sourced from news outlets and other information channels regarding disaster preparedness in the Philippines. Our goal was to develop a system that provides real-time data and early alerts, helping authorities respond quickly and keep everyone safe.',
-    },
-    {
-      question: 'Is there a mobile application for COASTELLA?',
-      answer:
-        'Yes! COASTELLA comes with an easy-to-use mobile application that allows authorized personnel to access real-time data and alerts on the go. This way, they can stay informed and ready to respond, no matter where they are.',
-    },
-    {
-      question: 'What happens if the solar power is insufficient?',
-      answer:
-        'COASTELLA has a 12V 28Ah lead-acid battery with a safe 80 percent usable capacity to store excess solar energy. This enables the system to maintain approximately 33 hours of operation in case of limited sunlight.',
+        "It uses a solar panel connected to a 12V 28Ah battery, allowing continuous operation even in remote river areas without electricity, ensuring data transmission day and night.",
     },
     {
       question:
-        'Does Coastella require constant internet connection to function?',
+        "What makes X-STREAM different from existing monitoring systems?",
       answer:
-        'No. The buoy sends data to a receiver by means of radio frequency (10-15 km range) without the internet. The system side only requires internet connectivity to send data to a Firebase database that authorized employees can then monitor and have access to real-time data and notifications.',
+        "Unlike traditional manual systems, X-STREAM provides real-time monitoring and sends instant alerts, helping reduce response delays and improve disaster preparedness in flood-prone areas. It also uses solar power for sustainable operation and provides both web and mobile accessibility, making it practical and efficient for community-based monitoring.",
+    },
+    {
+      question: "Can X-STREAM operate during storms or bad weather?",
+      answer:
+        "Yes! The system can function continuously for up to 33 hours even without sunlight, ensuring that monitoring and communication remain active during storms or cloudy weather.",
+    },
+    {
+      question: "How can X-STREAM help local communities?",
+      answer:
+        "By providing early warnings and accurate river data, X-STREAM helps communities stay informed, prepare evacuation plans, and minimize loss of life and property during floods or sudden river surges.",
     },
   ];
 
   return (
-    // ADDED DARK MODE: dark:bg-gray-900 at dark:outline-gray-700
-    <section className="w-full bg-white dark:bg-gray-900 py-16 outline-1 outline-[#959ea5] dark:outline-gray-700 rounded-lg">
+    <section className="w-full bg-white py-16">
       <div className="container mx-auto px-4">
         <div className="mb-16 text-center">
           <h2
-            // ADDED DARK MODE: dark:text-blue-100
-            className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] dark:text-blue-100 sm:text-3xl md:text-5xl"
+            className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] sm:text-3xl md:text-5xl"
             // style={{ fontFamily: "'Playfair Display', serif" }}
           >
             FREQUENTLY ASKED QUESTIONS
@@ -117,8 +99,7 @@ export default function FAQs() {
             Have questions about COASTELLA?
           </p> */}
           <p
-            // ADDED DARK MODE: dark:text-gray-300
-            className="mx-auto max-w-7xl text-lg text-[#023E8A] dark:text-gray-300"
+            className="mx-auto max-w-7xl text-lg text-[#023E8A]"
             // style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 200 }}
           >
             We've gathered some of the most common inquiries to help you

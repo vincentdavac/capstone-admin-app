@@ -112,7 +112,7 @@ const navItems: NavItem[] = [
     name: "Deployed Buoy",
     path: "/barangay/deployed-buoy",
   },
-   {
+  {
     name: "Historical Data",
     icon: <Management />,
     subItems: [
@@ -511,18 +511,33 @@ const AppSidebar = ({ alertsRef }: Props) => {
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <img
-                src="/logo_with_name.svg"
+                src="/light-with-name.svg"
                 alt="Logo"
                 className="dark:hidden"
               />
               <img
                 className="hidden dark:block"
-                src="/logo_with_name.svg"
+                src="/dark-with-name.svg"
                 alt="Logo"
               />
             </>
           ) : (
-            <img src="/favicon.svg" alt="Logo" width={50} height={50} />
+            <>
+              <img
+                src="/light-solo.svg"
+                alt="Logo"
+                width={50}
+                height={50}
+                className="dark:hidden"
+              />
+              <img
+                src="/dark-solo.svg"
+                alt="Logo"
+                width={50}
+                height={50}
+                className="hidden dark:block"
+              />
+            </>
           )}
         </Link>
       </div>

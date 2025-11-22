@@ -76,8 +76,11 @@ export default function Slider() {
   // Prevent crash while loading
   if (loading) {
     return (
-      <div className="w-full text-center py-24 text-xl font-semibold">
-        Loading slider...
+      <div className="w-full text-center py-24">
+        <div className="flex justify-center items-center gap-2 text-gray-500">
+          <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
+          Loading Slider...
+        </div>
       </div>
     );
   }

@@ -249,12 +249,6 @@ export default function App({ alertsRef }: AppProps) {
             }
           />
 
-
-
-
-
-
-
           {/* Management */}
           <Route
             path="/admin/manage-buoys"
@@ -315,11 +309,11 @@ export default function App({ alertsRef }: AppProps) {
           />
           <Route
             path="/admin/customization-about"
-            element={<CustomizationAbout />}
+            element={<CustomizationAbout alertsRef={alertsRef} />}
           />
           <Route
             path="/admin/customization-prototype"
-            element={<CustomizationPrototype />}
+            element={<CustomizationPrototype alertsRef={alertsRef} />}
           />
           <Route
             path="/admin/customization-faqs"

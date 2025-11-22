@@ -27,12 +27,17 @@ import {
 
 import { useSidebar } from "../context/SidebarContext";
 import {
+  CloudRain,
+  Droplet,
+  Droplets,
+  Gauge,
   LayoutDashboard,
-  LibraryBig,
   MapPinHouse,
   Megaphone,
   MessagesSquare,
+  Thermometer,
   Waves,
+  Wind,
 } from "lucide-react";
 
 type NavItem = {
@@ -88,7 +93,7 @@ const navItems: NavItem[] = [
   // BARANGAY
   {
     icon: <LayoutDashboard />,
-    name: "Barangay Dashboard",
+    name: "Dashboard",
     path: "/barangay/dashboard",
   },
   {
@@ -117,51 +122,51 @@ const navItems: NavItem[] = [
     icon: <Management />,
     subItems: [
       {
-        name: "Surroundings Temperature Monitoring",
+        name: "Surroundings Temperature",
         path: "/barangay/surrounding-table",
-        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        icon: <Thermometer className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
-        name: "Humidity Monitoring",
+        name: "Humidity",
         path: "/barangay/humidity-table",
-        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        icon: <Droplet className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
-        name: "Water Temperature Monitoring",
+        name: "Water Temperature ",
         path: "/barangay/water-temperature-table",
-        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        icon: <Thermometer className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Rain Monitoring",
         path: "/barangay/rain-monitoring-table",
-        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        icon: <CloudRain className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
-        name: "Atmospheric Pressure Monitoring",
+        name: "Atmospheric Pressure ",
         path: "/barangay/atmospheric-pressure-table",
-        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        icon: <Gauge className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
-        name: "Wind Speed Monitoring",
+        name: "Wind Speed",
         path: "/barangay/windspeed-monitoring-table",
-        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        icon: <Wind className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
-        name: "Water Depth Monitoring",
+        name: "Water Level",
         path: "/barangay/water-depth-table",
-        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        icon: <Waves className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
-        name: "Rain Gauge Monitoring",
+        name: "Rain Gauge",
         path: "/barangay/rain-gauge-table",
-        icon: <LibraryBig className="w-5 h-5 stroke-[1.5]" />,
+        icon: <Droplets className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
     ],
@@ -507,7 +512,15 @@ const AppSidebar = ({ alertsRef }: Props) => {
           !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
         }`}
       >
-        <Link to="/admin/dashboard">
+        <Link
+          to={
+            user?.userType === "admin"
+              ? "/admin/dashboard"
+              : user?.userType === "barangay"
+              ? "/barangay/dashboard"
+              : "/"
+          }
+        >
           {isExpanded || isHovered || isMobileOpen ? (
             <>
               <img

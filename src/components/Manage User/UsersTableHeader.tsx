@@ -1,16 +1,16 @@
-import React, { FormEvent } from 'react';
+import React, { FormEvent } from "react";
 
 interface UsersTableHeaderProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   // Ref para sa focus, kung gagamitin sa parent
-  inputRef: React.RefObject<HTMLInputElement>; 
+  inputRef: React.RefObject<HTMLInputElement>;
 }
 
-const UsersTableHeader: React.FC<UsersTableHeaderProps> = ({ 
-    searchTerm, 
-    setSearchTerm,
-    inputRef
+const UsersTableHeader: React.FC<UsersTableHeaderProps> = ({
+  searchTerm,
+  setSearchTerm,
+  inputRef,
 }) => {
   return (
     <>
@@ -19,9 +19,9 @@ const UsersTableHeader: React.FC<UsersTableHeaderProps> = ({
           Manage Users
         </h2>
       </div>
-      
+
       {/* 🔍 Search Bar */}
-      <div className="p-6 border-t border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-end">
+      <div className="p-6 border-t border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row gap-4 items-center justify-start">
         <form
           onSubmit={(e: FormEvent) => {
             return e.preventDefault();

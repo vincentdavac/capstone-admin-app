@@ -1,50 +1,78 @@
-import { useState } from "react";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useContext, useEffect, useState } from "react";
 import { StarIcon } from "lucide-react";
+import API_BASE_URL from "../config/coreApi";
+import { AppContext } from "../context/AppContext";
 
-export default function Testimonials() {
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Home Gardener",
-      image:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      quote:
-        "I never thought I could grow my own vegetables in my apartment. Thanks to GreenGrow's countertop system, I have fresh herbs and lettuce year-round!",
-    },
-    {
-      name: "Emma Rodriguez",
-      role: "School Teacher",
-      image:
-        "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      quote:
-        "Our classroom hydroponic garden has been an amazing educational tool. The students are engaged and excited to learn about sustainable agriculture.",
-    },
-    {
-      name: "Sarah Johnson",
-      role: "Home Gardener",
-      image:
-        "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      quote:
-        "I never thought I could grow my own vegetables in my apartment. Thanks to GreenGrow's countertop system, I have fresh herbs and lettuce year-round!",
-    },
-    {
-      name: "Emma Rodriguez",
-      role: "School Teacher",
-      image:
-        "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=150&q=80",
-      quote:
-        "Our classroom hydroponic garden has been an amazing educational tool. The students are engaged and excited to learn about sustainable agriculture.",
-    },
-  ];
+// 🧩 Feedback Interface
+export interface FeedbackData {
+  id: number;
+  attributes: {
+    userName: string;
+    userImage: string;
+    rate: number;
+    feedback: string;
+    isArchived: boolean;
+    createdDate: string;
+    createdTime: string;
+    updatedDate: string;
+    updatedTime: string;
+  };
+}
 
-  const itemsPerPage = 4; // show 3 cards per page on desktop
+interface Props {
+  refresh?: boolean;
+}
+
+export default function Testimonials({ refresh }: Props) {
+  const { token } = useContext(AppContext)!;
+  const [loading, setLoading] = useState(true);
+  const [feedbacks, setFeedbacks] = useState<FeedbackData[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 4;
 
-  const totalPages = Math.ceil(testimonials.length / itemsPerPage);
-  const currentTestimonials = testimonials.slice(
+  // ✅ Fetch active feedbacks
+  const fetchActiveFeedbacks = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${API_BASE_URL}/active-feedbacks`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+      const data = await res.json();
+      if (res.ok && data.data) {
+        setFeedbacks(data.data);
+      }
+    } catch (err) {
+      console.error("Error fetching active feedbacks:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (token) fetchActiveFeedbacks();
+  }, [refresh, token]);
+
+  if (loading) {
+    return (
+      <section className="w-full py-16 flex justify-center items-center">
+        <div className="flex justify-center items-center gap-2 text-gray-500">
+          <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
+          Loading feedback...
+        </div>
+      </section>
+    );
+  }
+
+  const currentFeedbacks = feedbacks.slice(
     currentPage * itemsPerPage,
     currentPage * itemsPerPage + itemsPerPage
   );
+
+  const totalPages = Math.ceil(feedbacks.length / itemsPerPage);
 
   return (
     <section className="w-full py-16 relative">
@@ -79,17 +107,19 @@ export default function Testimonials() {
           </p>
         </div>
 
-        {/* Testimonials Container */}
+        {/* Feedback Cards */}
         <div className="flex flex-col md:flex-row gap-5 justify-center">
-          {currentTestimonials.map((testimonial, index) => {
+          {currentFeedbacks.map((f, index) => {
+            const { userName, userImage, rate, feedback } = f.attributes;
             const gradients = [
               "from-blue-400 to-cyan-400",
               "from-cyan-400 to-blue-500",
               "from-blue-500 to-cyan-400",
             ];
+
             return (
               <div
-                key={index}
+                key={f.id}
                 className="group relative flex min-w-[80vw] md:min-w-0 md:flex-1 flex-col transition-transform duration-300 snap-center"
               >
                 <div
@@ -104,30 +134,31 @@ export default function Testimonials() {
                       <StarIcon
                         key={i}
                         size={20}
-                        className="fill-white/80 text-white/60"
+                        className={`${
+                          i < rate
+                            ? "fill-yellow-400 text-yellow-400"
+                            : "fill-white/80 text-white/60"
+                        }`}
                       />
                     ))}
                   </div>
 
                   <p className="montserrat mb-6 flex-1 text-lg font-light text-white/90 text-justify leading-relaxed">
-                    "{testimonial.quote}"
+                    "{feedback}"
                   </p>
 
                   <div className="flex items-center">
                     <div className="mr-4 h-12 w-12 overflow-hidden rounded-full border-2 border-white/30">
                       <img
-                        src={testimonial.image}
-                        alt={testimonial.name}
+                        src={userImage}
+                        alt={userName}
                         className="h-full w-full object-cover"
                       />
                     </div>
                     <div>
                       <h4 className="montserrat font-light text-white">
-                        {testimonial.name}
+                        {userName}
                       </h4>
-                      <p className="text-sm text-white/80">
-                        {testimonial.role}
-                      </p>
                     </div>
                   </div>
                 </div>

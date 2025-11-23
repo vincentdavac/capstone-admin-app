@@ -13,6 +13,7 @@ export interface AboutData {
     sideTitle: string;
     sideDescription: string;
     image: string;
+    videoLink: string;
     isArchived: boolean;
   };
 }
@@ -38,6 +39,7 @@ const AboutUpdate = ({
   const [caption, setCaption] = useState("");
   const [sideTitle, setSideTitle] = useState("");
   const [sideDescription, setSideDescription] = useState("");
+  const [videoLink, setVideoLink] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string>("");
 
@@ -50,6 +52,7 @@ const AboutUpdate = ({
       setCaption(data.attributes.caption);
       setSideTitle(data.attributes.sideTitle);
       setSideDescription(data.attributes.sideDescription);
+      setVideoLink(data.attributes.videoLink);
       setPreview(data.attributes.image);
     }
   }, [data]);
@@ -77,6 +80,7 @@ const AboutUpdate = ({
     formData.append("caption", caption);
     formData.append("side_title", sideTitle);
     formData.append("side_description", sideDescription);
+    formData.append("video_link", videoLink);
     formData.append("_method", "PATCH");
 
     if (image instanceof File) {
@@ -133,9 +137,24 @@ const AboutUpdate = ({
           Update About Section
         </h2>
 
-        {/* Image Preview */}
+        {/* Video or Image Preview */}
         <div className="mb-6">
-          {preview ? (
+          {videoLink ? (
+            <div className="relative w-full h-48">
+              <iframe
+                src={`https://www.youtube.com/embed/${
+                  videoLink.split("v=")[1] || videoLink
+                }?autoplay=0&loop=1&playlist=${
+                  videoLink.split("v=")[1] || videoLink
+                }&mute=1`}
+                title={title}
+                className="w-full h-full object-cover rounded-xl border shadow"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            </div>
+          ) : preview ? (
             <img
               src={preview}
               className="w-full h-48 object-cover rounded-xl border shadow"
@@ -143,7 +162,7 @@ const AboutUpdate = ({
           ) : (
             <div className="w-full h-48 flex flex-col items-center justify-center bg-gray-200 dark:bg-gray-700 rounded-xl border text-gray-500">
               <ImageOff size={32} />
-              <p>No image uploaded</p>
+              <p>No image or video uploaded</p>
             </div>
           )}
         </div>
@@ -199,6 +218,20 @@ const AboutUpdate = ({
               value={sideDescription}
               onChange={(e) => setSideDescription(e.target.value)}
               className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500 transition resize-none"
+            />
+          </div>
+
+          {/* Video Link */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+              Video Link (YouTube)
+            </label>
+            <input
+              type="text"
+              value={videoLink}
+              onChange={(e) => setVideoLink(e.target.value)}
+              placeholder="https://www.youtube.com/watch?v=VIDEO_ID"
+              className="w-full p-3 rounded-xl border bg-gray-50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500 transition"
             />
           </div>
 

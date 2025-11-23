@@ -268,6 +268,12 @@ const othersItems: NavItem[] = [
         icon: <ManageUsers className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
+      {
+        name: "Feedbacks",
+        path: "/admin/archived-feedbacks",
+        icon: <Comment className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
     ],
   },
 ];

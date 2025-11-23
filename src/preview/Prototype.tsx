@@ -28,12 +28,14 @@ export default function Prototype({ refresh }: Props) {
   const { token } = useContext(AppContext)!;
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
   const cardRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const [loading, setLoading] = useState(true);
 
   // Dynamically fetched prototypes
   const [leftImages, setLeftImages] = useState<PrototypeData[]>([]);
   const [rightImages, setRightImages] = useState<PrototypeData[]>([]);
 
   const fetchPrototypes = async () => {
+    setLoading(true);
     try {
       const [leftRes, rightRes] = await Promise.all([
         fetch(`${API_BASE_URL}/prototypes/left`, {
@@ -51,12 +53,25 @@ export default function Prototype({ refresh }: Props) {
       if (rightRes.ok) setRightImages(rightData.data || []);
     } catch (err) {
       console.error("Error fetching prototypes:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchPrototypes();
   }, [token, refresh]);
+
+  if (loading) {
+    return (
+      <section className="w-full py-16 flex justify-center items-center">
+        <div className="flex justify-center items-center gap-2 text-gray-500">
+          <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
+          Loading Prototype...
+        </div>{" "}
+      </section>
+    );
+  }
 
   return (
     <section className="w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 py-16  rounded-lg dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors duration-300">

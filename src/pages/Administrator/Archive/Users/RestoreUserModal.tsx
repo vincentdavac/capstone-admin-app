@@ -1,8 +1,8 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useState } from "react";
 import { RefreshCw, X } from "lucide-react";
-import API_BASE_URL from "../../../config/coreApi";
-import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
+import API_BASE_URL from "../../../../config/coreApi";
+import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
 
 interface BuoyData {
   id: number;

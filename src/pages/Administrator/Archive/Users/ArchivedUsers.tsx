@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useRef, useContext, useEffect } from "react";
-import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-import API_BASE_URL from "../../../config/coreApi";
-import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
-import { AppContext } from "../../../context/AppContext";
+import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
+import API_BASE_URL from "../../../../config/coreApi";
+import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
+import { AppContext } from "../../../../context/AppContext";
 
-import UsersTableHeader from "../../../components/Manage User/UsersTableHeader";
+import UsersTableHeader from "../../../../components/Manage User/UsersTableHeader";
 import UsersTable from "./UsersTable";
-import UsersPagination from "../../../components/Manage User/UsersPagination";
+import UsersPagination from "../../../../components/Manage User/UsersPagination";
 import RestoreUserModal from "./RestoreUserModal";
 
 interface BuoyData {

@@ -30,7 +30,7 @@ import AlertManagement from "./pages/Barangay/AlertManagement/AlertManagement";
 import ChatSupport from "./pages/Administrator/Chat/AdminChatSupport";
 
 import ManageUsers from "./pages/Administrator/ManageUsers/ManageUsers";
-import ArchivedUsers from "./pages/Administrator/Archive/ArchivedUsers";
+import ArchivedUsers from "./pages/Administrator/Archive/Users/ArchivedUsers";
 import BuoyDeployment from "./pages/Administrator/Management/BuoyDeployment/BuoyDeployment";
 // import ChatSupport from "./pages/Management/ChatSupport";
 import AlertSystem from "./pages/Management/AlertSystem";
@@ -73,6 +73,7 @@ import AtmosphericPressure from "./pages/Administrator/Historical Tables/Atmosph
 import WindSpeed from "./pages/Administrator/Historical Tables/WindSpeed";
 import WaterDepth from "./pages/Administrator/Historical Tables/WaterDepth";
 import RainGauge from "./pages/Administrator/Historical Tables/RainGauge";
+import FeedbackArchivedTable from "./pages/Administrator/Archive/Feedbacks/FeedbackArchivedTable";
 
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -125,6 +126,15 @@ export default function App({ alertsRef }: AppProps) {
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <ArchivedUsers alertsRef={alertsRef} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            index
+            path="/admin/archived-feedbacks"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <FeedbackArchivedTable alertsRef={alertsRef} />
               </ProtectedRoute>
             }
           />
@@ -317,19 +327,19 @@ export default function App({ alertsRef }: AppProps) {
           />
           <Route
             path="/admin/customization-faqs"
-            element={<CustomizationFaqs />}
+            element={<CustomizationFaqs alertsRef={alertsRef} />}
           />
           <Route
             path="/admin/customization-team"
-            element={<CustomizationTeam />}
+            element={<CustomizationTeam alertsRef={alertsRef} />}
           />
           <Route
             path="/admin/customization-footer"
-            element={<CustomizationFooter />}
+            element={<CustomizationFooter alertsRef={alertsRef} />}
           />
           <Route
             path="/admin/customization-feedbacks"
-            element={<CustomizationFeedbacks />}
+            element={<CustomizationFeedbacks alertsRef={alertsRef} />}
           />
           {/* Forms */}
           <Route path="/form-elements" element={<FormElements />} />

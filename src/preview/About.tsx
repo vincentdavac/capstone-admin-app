@@ -11,6 +11,7 @@ interface AboutData {
     image: string;
     sideTitle: string;
     sideDescription: string;
+    videoLink: string;
     isArchived: boolean;
     createdDate: string;
     createdTime: string;
@@ -36,6 +37,26 @@ interface CardData {
 interface Props {
   refresh?: boolean; // optional trigger to refetch
 }
+
+// const getEmbedUrl = (url: string) => {
+//   if (!url) return "";
+//   // Match YouTube watch URLs
+//   const match = url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/);
+//   if (match && match[1]) {
+//     return `https://www.youtube.com/embed/${match[1]}`;
+//   }
+//   return url; // fallback if not a YouTube URL
+// };
+
+const getEmbedUrl = (url: string) => {
+  if (!url) return "";
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/);
+  if (match && match[1]) {
+    const videoId = match[1];
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=1&controls=0&modestbranding=1&rel=0`;
+  }
+  return url;
+};
 
 export default function About({ refresh }: Props) {
   const { token } = useContext(AppContext)!;
@@ -82,15 +103,15 @@ export default function About({ refresh }: Props) {
       <section className="w-full py-16 flex justify-center items-center">
         <div className="flex justify-center items-center gap-2 text-gray-500">
           <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
-          Loading data...
-        </div>{" "}
+          Loading About Us...
+        </div>
       </section>
     );
   }
 
   if (!about) return null;
 
-  const { title, caption, image, sideTitle, sideDescription } =
+  const { title, caption, image, sideTitle, sideDescription, videoLink } =
     about.attributes;
 
   return (
@@ -101,7 +122,6 @@ export default function About({ refresh }: Props) {
           background: `linear-gradient(180deg, #1E3A8A 0%, #3B82F6 50%, #60A5FA 100%)`,
         }}
       />
-
       <div
         className="absolute inset-0 z-0 opacity-100"
         style={{
@@ -125,13 +145,33 @@ export default function About({ refresh }: Props) {
         <div className="mb-16 flex flex-col items-center gap-8 pt-10 lg:flex-row max-w-6xl mx-auto">
           <div className="lg:w-1/2">
             <div className="overflow-hidden rounded-lg shadow-xl">
-              <img
-                src={image}
-                alt={title}
-                className="h-100 w-full object-cover"
-              />
+              {videoLink ? (
+                // <iframe
+                //   src={getEmbedUrl(videoLink)}
+                //   title={title}
+                //   className="h-100 w-full object-cover"
+                //   frameBorder="0"
+                //   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                //   allowFullScreen
+                // />
+                <iframe
+                  src={getEmbedUrl(videoLink)}
+                  title={title}
+                  className="h-100 w-full object-cover"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <img
+                  src={image}
+                  alt={title}
+                  className="h-100 w-full object-cover"
+                />
+              )}
             </div>
           </div>
+
           <div className="lg:w-1/2">
             <div className="flex flex-col gap-y-8">
               <p className="mb-4 text-justify text-lg leading-relaxed text-[#FFFFFF]">
@@ -146,7 +186,6 @@ export default function About({ refresh }: Props) {
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 gap-8 md:grid-cols-3">
           {cards.map((card) => {
-            // Choose icon based on card title
             let icon;
             switch (card.attributes.cardTitle.toUpperCase()) {
               case "OUR MISSION":

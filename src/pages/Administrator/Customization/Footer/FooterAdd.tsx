@@ -1,26 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useState } from "react";
 import { X } from "lucide-react";
 import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
 import API_BASE_URL from "../../../../config/coreApi";
-
-export interface AboutData {
-  id: number;
-  attributes: {
-    title: string;
-    caption: string;
-    sideTitle: string;
-    sideDescription: string;
-    image: string;
-    videoLink: string;
-    isArchived: boolean;
-    createdDate: string;
-    createdTime: string;
-    updatedDate: string;
-    updatedTime: string;
-  };
-}
 
 interface Props {
   show: boolean;
@@ -30,12 +12,14 @@ interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
-const AboutAdd = ({ show, onClose, token, alertsRef, onAdded }: Props) => {
-  const [title, setTitle] = useState<string>("");
+const FooterAdd = ({ show, onClose, token, alertsRef, onAdded }: Props) => {
   const [caption, setCaption] = useState<string>("");
-  const [sideTitle, setSideTitle] = useState<string>("");
-  const [sideDescription, setSideDescription] = useState<string>("");
-  const [videoLink, setVideoLink] = useState<string>("");
+  const [documentationLink, setDocumentationLink] = useState<string>("");
+  const [researchPaperLink, setResearchPaperLink] = useState<string>("");
+  const [emailAddress, setEmailAddress] = useState<string>("");
+  const [facebookLink, setFacebookLink] = useState<string>("");
+  const [youtubeLink, setYoutubeLink] = useState<string>("");
+  const [footerSubtitle, setFooterSubtitle] = useState<string>("");
   const [image, setImage] = useState<File | null>(null);
 
   if (!show) return null;
@@ -44,30 +28,34 @@ const AboutAdd = ({ show, onClose, token, alertsRef, onAdded }: Props) => {
     e.preventDefault();
 
     if (
-      !title ||
       !caption ||
-      !sideTitle ||
-      !sideDescription ||
-      !image ||
-      !videoLink
+      !documentationLink ||
+      !researchPaperLink ||
+      !emailAddress ||
+      !facebookLink ||
+      !youtubeLink ||
+      !footerSubtitle ||
+      !image
     ) {
       alertsRef.current?.addAlert(
         "error",
-        "Please fill in all fields, select an image, and provide a video link."
+        "Please fill in all fields and select an image."
       );
       return;
     }
 
     try {
       const formData = new FormData();
-      formData.append("title", title);
       formData.append("caption", caption);
-      formData.append("side_title", sideTitle);
-      formData.append("side_description", sideDescription);
-      formData.append("video_link", videoLink);
+      formData.append("documentation_link", documentationLink);
+      formData.append("research_paper_link", researchPaperLink);
+      formData.append("email_address", emailAddress);
+      formData.append("facebook_link", facebookLink);
+      formData.append("youtube_link", youtubeLink);
+      formData.append("footer_subtitle", footerSubtitle);
       formData.append("image", image);
 
-      const res = await fetch(`${API_BASE_URL}/abouts`, {
+      const res = await fetch(`${API_BASE_URL}/footers`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -78,27 +66,30 @@ const AboutAdd = ({ show, onClose, token, alertsRef, onAdded }: Props) => {
 
       const result = await res.json();
 
-      if (res.ok) {
+      // Handle API status
+      if (result.status === "success") {
         alertsRef.current?.addAlert(
           "success",
-          "Homepage About section added successfully!"
+          "Homepage Footer added successfully!"
         );
         onAdded();
         onClose();
+      } else if (result.status === "error") {
+        alertsRef.current?.addAlert(
+          "error",
+          result.message || "Failed to add Footer."
+        );
       } else {
-        if (result.errors) {
-          Object.keys(result.errors).forEach((key) => {
-            alertsRef.current?.addAlert("error", result.errors[key][0]);
-          });
-        } else {
-          alertsRef.current?.addAlert(
-            "error",
-            result.message || "Failed to add About section."
-          );
-        }
+        // Fallback for unknown structure
+        alertsRef.current?.addAlert(
+          "error",
+          "Unexpected response from server."
+        );
+        console.error("Unexpected response:", result);
       }
     } catch (err: any) {
-      alertsRef.current?.addAlert("error", "Error adding About section.");
+      console.error("Error:", err);
+      alertsRef.current?.addAlert("error", "Error adding Footer.");
     }
   };
 
@@ -115,77 +106,105 @@ const AboutAdd = ({ show, onClose, token, alertsRef, onAdded }: Props) => {
 
         {/* Title */}
         <h2 className="text-3xl font-extrabold mb-6 text-gray-900 dark:text-white text-center tracking-tight">
-          Add New About Section
+          Add Homepage Footer
         </h2>
 
         {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-5">
-          {/* Title */}
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-              Title
-            </label>
-            <input
-              type="text"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              placeholder="About Title"
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-            />
-          </div>
-
           {/* Caption */}
           <div>
             <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
               Caption
             </label>
-            <textarea
-              value={caption}
-              onChange={(e) => setCaption(e.target.value)}
-              placeholder="About Caption"
-              rows={3}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"
-            />
-          </div>
-
-          {/* Side Title */}
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-              Side Title
-            </label>
             <input
               type="text"
-              value={sideTitle}
-              onChange={(e) => setSideTitle(e.target.value)}
-              placeholder="Side Title"
+              value={caption}
+              onChange={(e) => setCaption(e.target.value)}
+              placeholder="Footer Caption"
               className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
             />
           </div>
 
-          {/* Side Description */}
+          {/* Documentation Link */}
           <div>
             <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-              Side Description
-            </label>
-            <textarea
-              value={sideDescription}
-              onChange={(e) => setSideDescription(e.target.value)}
-              placeholder="Side Description"
-              rows={3}
-              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition resize-none"
-            />
-          </div>
-
-          {/* Video Link */}
-          <div>
-            <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
-              Video Link
+              Documentation Link
             </label>
             <input
               type="text"
-              value={videoLink}
-              onChange={(e) => setVideoLink(e.target.value)}
-              placeholder="Video URL"
+              value={documentationLink}
+              onChange={(e) => setDocumentationLink(e.target.value)}
+              placeholder="Documentation URL"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            />
+          </div>
+
+          {/* Research Paper Link */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+              Research Paper Link
+            </label>
+            <input
+              type="text"
+              value={researchPaperLink}
+              onChange={(e) => setResearchPaperLink(e.target.value)}
+              placeholder="Research Paper URL"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            />
+          </div>
+
+          {/* Email Address */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+              Email Address
+            </label>
+            <input
+              type="email"
+              value={emailAddress}
+              onChange={(e) => setEmailAddress(e.target.value)}
+              placeholder="Email Address"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            />
+          </div>
+
+          {/* Facebook Link */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+              Facebook Link
+            </label>
+            <input
+              type="text"
+              value={facebookLink}
+              onChange={(e) => setFacebookLink(e.target.value)}
+              placeholder="Facebook URL"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            />
+          </div>
+
+          {/* YouTube Link */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+              YouTube Link
+            </label>
+            <input
+              type="text"
+              value={youtubeLink}
+              onChange={(e) => setYoutubeLink(e.target.value)}
+              placeholder="YouTube URL"
+              className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+            />
+          </div>
+
+          {/* Footer Subtitle */}
+          <div>
+            <label className="block text-sm font-semibold mb-2 text-gray-700 dark:text-gray-300">
+              Footer Subtitle
+            </label>
+            <input
+              type="text"
+              value={footerSubtitle}
+              onChange={(e) => setFooterSubtitle(e.target.value)}
+              placeholder="Footer Subtitle"
               className="w-full p-3 border border-gray-300 dark:border-gray-600 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
             />
           </div>
@@ -218,7 +237,7 @@ const AboutAdd = ({ show, onClose, token, alertsRef, onAdded }: Props) => {
               type="submit"
               className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-2xl shadow-md hover:shadow-lg transition"
             >
-              Add About
+              Add Footer
             </button>
           </div>
         </form>
@@ -227,4 +246,4 @@ const AboutAdd = ({ show, onClose, token, alertsRef, onAdded }: Props) => {
   );
 };
 
-export default AboutAdd;
+export default FooterAdd;

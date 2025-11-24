@@ -1,10 +1,15 @@
 import { Link } from "react-router";
+import { AppContext } from "../../context/AppContext";
+import { useContext } from "react";
 
 interface BreadcrumbProps {
   pageTitle: string;
 }
 
 const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pageTitle }) => {
+  const { user } = useContext(AppContext)!;
+  const lastType = user?.userType;
+
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
       <h2
@@ -18,7 +23,13 @@ const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pageTitle }) => {
           <li>
             <Link
               className="inline-flex items-center gap-1.5 text-sm text-gray-500 dark:text-gray-400"
-              to="/"
+              to={
+                lastType === "admin"
+                  ? "/admin/dashboard"
+                  : lastType === "barangay"
+                  ? "/barangay/dashboard"
+                  : "/"
+              }
             >
               Home
               <svg
@@ -39,6 +50,7 @@ const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pageTitle }) => {
               </svg>
             </Link>
           </li>
+
           <li className="text-sm text-gray-800 dark:text-white/90">
             {pageTitle}
           </li>

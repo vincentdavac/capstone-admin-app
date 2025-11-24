@@ -1,7 +1,17 @@
 import FAQ from "../../../../preview/FAQs"; // Assuming the path is correct
 import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
+import FAQsTable from "./FAQsTable";
+import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
+import { useState } from "react";
 
-const CustomizationFaqs: React.FC = () => {
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
+
+const CustomizationFaqs = ({ alertsRef }: Props) => {
+  const [refresh, setRefresh] = useState(false); // trigger refetch
+
+  const handleRefresh = () => setRefresh((prev) => !prev);
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
       <PageBreadcrumb pageTitle="Customize FAQs" />
@@ -10,10 +20,11 @@ const CustomizationFaqs: React.FC = () => {
         <div className="flex justify-center w-full">
           {/* FAQ component is assumed to be the preview */}
           <div className="w-full max-w">
-            <FAQ />
+            <FAQ refresh={refresh} />
           </div>
         </div>
       </div>
+      <FAQsTable alertsRef={alertsRef} onRefresh={handleRefresh} />
     </div>
   );
 };

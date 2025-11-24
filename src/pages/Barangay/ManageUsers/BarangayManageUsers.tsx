@@ -8,7 +8,9 @@ import { AppContext } from "../../../context/AppContext";
 import UsersTableHeader from "../../../components/Manage User/UsersTableHeader";
 import UsersTable from "./UsersTable";
 import UsersPagination from "../../../components/Manage User/UsersPagination";
-import RestoreUserModal from "./RestoreUserModal";
+
+import UpdateUserModal from "./UpdateUserModal";
+import ArchiveUserModal from "./ArchiveUserModal";
 
 interface BuoyData {
   id: number;
@@ -58,9 +60,11 @@ interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
-const ArchivedUsers = ({ alertsRef }: Props) => {
+const BarangayManageUsers = ({ alertsRef }: Props) => {
   const { user, token } = useContext(AppContext)!;
 
+  // state:
+  const [showUpdate, setShowUpdate] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -75,6 +79,7 @@ const ArchivedUsers = ({ alertsRef }: Props) => {
   // handlers:
   const handleUpdateClick = (u: UserData) => {
     setSelectedUser(u);
+    setShowUpdate(true);
   };
 
   const handleArchiveClick = (u: UserData) => {
@@ -86,7 +91,7 @@ const ArchivedUsers = ({ alertsRef }: Props) => {
     setLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/archived-users`, {
+      const response = await fetch(`${API_BASE_URL}/active-users`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -138,7 +143,7 @@ const ArchivedUsers = ({ alertsRef }: Props) => {
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
-      <PageBreadcrumb pageTitle="Archived Users" />
+      <PageBreadcrumb pageTitle="Manage Users" />
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         {/* 1. Header (Title and Search Bar) */}
@@ -168,7 +173,17 @@ const ArchivedUsers = ({ alertsRef }: Props) => {
         />
       </div>
 
-      <RestoreUserModal
+      <UpdateUserModal
+        show={showUpdate}
+        onClose={() => setShowUpdate(false)}
+        token={token ?? ""}
+        userId={selectedUser?.id ?? null}
+        userData={selectedUser ?? undefined}
+        onUpdated={fetchUsers}
+        alertsRef={alertsRef}
+      />
+
+      <ArchiveUserModal
         show={showArchive}
         onClose={() => setShowArchive(false)}
         token={token ?? ""}
@@ -181,4 +196,4 @@ const ArchivedUsers = ({ alertsRef }: Props) => {
   );
 };
 
-export default ArchivedUsers;
+export default BarangayManageUsers;

@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import React, { useEffect, useState } from "react";
-import { RefreshCw, X } from "lucide-react";
+import { AlertTriangle, X } from "lucide-react";
 import API_BASE_URL from "../../../config/coreApi";
 import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
 
@@ -58,7 +58,7 @@ interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
-const RestoreUserModal: React.FC<Props> = ({
+const ArchiveUserModal: React.FC<Props> = ({
   show,
   onClose,
   userId,
@@ -78,9 +78,9 @@ const RestoreUserModal: React.FC<Props> = ({
   const handleArchive = async () => {
     try {
       const res = await fetch(
-        `${API_BASE_URL}/admin/restore-barangay/${userId}?_method=PATCH`,
+        `${API_BASE_URL}/barangay/archived-user/${userId}`,
         {
-          method: "post",
+          method: "PATCH",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -88,7 +88,7 @@ const RestoreUserModal: React.FC<Props> = ({
           },
           // ✅ Only send is_active
           body: JSON.stringify({
-            is_active: 1,
+            is_active: 0,
           }),
         }
       );
@@ -100,7 +100,7 @@ const RestoreUserModal: React.FC<Props> = ({
         // Trigger alert
         alertsRef.current?.addAlert(
           "success",
-          `User has restored archived successfully!`
+          `User has beena archived successfully!`
         );
 
         onArchived?.();
@@ -148,12 +148,12 @@ const RestoreUserModal: React.FC<Props> = ({
         </button>
 
         <div className="flex flex-col items-center text-center">
-          <RefreshCw className="text-green-500 mb-3" size={40} />
+          <AlertTriangle className="text-yellow-500 mb-3" size={40} />
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            Restore User?
+            Archive User?
           </h3>
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            This action will mark the user as activated. You can archive this
+            This action will mark the user as archived. You can restore this
             user{" "}
             <span className="font-semibold text-gray-800 dark:text-gray-200">
               {formData?.firstName} {formData?.lastName}
@@ -170,7 +170,7 @@ const RestoreUserModal: React.FC<Props> = ({
             </button>
             <button
               onClick={handleArchive}
-              className="px-4 py-2 bg-[#453EFE] text-white rounded-md hover:bg-indigo-700"
+              className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
             >
               Confirm
             </button>
@@ -181,4 +181,4 @@ const RestoreUserModal: React.FC<Props> = ({
   );
 };
 
-export default RestoreUserModal;
+export default ArchiveUserModal;

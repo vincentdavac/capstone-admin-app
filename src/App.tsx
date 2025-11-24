@@ -30,7 +30,7 @@ import AlertManagement from "./pages/Barangay/AlertManagement/AlertManagement";
 import ChatSupport from "./pages/Administrator/Chat/AdminChatSupport";
 
 import ManageUsers from "./pages/Administrator/ManageUsers/ManageUsers";
-import ArchivedUsers from "./pages/Administrator/Archive/ArchivedUsers";
+import ArchivedUsers from "./pages/Administrator/Archive/Users/ArchivedUsers";
 import BuoyDeployment from "./pages/Administrator/Management/BuoyDeployment/BuoyDeployment";
 // import ChatSupport from "./pages/Management/ChatSupport";
 import AlertSystem from "./pages/Management/AlertSystem";
@@ -73,6 +73,8 @@ import AtmosphericPressure from "./pages/Administrator/Historical Tables/Atmosph
 import WindSpeed from "./pages/Administrator/Historical Tables/WindSpeed";
 import WaterDepth from "./pages/Administrator/Historical Tables/WaterDepth";
 import RainGauge from "./pages/Administrator/Historical Tables/RainGauge";
+import FeedbackArchivedTable from "./pages/Administrator/Archive/Feedbacks/FeedbackArchivedTable";
+import BarangayManageUsers from "./pages/Barangay/ManageUsers/BarangayManageUsers";
 
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -102,15 +104,6 @@ export default function App({ alertsRef }: AppProps) {
         <Route element={<AppLayout alertsRef={alertsRef} />}>
           <Route
             index
-            path="/barangay/alert-management"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <AlertManagement />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            index
             path="/admin/manage-users"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
@@ -128,13 +121,12 @@ export default function App({ alertsRef }: AppProps) {
               </ProtectedRoute>
             }
           />
-
           <Route
             index
-            path="/barangay/deployed-buoy"
+            path="/admin/archived-feedbacks"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
-                <DeployedBuoy />
+                <FeedbackArchivedTable alertsRef={alertsRef} />
               </ProtectedRoute>
             }
           />
@@ -147,24 +139,7 @@ export default function App({ alertsRef }: AppProps) {
               </ProtectedRoute>
             }
           />
-          <Route
-            index
-            path="/barangay/dashboard"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <BarangayDashboard />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            index
-            path="/barangay/river-monitoring"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <StormSurge />
-              </ProtectedRoute>
-            }
-          />
+
           <Route
             index
             path="/barangay/historical-data"
@@ -182,78 +157,6 @@ export default function App({ alertsRef }: AppProps) {
               </ProtectedRoute>
             }
           />
-
-          {/* Historical data */}
-          <Route
-            path="/barangay/surrounding-table"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <SurroundingTable />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/barangay/humidity-table"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <HumidityTable />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/barangay/water-temperature-table"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <WaterMonitoring />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/barangay/rain-monitoring-table"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <RainMonitoring />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/barangay/atmospheric-pressure-table"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <AtmosphericPressure />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/barangay/windspeed-monitoring-table"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <WindSpeed />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/barangay/water-depth-table"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <WaterDepth />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/barangay/rain-gauge-table"
-            element={
-              <ProtectedRoute alertsRef={alertsRef}>
-                <RainGauge />
-              </ProtectedRoute>
-            }
-          />
-
-
-
-
-
-
 
           {/* Management */}
           <Route
@@ -315,27 +218,27 @@ export default function App({ alertsRef }: AppProps) {
           />
           <Route
             path="/admin/customization-about"
-            element={<CustomizationAbout />}
+            element={<CustomizationAbout alertsRef={alertsRef} />}
           />
           <Route
             path="/admin/customization-prototype"
-            element={<CustomizationPrototype />}
+            element={<CustomizationPrototype alertsRef={alertsRef} />}
           />
           <Route
             path="/admin/customization-faqs"
-            element={<CustomizationFaqs />}
+            element={<CustomizationFaqs alertsRef={alertsRef} />}
           />
           <Route
             path="/admin/customization-team"
-            element={<CustomizationTeam />}
+            element={<CustomizationTeam alertsRef={alertsRef} />}
           />
           <Route
             path="/admin/customization-footer"
-            element={<CustomizationFooter />}
+            element={<CustomizationFooter alertsRef={alertsRef} />}
           />
           <Route
             path="/admin/customization-feedbacks"
-            element={<CustomizationFeedbacks />}
+            element={<CustomizationFeedbacks alertsRef={alertsRef} />}
           />
           {/* Forms */}
           <Route path="/form-elements" element={<FormElements />} />
@@ -357,8 +260,123 @@ export default function App({ alertsRef }: AppProps) {
 
           {/*  BARANGAY ROUTES */}
           <Route
+            index
+            path="/barangay/dashboard"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <BarangayDashboard />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            index
+            path="/barangay/manage-users"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <BarangayManageUsers alertsRef={alertsRef} />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            index
+            path="/barangay/river-monitoring"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <StormSurge />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/barangay/chat-support"
             element={<BarangayChatSupport alertsRef={alertsRef} />}
+          />
+
+          <Route
+            index
+            path="/barangay/alert-management"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <AlertManagement />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            index
+            path="/barangay/deployed-buoy"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <DeployedBuoy />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Historical data */}
+          <Route
+            path="/barangay/historical-data/surrounding-temperature"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <SurroundingTable />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/barangay/historical-data/humidity"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <HumidityTable />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/barangay/historical-data/water-temperature"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <WaterMonitoring />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/barangay/historical-data/rain-monitoring"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <RainMonitoring />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/barangay/historical-data/atmospheric-pressure"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <AtmosphericPressure />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/barangay/historical-data/windspeed-monitoring"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <WindSpeed />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/barangay/historical-data/water-level"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <WaterDepth />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/barangay/historical-data/rain-gauge"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <RainGauge />
+              </ProtectedRoute>
+            }
           />
         </Route>
 

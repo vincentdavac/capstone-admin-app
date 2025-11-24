@@ -1,4 +1,119 @@
-export default function About() {
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useContext, useEffect, useState } from "react";
+import API_BASE_URL from "../config/coreApi";
+import { AppContext } from "../context/AppContext";
+
+interface AboutData {
+  id: number;
+  attributes: {
+    title: string;
+    caption: string;
+    image: string;
+    sideTitle: string;
+    sideDescription: string;
+    videoLink: string;
+    isArchived: boolean;
+    createdDate: string;
+    createdTime: string;
+    updatedDate: string;
+    updatedTime: string;
+  };
+}
+
+interface CardData {
+  id: number;
+  attributes: {
+    homepageAboutId: number;
+    cardTitle: string;
+    cardDescription: string;
+    isArchive: boolean;
+    createdDate: string;
+    createdTime: string;
+    updatedDate: string;
+    updatedTime: string;
+  };
+}
+
+interface Props {
+  refresh?: boolean; // optional trigger to refetch
+}
+
+// const getEmbedUrl = (url: string) => {
+//   if (!url) return "";
+//   // Match YouTube watch URLs
+//   const match = url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/);
+//   if (match && match[1]) {
+//     return `https://www.youtube.com/embed/${match[1]}`;
+//   }
+//   return url; // fallback if not a YouTube URL
+// };
+
+const getEmbedUrl = (url: string) => {
+  if (!url) return "";
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/watch\?v=)([\w-]+)/);
+  if (match && match[1]) {
+    const videoId = match[1];
+    return `https://www.youtube.com/embed/${videoId}?autoplay=1&loop=1&playlist=${videoId}&mute=1&controls=0&modestbranding=1&rel=0`;
+  }
+  return url;
+};
+
+export default function About({ refresh }: Props) {
+  const { token } = useContext(AppContext)!;
+
+  const [about, setAbout] = useState<AboutData | null>(null);
+  const [cards, setCards] = useState<CardData[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  const fetchAboutAndCards = async () => {
+    setLoading(true);
+    try {
+      // Fetch About Section
+      const aboutRes = await fetch(`${API_BASE_URL}/abouts`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+      const aboutData = await aboutRes.json();
+      if (aboutRes.ok && aboutData.data) setAbout(aboutData.data);
+
+      // Fetch Active Cards
+      const cardsRes = await fetch(`${API_BASE_URL}/about-cards-active`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+      const cardsData = await cardsRes.json();
+      if (cardsRes.ok && cardsData.data) setCards(cardsData.data);
+    } catch (error) {
+      console.error("Error fetching About or Cards:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (token) fetchAboutAndCards();
+  }, [token, refresh]);
+
+  if (loading) {
+    return (
+      <section className="w-full py-16 flex justify-center items-center">
+        <div className="flex justify-center items-center gap-2 text-gray-500">
+          <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
+          Loading About Us...
+        </div>
+      </section>
+    );
+  }
+
+  if (!about) return null;
+
+  const { title, caption, image, sideTitle, sideDescription, videoLink } =
+    about.attributes;
+
   return (
     <section className="w-full py-16 relative">
       <div
@@ -7,7 +122,6 @@ export default function About() {
           background: `linear-gradient(180deg, #1E3A8A 0%, #3B82F6 50%, #60A5FA 100%)`,
         }}
       />
-
       <div
         className="absolute inset-0 z-0 opacity-100"
         style={{
@@ -21,56 +135,61 @@ export default function About() {
       <div className="container mx-auto px-4 relative z-10">
         <div className="mb-2 text-center">
           <h2 className="mb-2 text-2xl font-bold text-[#FFFFFF] md:text-5xl">
-            ABOUT US
+            {title}
           </h2>
           <p className="max-w-6xl mx-auto pt-7 text-justify text-lg leading-relaxed text-[#FFFFFF]">
-            X-STREAM strategically deploys its solar-powered, IoT-based buoys in
-            river areas that are vulnerable to environmental hazards. These
-            buoys use multiple sensors to gather accurate, real-time data on
-            water levels, rainfall, wind speed, temperatures, and humidity to
-            help disaster responders, local communities, and authorities make
-            informed decisions. By combining sustainable technology with early
-            warning systems, we enhance disaster preparedness, enable quick
-            response to potential threats, and contribute to river safety.
+            {caption}
           </p>
         </div>
+
         <div className="mb-16 flex flex-col items-center gap-8 pt-10 lg:flex-row max-w-6xl mx-auto">
           <div className="lg:w-1/2">
             <div className="overflow-hidden rounded-lg shadow-xl">
-              <img
-                src="https://www.resinextrad.com/en/wp-content/uploads/2018/03/MAHDIA-TUNISIA-min.jpg"
-                alt="Team members working on hydroponic systems"
-                className="h-100 w-full object-cover"
-              />
+              {videoLink ? (
+                // <iframe
+                //   src={getEmbedUrl(videoLink)}
+                //   title={title}
+                //   className="h-100 w-full object-cover"
+                //   frameBorder="0"
+                //   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                //   allowFullScreen
+                // />
+                <iframe
+                  src={getEmbedUrl(videoLink)}
+                  title={title}
+                  className="h-100 w-full object-cover"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <img
+                  src={image}
+                  alt={title}
+                  className="h-100 w-full object-cover"
+                />
+              )}
             </div>
           </div>
+
           <div className="lg:w-1/2">
             <div className="flex flex-col gap-y-8">
               <p className="mb-4 text-justify text-lg leading-relaxed text-[#FFFFFF]">
-                The X-STREAM Deployment Map shows the current locations of our
-                active buoys along vulnerable river areas. Each site is chosen
-                through hazard mapping and community consultations to ensure
-                that monitoring is focused on high-risk and high-priority
-                locations. By targeting these areas, we can deliver real-time
-                alerts and accurate data to support disaster preparedness and
-                river safety.
+                {sideTitle}
               </p>
               <p className="mb-4 text-justify text-lg leading-relaxed text-[#FFFFFF]">
-                From site selection to full deployment, our team works to
-                position each buoy where it can make the most impact. This
-                network of buoys forms a reliable early warning system, helping
-                communities stay informed, respond quickly, and protect lives.
+                {sideDescription}
               </p>
             </div>
           </div>
         </div>
 
         <div className="max-w-6xl mx-auto grid grid-cols-1 gap-8 md:grid-cols-3">
-          <div className="group relative flex flex-col">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative rounded-xl glass-effect p-6 shadow-lg border border-white/20 backdrop-blur-sm transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl group-hover:border-white/40 flex flex-col flex-1">
-              <div className="flex flex-col items-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4 transform transition-transform duration-300 group-hover:scale-110 group-hover:bg-white/30">
+          {cards.map((card) => {
+            let icon;
+            switch (card.attributes.cardTitle.toUpperCase()) {
+              case "OUR MISSION":
+                icon = (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"
@@ -87,25 +206,10 @@ export default function About() {
                     <circle cx="12" cy="12" r="6"></circle>
                     <circle cx="12" cy="12" r="2"></circle>
                   </svg>
-                </div>
-                <h3 className="text-xl font-bold text-[#FFFFFF] text-center transform transition-transform duration-300 group-hover:translate-y-1">
-                  OUR MISSION
-                </h3>
-              </div>
-              <p className="text-justify text-white/90 leading-relaxed text-base transform transition-all duration-300 group-hover:text-white flex-1">
-                To develop a sustainable, solar-powered river monitoring and
-                alert system that provides real-time data and early warnings,
-                empowering disaster responders and local communities to enhance
-                safety, preparedness, and response.
-              </p>
-            </div>
-          </div>
-
-          <div className="group relative flex flex-col">
-            <div className="absolute -inset-1 bg-gradient-to-r from-cyan-400 to-blue-500 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative rounded-xl glass-effect p-6 shadow-lg border border-white/20 backdrop-blur-sm transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl group-hover:border-white/40 flex flex-col flex-1">
-              <div className="flex flex-col items-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4 transform transition-transform duration-300 group-hover:scale-110 group-hover:bg-white/30">
+                );
+                break;
+              case "OUR VISION":
+                icon = (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"
@@ -121,24 +225,10 @@ export default function About() {
                     <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                     <circle cx="12" cy="12" r="3"></circle>
                   </svg>
-                </div>
-                <h3 className="text-xl font-bold text-[#FFFFFF] text-center transform transition-transform duration-300 group-hover:translate-y-1">
-                  OUR VISION
-                </h3>
-              </div>
-              <p className="text-justify text-white/90 leading-relaxed text-base transform transition-all duration-300 group-hover:text-white flex-1">
-                To be the leading solution in river monitoring, creating safer
-                and more resilient communities through innovative, sustainable
-                technology and reliable, real-time data.
-              </p>
-            </div>
-          </div>
-
-          <div className="group relative flex flex-col">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-cyan-400 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
-            <div className="relative rounded-xl glass-effect p-6 shadow-lg border border-white/20 backdrop-blur-sm transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl group-hover:border-white/40 flex flex-col flex-1">
-              <div className="flex flex-col items-center mb-6">
-                <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4 transform transition-transform duration-300 group-hover:scale-110 group-hover:bg-white/30">
+                );
+                break;
+              case "OUR VALUES":
+                icon = (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32"
@@ -153,18 +243,31 @@ export default function About() {
                   >
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                   </svg>
+                );
+                break;
+              default:
+                icon = null;
+            }
+
+            return (
+              <div key={card.id} className="group relative flex flex-col">
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-400 to-cyan-400 rounded-xl blur opacity-25 group-hover:opacity-75 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative rounded-xl glass-effect p-6 shadow-lg border border-white/20 backdrop-blur-sm transform transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl group-hover:border-white/40 flex flex-col flex-1">
+                  <div className="flex flex-col items-center mb-6">
+                    <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center mb-4 transform transition-transform duration-300 group-hover:scale-110 group-hover:bg-white/30">
+                      {icon}
+                    </div>
+                    <h3 className="text-xl font-bold text-[#FFFFFF] text-center transform transition-transform duration-300 group-hover:translate-y-1">
+                      {card.attributes.cardTitle}
+                    </h3>
+                  </div>
+                  <p className="text-justify text-white/90 leading-relaxed text-base transform transition-all duration-300 group-hover:text-white flex-1">
+                    {card.attributes.cardDescription}
+                  </p>
                 </div>
-                <h3 className="text-xl font-bold text-[#FFFFFF] text-center transform transition-transform duration-300 group-hover:translate-y-1">
-                  OUR VALUES
-                </h3>
               </div>
-              <p className="text-justify text-white/90 leading-relaxed text-base transform transition-all duration-300 group-hover:text-white flex-1">
-                Commitment to innovation, sustainability, and community safety
-                through reliable technology and collaborative partnerships that
-                drive meaningful impact.
-              </p>
-            </div>
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>

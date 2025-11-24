@@ -63,7 +63,7 @@ const navItems: NavItem[] = [
   },
   {
     icon: <MessagesSquare />,
-    name: "Admin Chat support",
+    name: "Chat support",
     path: "/admin/chat-support",
   },
   {
@@ -97,14 +97,19 @@ const navItems: NavItem[] = [
     path: "/barangay/dashboard",
   },
   {
-    icon: <Waves />,
-    name: "River Monitoring",
-    path: "/barangay/river-monitoring",
-  },
-  {
     icon: <MessagesSquare />,
     name: "Chat support",
     path: "/barangay/chat-support",
+  },
+  {
+    icon: <ManageUsers />,
+    name: "Manage Users",
+    path: "/barangay/manage-users",
+  },
+  {
+    icon: <Waves />,
+    name: "River Monitoring",
+    path: "/barangay/river-monitoring",
   },
 
   {
@@ -123,49 +128,49 @@ const navItems: NavItem[] = [
     subItems: [
       {
         name: "Surroundings Temperature",
-        path: "/barangay/surrounding-table",
+        path: "/barangay/historical-data/surrounding-temperature",
         icon: <Thermometer className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Humidity",
-        path: "/barangay/humidity-table",
+        path: "/barangay/historical-data/humidity",
         icon: <Droplet className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Water Temperature ",
-        path: "/barangay/water-temperature-table",
+        path: "/barangay/historical-data/water-temperature",
         icon: <Thermometer className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Rain Monitoring",
-        path: "/barangay/rain-monitoring-table",
+        path: "/barangay/historical-data/rain-monitoring",
         icon: <CloudRain className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Atmospheric Pressure ",
-        path: "/barangay/atmospheric-pressure-table",
+        path: "/barangay/historical-data/atmospheric-pressure",
         icon: <Gauge className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Wind Speed",
-        path: "/barangay/windspeed-monitoring-table",
+        path: "/barangay/historical-data/windspeed-monitoring",
         icon: <Wind className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Water Level",
-        path: "/barangay/water-depth-table",
+        path: "/barangay/historical-data/water-level",
         icon: <Waves className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Rain Gauge",
-        path: "/barangay/rain-gauge-table",
+        path: "/barangay/historical-data/rain-gauge",
         icon: <Droplets className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
@@ -262,6 +267,7 @@ const othersItems: NavItem[] = [
     icon: <Archive />,
     name: "Archive",
     subItems: [
+      //  ADMIN
       {
         name: "Users",
         path: "/admin/archived-users",
@@ -272,6 +278,13 @@ const othersItems: NavItem[] = [
         name: "Feedbacks",
         path: "/admin/archived-feedbacks",
         icon: <Comment className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      // BARANGAY
+      {
+        name: "Users",
+        path: "/barangay/archived-users",
+        icon: <ManageUsers className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
     ],

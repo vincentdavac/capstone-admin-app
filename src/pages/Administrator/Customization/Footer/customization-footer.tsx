@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import Footer from "../../../../preview/Footer";
 import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
 import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";

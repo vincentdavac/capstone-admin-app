@@ -118,7 +118,7 @@ export default function SignInForm({ alertsRef }: Props) {
 
       // ✅ Wait a bit for context to update before navigating
       setTimeout(() => {
-        navigate("/barangay/chat-support");
+        navigate("/barangay/dashboard");
       }, 300);
 
       console.log({ newToken });

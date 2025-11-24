@@ -1,5 +1,7 @@
-import { Bell, X } from 'lucide-react';
-import { useEffect } from 'react';
+import { Bell, X } from "lucide-react";
+import { useEffect, useContext, useState } from "react";
+import { AppContext } from "../../../context/AppContext";
+import api_endpoint from "../../../config/coreApi";
 interface Alert {
   id: number;
   alertId: string;
@@ -14,30 +16,62 @@ interface AlertModalProps {
   isOpen: boolean;
   alert: Alert | null;
   onClose: () => void;
-  onSend: () => void;
+  isSending?: boolean;
 }
-const AlertModal = ({ isOpen, alert, onClose, onSend }: AlertModalProps) => {
-    useEffect(() => {
+const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
+  const { user,token } = useContext(AppContext)!;
+  const [isSending, setIsSending] = useState(false);
+   const buoyId = user?.barangay?.buoys?.[0]?.id;
+   
+  useEffect(() => {
     if (isOpen) {
-      const audio = new Audio('/sound/dangersound.mp3'); 
-      audio.play();
+      const audio = new Audio("/sound/dangersound.mp3");
+      audio.play().catch((e) => console.log("Audio play failed:", e));
     }
   }, [isOpen]);
-  
-  if (!isOpen || !alert) return null;
 
-  const getAlertTitle = (level: string): string => {
-    if (level === 'Red') return 'Red ALERT';
-    if (level === 'Blue') return 'Blue ALERT';
-    return 'ALERT';
+  const handleSend = async () => {
+    if (!alert) return;
+    setIsSending(true);
+    try {
+      const response = await fetch(`${api_endpoint}/broadcast-monitoring`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          alert_id: alert.id,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to send alert: ${response.status}`);
+      }
+      onClose();
+    } catch (error) {
+      console.error("Failed to send alert:", error);
+    } finally {
+      setIsSending(false);
+    }
   };
+
+  if (!isOpen || !alert) return null;
+  const getAlertTitle = (level: string): string => {
+    if (level === "Red") return "Red ALERT";
+    if (level === "Blue") return "Blue ALERT";
+    return "ALERT";
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 p-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full border-4 border-red-500 animate-scale-in">
+      <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full border-4 border-red-500">
         <div className="flex justify-end p-4">
           <button
             onClick={onClose}
-            className="text-red-500 hover:text-red-700 transition"
+            className="text-red-500 hover:text-red-700"
+            disabled={isSending}
           >
             <X size={32} strokeWidth={3} />
           </button>
@@ -58,23 +92,26 @@ const AlertModal = ({ isOpen, alert, onClose, onSend }: AlertModalProps) => {
               </p>
               <div className="mt-4 text-sm text-gray-600">
                 <div>Sensor: {alert.sensor_type}</div>
-                <div>Buoy: {alert.buoy_id}</div>
+                <div>Buoy: {buoyId}</div>
                 <div>Time: {new Date(alert.recorded_at).toLocaleString()}</div>
               </div>
             </div>
           </div>
+
           <div className="flex justify-center gap-6">
             <button
               onClick={onClose}
-              className="px-12 py-4 border-2 border-red-500 text-black rounded-full font-semibold text-lg hover:bg-red-50 transition min-w-[200px]"
+              disabled={isSending}
+              className="px-12 py-4 border-2 border-red-500 text-black rounded-full font-semibold text-lg hover:bg-red-50 transition min-w-[200px] disabled:opacity-50"
             >
               Close
             </button>
             <button
-              onClick={onSend}
-              className="px-12 py-4 bg-red-500 text-white rounded-full font-semibold text-lg hover:bg-red-600 transition min-w-[200px]"
+              onClick={handleSend}
+              disabled={isSending}
+              className="px-12 py-4 bg-red-500 text-white rounded-full font-semibold text-lg hover:bg-red-600 transition min-w-[200px] disabled:opacity-50"
             >
-              Send
+              {isSending ? "Sending..." : "Send"}
             </button>
           </div>
         </div>
@@ -82,5 +119,4 @@ const AlertModal = ({ isOpen, alert, onClose, onSend }: AlertModalProps) => {
     </div>
   );
 };
-
 export default AlertModal;

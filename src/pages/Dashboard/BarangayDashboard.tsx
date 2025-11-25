@@ -14,7 +14,7 @@ const BarangayDashboardContent: React.FC = () => {
   if (!buoyId) {
   return <div>Loading...</div>;
 }
-  const { showAlert, currentAlert, handleClose, handleSend } = useAlertMonitor(buoyId?.toString(),5000);
+  const {showAlert,currentAlert,handleClose} = useAlertMonitor(buoyId?.toString(),5000);
   return (
     <div className="min-h-screen p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* 4 KPI Cards */}
@@ -51,7 +51,6 @@ const BarangayDashboardContent: React.FC = () => {
         isOpen={showAlert}
         alert={currentAlert}
         onClose={handleClose}
-        onSend={handleSend}
       />
     </div>
   );

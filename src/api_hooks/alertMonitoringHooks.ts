@@ -11,63 +11,60 @@ interface Alert {
   recorded_at: string;
   alert_shown: boolean;
 }
-export const useAlertMonitor = (buoyId: string, pollInterval: number = 5000) => {
+export const useAlertMonitor = (prototypeId: string, pollInterval: number = 5000) => {
   const [currentAlert, setCurrentAlert] = useState<Alert | null>(null);
   const [showAlert, setShowAlert] = useState<boolean>(false);
-  const [previousLevel, setPreviousLevel] = useState<string | null>(null);
-  
-  const checkAlerts = useCallback(async () => {
+  const [previousLevels, setPreviousLevels] = useState<any>({});
+  const [shownAlertIds, setShownAlertIds] = useState(new Set<number>());
+  const [isSending, setIsSending] = useState(false);
+  const checkAlerts = async () => {
     try {
-      const status = await alertMonitoring.checkAlertStatus(buoyId);
-      
+      const status = await alertMonitoring.checkAlertStatus(prototypeId);
       if (status.current_level === 'White') {
-        setPreviousLevel('White');
+        setPreviousLevels({}); 
+        setShownAlertIds(new Set());
         return;
       }
-      
-      const { alerts, has_new_alerts } = await alertMonitoring.getActiveAlerts(buoyId);
-      
+      const { alerts, has_new_alerts } = await alertMonitoring.getActiveAlerts(prototypeId);
       if (has_new_alerts && alerts.length > 0) {
         const newAlert = alerts[0];
-        
-        const isLevelIncrease = 
-          (previousLevel === null || previousLevel === 'White') &&
-          (newAlert.alert_level === 'Blue' || newAlert.alert_level === 'Red');
-        
-        if (isLevelIncrease) {
+        if (shownAlertIds.has(newAlert.id)) {
+          return;
+        }
+        const currentLvl = newAlert.alert_level;
+        const prevLvl = previousLevels[newAlert.sensor_type];
+        const danger = currentLvl === 'Blue' || currentLvl === 'Red';
+        const lvlChange = prevLvl !== currentLvl;
+        if (danger && lvlChange) {
           setCurrentAlert(newAlert);
           setShowAlert(true);
-          setPreviousLevel(newAlert.alert_level);
+          setPreviousLevels({
+            ...previousLevels,
+            [newAlert.sensor_type]: currentLvl
+          });
+          setShownAlertIds(new Set(shownAlertIds).add(newAlert.id));
         }
       }
     } catch (error) {
       console.error('Error checking alerts:', error);
     }
-  }, [buoyId, previousLevel]);
-
+  };
   useEffect(() => {
     checkAlerts();
-    const interval = setInterval(checkAlerts, pollInterval);
+    const interval = setInterval(checkAlerts, 5000);
     return () => clearInterval(interval);
-  }, [checkAlerts, pollInterval]);
+  }, [prototypeId]);
 
-  const handleClose = useCallback(async () => {
+  const handleClose = async () => {
     if (currentAlert) {
       await alertMonitoring.markAlertAsShown(currentAlert.id);
       setShowAlert(false);
       setCurrentAlert(null);
     }
-  }, [currentAlert]);
-
-  const handleSend = useCallback(async () => {
-    console.log('Sending alert notification:', currentAlert);
-    await handleClose();
-  }, [currentAlert, handleClose]);
-
+  };
   return {
     showAlert,
     currentAlert,
     handleClose,
-    handleSend,
   };
 };

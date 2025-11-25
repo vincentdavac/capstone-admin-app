@@ -75,6 +75,7 @@ import WaterDepth from "./pages/Administrator/Historical Tables/WaterDepth";
 import RainGauge from "./pages/Administrator/Historical Tables/RainGauge";
 import FeedbackArchivedTable from "./pages/Administrator/Archive/Feedbacks/FeedbackArchivedTable";
 import BarangayManageUsers from "./pages/Barangay/ManageUsers/BarangayManageUsers";
+import BarangayArchivedUsers from "./pages/Barangay/Archive/Users/BarangayArchivedUsers";
 
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -375,6 +376,16 @@ export default function App({ alertsRef }: AppProps) {
             element={
               <ProtectedRoute alertsRef={alertsRef}>
                 <RainGauge />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            index
+            path="/barangay/archived-users"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <BarangayArchivedUsers alertsRef={alertsRef} />
               </ProtectedRoute>
             }
           />

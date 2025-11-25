@@ -6,7 +6,9 @@ const manageBuoy = () => {
       <div className="lg:col-span-2 flex flex-col gap-4 w-full">
         <div className="w-full h-auto bg-white dark:bg-gray-800 shadow rounded-lg border border-gray-300 dark:border-gray-700 p-4">
           <div className="w-full px-2 sm:px-4 flex items-center h-14 sm:h-16">
-            <h1 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">SENSORS MONITORING TABLE</h1>
+            <h1 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-white">
+              SENSORS MONITORING TABLE
+            </h1>
           </div>
           <hr className="w-full border-t border-gray-300 dark:border-gray-700" />
 
@@ -21,7 +23,10 @@ const manageBuoy = () => {
             </div>
             <div className="relative w-full sm:w-60 lg:w-96 flex-shrink-0">
               <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none z-[999]">
-                <Icons name="search" className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                <Icons
+                  name="search"
+                  className="w-5 h-5 text-gray-400 dark:text-gray-500"
+                />
               </span>
               <input
                 type="text"

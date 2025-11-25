@@ -11,7 +11,7 @@ const PageBreadcrumb: React.FC<BreadcrumbProps> = ({ pageTitle }) => {
   const lastType = user?.userType;
 
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
+    <div className="flex flex-wrap items-center justify-between gap-3 mb-2">
       <h2
         className="text-xl font-semibold text-gray-800 dark:text-white/90"
         x-text="pageName"

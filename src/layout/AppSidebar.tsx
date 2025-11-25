@@ -119,7 +119,7 @@ const navItems: NavItem[] = [
   },
   {
     icon: <Buoy />,
-    name: "Deployed Buoy",
+    name: "Buoy Monitoring",
     path: "/barangay/deployed-buoy",
   },
   {

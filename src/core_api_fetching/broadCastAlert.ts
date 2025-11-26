@@ -39,9 +39,9 @@ export function useBroadcastAlert() {
         throw new Error("Failed to broadcast alert");
       }
       const result = await response.json();
-      console.log("Alert broadcasted successfully:", result);
+      
         if (result.reset > 0) {
-        console.log(`Will reset after ${result.reset} seconds`);
+        (`Will reset after ${result.reset} seconds`);
         const endPoint = `${api_endpoint}/reset-relay`;
         setTimeout(async () => {
           await fetch(endPoint, {
@@ -52,7 +52,6 @@ export function useBroadcastAlert() {
             },
             body: JSON.stringify({ buoy_code: String(buoyCode)})
           });
-          console.log('RELAY reset to false');
         }, result.reset * 1000); 
       }
       setSuccess(true);

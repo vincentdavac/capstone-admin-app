@@ -10,7 +10,6 @@ import AlertModal from "../Barangay/AlertManagement/alertModal";
 const BarangayDashboardContent: React.FC = () => {
   const { user } = useContext(AppContext)!;
   const buoyId = user?.barangay?.buoys?.[0]?.id;
-  console.log("teststs", buoyId);
   if (!buoyId) {
   return <div>Loading...</div>;
 }

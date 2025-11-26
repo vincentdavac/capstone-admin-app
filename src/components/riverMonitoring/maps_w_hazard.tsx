@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 
 import * as echarts from "echarts";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 import { ref, onValue } from "firebase/database";
 import { database } from "../../firebaseCredentials/firebase";
 
@@ -19,6 +17,7 @@ export default function MapsWithHazard() {
   const waterPressure = useRef(null);
   const rainGauge = useRef(null);
 
+  // --- Data Fetching UseEffects (Unchanged) ---
   useEffect(() => {
     const sstRef = ref(
       database,
@@ -45,6 +44,7 @@ export default function MapsWithHazard() {
 
     return () => unsubscribe();
   }, []);
+  
   useEffect(() => {
     const humidityDBRef = ref(database, "BME280/HUMIDITY");
 
@@ -61,54 +61,109 @@ export default function MapsWithHazard() {
 
     return () => unsubscribe();
   }, []);
-  useEffect(() => {
-    //  14.642250839841605, 120.93873906253934
-    const map = L.map("map").setView(
-      [14.642250839841605, 120.93873906253934],
-      12
-    );
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
-
-    L.marker([14.642250839841605, 120.93873906253934])
-      .addTo(map)
-      .bindPopup("<b>Coastal</b>")
-      .openPopup();
-    return () => {
-      map.remove();
-    };
-  }, []);
   useEffect(() => {
     const charts: echarts.ECharts[] = [];
     const unsubscribers: (() => void)[] = [];
-    if (humidityRef.current) {
-      const container = humidityRef.current;
-      const fillY = 15 + (170 - (percentage / 100) * 170);
-      container.innerHTML = `
-      <svg viewBox="0 0 200 200" style="width:100%;height:100%;max-width:200px;max-height:200px;margin:0 auto;">
-        <defs>
-          <clipPath id="circleClip"><circle cx="100" cy="100" r="85" /></clipPath>
-          <pattern id="wave" x="0" y="0" width="400" height="200" patternUnits="userSpaceOnUse">
-            <path d="M0,50 Q50,35 100,50 T200,50 T300,50 T400,50 V200 H0 Z" fill="#3b82f6" opacity="0.85">
-              <animateTransform attributeName="transform" type="translate" from="0,0" to="-200,0" dur="3s" repeatCount="indefinite" />
-            </path>
-          </pattern>
-        </defs>
-        <circle cx="100" cy="100" r="90" fill="none" stroke="#3b82f6" stroke-width="5" />
-        <circle cx="100" cy="100" r="85" fill="#f0f9ff" />
-        <g clip-path="url(#circleClip)">
-          <rect x="0" y="${fillY}" width="200" height="200" fill="url(#wave)">
-            <animate attributeName="y" from="200" to="${fillY}" dur="2s" fill="freeze" />
-          </rect>
-        </g>
-        <text x="100" y="112" text-anchor="middle" font-size="46" font-weight="bold" fill="#ffffff" style="text-shadow:0 2px 4px rgba(0,0,0,0.3)">
-          ${percentage.toFixed(0)}%
-        </text>
-      </svg>`;
-    }
+    
+    const updateEChartsOptions = (chart: echarts.ECharts, seriesOptions: any, isDark: boolean, dynamicMax?: number) => {
+        const textColor = isDark ? '#ccc' : '#464646'; 
+        const axisLineColor = isDark ? '#9ca3af' : '#fff'; 
+
+        let newOptions: echarts.EChartsOption = { series: [] };
+
+        if (seriesOptions.type === 'gauge' && seriesOptions.center[1] === '75%') { // SST Gauge
+            newOptions = {
+                series: [{
+                    ...seriesOptions,
+                    max: dynamicMax,
+                    axisLabel: {
+                        ...seriesOptions.axisLabel,
+                        color: textColor,
+                    },
+                }],
+            };
+        } else if (seriesOptions.type === 'gauge' && seriesOptions.center[1] === '60%') { // Wind/Pressure
+             newOptions = {
+                series: [{
+                    ...seriesOptions,
+                    axisLabel: {
+                        ...seriesOptions.axisLabel,
+                        color: textColor,
+                    },
+                    splitLine: {
+                        ...seriesOptions.splitLine,
+                        lineStyle: { color: textColor, width: 1 },
+                    },
+                }],
+            };
+        } else if (seriesOptions.type === 'gauge' && seriesOptions.center[1] === '55%') { // Water/Rain
+             newOptions = {
+                series: [{
+                    ...seriesOptions,
+                    axisTick: {
+                        ...seriesOptions.axisTick,
+                        lineStyle: { color: axisLineColor, width: seriesOptions.axisTick.lineStyle.width },
+                    },
+                    splitLine: {
+                        ...seriesOptions.splitLine,
+                        lineStyle: { color: axisLineColor, width: seriesOptions.splitLine.lineStyle.width },
+                    },
+                    axisLabel: {
+                        ...seriesOptions.axisLabel,
+                        color: textColor,
+                    },
+                }],
+            };
+        }
+        chart.setOption(newOptions, true);
+    };
+
+    const targetNode = document.documentElement;
+    const observer = new MutationObserver((mutationsList) => {
+        for (const mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                const isDark = targetNode.classList.contains('dark');
+                
+                charts.forEach((chart, index) => {
+                    const seriesData = chart.getOption().series[0];
+                    if (index === 0) updateEChartsOptions(chart, seriesData, isDark, sstData > 0 ? sstData * 1.2 : 3);
+                    else updateEChartsOptions(chart, seriesData, isDark);
+                });
+
+                if (humidityRef.current) {
+                    const container = humidityRef.current;
+                    const fillY = 15 + (170 - (percentage / 100) * 170);
+                    const circleFill = isDark ? '#1f2937' : '#f0f9ff';
+                    const circleStroke = isDark ? '#60a5fa' : '#3b82f6';
+                    
+                    container.innerHTML = `
+                    <svg viewBox="0 0 200 200" style="width:100%;height:100%;max-width:200px;max-height:200px;margin:0 auto;">
+                        <defs>
+                          <clipPath id="circleClip"><circle cx="100" cy="100" r="85" /></clipPath>
+                          <pattern id="wave" x="0" y="0" width="400" height="200" patternUnits="userSpaceOnUse">
+                            <path d="M0,50 Q50,35 100,50 T200,50 T300,50 T400,50 V200 H0 Z" fill="#3b82f6" opacity="0.85">
+                              <animateTransform attributeName="transform" type="translate" from="0,0" to="-200,0" dur="3s" repeatCount="indefinite" />
+                            </path>
+                          </pattern>
+                        </defs>
+                        <circle cx="100" cy="100" r="90" fill="none" stroke="${circleStroke}" stroke-width="5" />
+                        <circle cx="100" cy="100" r="85" fill="${circleFill}" /> 
+                        <g clip-path="url(#circleClip)">
+                          <rect x="0" y="${fillY}" width="200" height="200" fill="url(#wave)">
+                            <animate attributeName="y" from="200" to="${fillY}" dur="2s" fill="freeze" />
+                          </rect>
+                        </g>
+                        <text x="100" y="112" text-anchor="middle" font-size="46" font-weight="bold" fill="#ffffff" style="text-shadow:0 2px 4px rgba(0,0,0,0.3)">
+                          ${percentage.toFixed(0)}%
+                        </text>
+                    </svg>`;
+                }
+            }
+        }
+    });
+
+    observer.observe(targetNode, { attributes: true });
 
     if (windSpeed.current) {
       const windSpeedGauge = echarts.init(windSpeed.current);
@@ -229,6 +284,7 @@ export default function MapsWithHazard() {
       );
       unsubscribers.push(unsubscribe);
     }
+    
     if (atmosphericPressure.current) {
       const pressureGauge = echarts.init(atmosphericPressure.current);
       pressureGauge.setOption({
@@ -285,6 +341,7 @@ export default function MapsWithHazard() {
       );
       unsubscribers.push(unsubscribe);
     }
+
     if (waterLevel.current) {
       const levelGauge = echarts.init(waterLevel.current);
       levelGauge.setOption({
@@ -360,6 +417,7 @@ export default function MapsWithHazard() {
       );
       unsubscribers.push(unsubscribe);
     }
+
     if (waterTemperature.current) {
       const tempGauge = echarts.init(waterTemperature.current);
       tempGauge.setOption({
@@ -427,6 +485,7 @@ export default function MapsWithHazard() {
       );
       unsubscribers.push(unsubscribe);
     }
+
     if (waterPressure.current) {
       const pressureGauge = echarts.init(waterPressure.current);
       pressureGauge.setOption({
@@ -503,10 +562,12 @@ export default function MapsWithHazard() {
               series: [{ data: [{ value: val }] }],
             });
           }
+          
         }
       );
       unsubscribers.push(unsubscribe);
     }
+
     if (rainGauge.current) {
       const rainGaugeChart = echarts.init(rainGauge.current);
       rainGaugeChart.setOption({
@@ -594,123 +655,87 @@ export default function MapsWithHazard() {
       );
       unsubscribers.push(unsubscribe);
     }
+    
     const handleResize = () => charts.forEach((chart) => chart.resize());
     window.addEventListener("resize", handleResize);
 
     return () => {
       window.removeEventListener("resize", handleResize);
       charts.forEach((chart) => chart.dispose());
+      observer.disconnect(); 
       unsubscribers.forEach((unsub) => unsub());
     };
   }, [sstData, percentage]);
 
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <div className="lg:col-span-2 flex flex-col gap-4">
-        <div className="border-2 border-[#D9D9D9] rounded-[15px] h-64 sm:h-80 lg:h-[632px] w-[946px]">
-          <div id="map" className="w-full h-full rounded-xl" />
-        </div>
+
+  const SensorCard = ({ title, valueRef, footerText }: { title: string; valueRef: React.RefObject<HTMLDivElement>; footerText: string; }) => (
+    <div className="flex flex-col p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md dark:shadow-xl hover:shadow-lg transition-shadow duration-300 border border-gray-200 dark:border-gray-700">
+      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1 text-center">
+        {title}
+      </h3>
+      <div ref={valueRef} className="w-full h-48 sm:h-56 lg:h-64 flex-grow" />
+      <div className="w-full text-center mt-1 pt-1 border-t border-gray-200 dark:border-gray-700">
+        <p className="text-sm text-gray-600 dark:text-gray-400 italic leading-snug">
+          {footerText}
+        </p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 overflow-x-hidden overflow-y-auto scrollbar-hide h-[632px] no-scrollbar p-2">
-        <div className="flex flex-col">
-          <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[225px] flex flex-col items-center justify-center">
-            <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1 text-center leading-tight">
-              Surroundings <br /> Temperature
-            </p>
-            <div ref={gaugeRef} className="w-full h-full" />
-          </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
-            High Moisture (High humidity supports strong tropical cyclone
-            development.)
-          </div>
-        </div>
+    </div>
+  );
 
-        <div className="flex flex-col">
-          <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[225px] flex flex-col items-center justify-center">
-            <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-              Humidity
-            </p>
-            <div ref={humidityRef} className="w-full h-full" />
-          </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
-            High Moisture (High humidity supports strong tropical cyclone
-            development.)
-          </div>
-        </div>
+  return (
+    <div className="p-4 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+      
+      {/* Sensor gauges grid: responsive 1-column (mobile) to 2/3/4-columns (larger screens) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-4">
+        
+        <SensorCard 
+          title="Surroundings Temperature (°C)" 
+          valueRef={gaugeRef} 
+          footerText="High Moisture (High humidity supports strong tropical cyclone development.)"
+        />
 
-        <div className="flex flex-col">
-          <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[225px] flex flex-col items-center justify-center">
-            <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-              Wind Speed (km/h)
-            </p>
-            <div ref={windSpeed} className="w-full h-full" />
-          </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
-            High Moisture (High humidity supports strong tropical cyclone
-            development.)
-          </div>
-        </div>
+        <SensorCard 
+          title="Humidity (%)" 
+          valueRef={humidityRef} 
+          footerText="High Moisture (High humidity supports strong tropical cyclone development.)"
+        />
 
-        <div className="flex flex-col">
-          <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[225px] flex flex-col items-center justify-center">
-            <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-              Atmospheric Pressure
-            </p>
-            <div ref={atmosphericPressure} className="w-full h-full" />
-          </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
-            Normal Pressure (Fair weather; High pressure system)
-          </div>
-        </div>
+        <SensorCard 
+          title="Wind Speed (km/h)" 
+          valueRef={windSpeed} 
+          footerText="High wind speeds indicate potential storm conditions or strong air currents."
+        />
 
-        <div className="flex flex-col">
-          <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[225px] flex flex-col items-center justify-center">
-            <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-              Water level
-            </p>
-            <div ref={waterLevel} className="w-full h-full" />
-          </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
-            High Moisture (High humidity supports strong tropical cyclone
-            development.)
-          </div>
-        </div>
+        <SensorCard 
+          title="Atmospheric Pressure (hPa)" 
+          valueRef={atmosphericPressure} 
+          footerText="Normal Pressure (Fair weather; High pressure system)"
+        />
 
-        <div className="flex flex-col">
-          <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[225px] flex flex-col items-center justify-center">
-            <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-              Water Temperature
-            </p>
-            <div ref={waterTemperature} className="w-full h-full" />
-          </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
-            Normal Pressure (Fair weather; High pressure system)
-          </div>
-        </div>
+        <SensorCard 
+          title="Water Level (m)" 
+          valueRef={waterLevel} 
+          footerText="Elevated water levels can indicate high tide or a surge risk."
+        />
 
-        <div className="flex flex-col">
-          <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[225px] flex flex-col items-center justify-center">
-            <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-              Water Pressure
-            </p>
-            <div ref={waterPressure} className="w-full h-full" />
-          </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
-            Normal Pressure (Fair weather; High pressure system)
-          </div>
-        </div>
+        <SensorCard 
+          title="Water Temperature (°C)" 
+          valueRef={waterTemperature} 
+          footerText="Ocean temperature is a critical factor for tropical cyclone formation."
+        />
 
-        <div className="flex flex-col">
-          <div className="border-2 border-[#D9D9D9] w-full rounded-sm h-20 sm:h-28 lg:h-[225px] flex flex-col items-center justify-center">
-            <p className="text-xs sm:text-sm lg:text-base font-medium text-gray-700 mb-1">
-             Rain Fall Count Milimeter
-            </p>
-            <div ref={rainGauge} className="w-full h-full" />
-          </div>
-          <div className="w-full text-center mt-2 text-sm text-gray-600 p-2">
-            Normal Pressure (Fair weather; High pressure system)
-          </div>
-        </div>
+        <SensorCard 
+          title="Water Pressure (hPa)" 
+          valueRef={waterPressure} 
+          footerText="Water pressure measurements are used to infer water depth/level."
+        />
+
+        <SensorCard 
+          title="Rainfall Count (mm)" 
+          valueRef={rainGauge} 
+          footerText="Monitors precipitation rate. Heavy rain contributes to flooding."
+        />
+        
       </div>
     </div>
   );

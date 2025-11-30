@@ -43,7 +43,6 @@ export function useBroadcastAlert() {
       }
       const result = await response.json();
       if (result.reset > 0) {
-        `Will reset after ${result.reset} seconds`;
         const endPoint = `${api_endpoint}/reset-relay`;
         setTimeout(async () => {
           await fetch(endPoint, {

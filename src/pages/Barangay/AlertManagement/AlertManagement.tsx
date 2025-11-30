@@ -157,10 +157,10 @@ const AlertManagement: React.FC = () => {
               handleBroadcast={handleBroadcast}
             />
             <AlertModal
-        isOpen={showAlert}
-        alert={currentAlert}
-        onClose={handleClose}
-      />
+              isOpen={showAlert}
+              alert={currentAlert}
+              onClose={handleClose}
+            />
           </div>
         </div>
       </div>

@@ -21,8 +21,8 @@ interface AlertModalProps {
 const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
   const { user,token } = useContext(AppContext)!;
   const [isSending, setIsSending] = useState(false);
-   const buoyId = user?.barangay?.buoys?.[0]?.id;
-   
+  const buoyId = user?.barangay?.buoys?.[0]?.id;
+   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   useEffect(() => {
     if (isOpen) {
       const audio = new Audio("/sound/dangersound.mp3");
@@ -43,11 +43,26 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
         },
         body: JSON.stringify({
           alert_id: alert.id,
+          buoy_code: String(buoyCode),
         }),
       });
 
       if (!response.ok) {
         throw new Error(`Failed to send alert: ${response.status}`);
+      }
+      const result = await response.json();
+      if (result.reset > 0) {
+        const endPoint = `${api_endpoint}/reset-relay-modal`;
+        setTimeout(async () => {
+          await fetch(endPoint, {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ buoy_code: String(buoyCode) }),
+          });
+        }, result.reset * 1000);
       }
       onClose();
     } catch (error) {

@@ -22,7 +22,8 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
   const { user,token } = useContext(AppContext)!;
   const [isSending, setIsSending] = useState(false);
   const buoyId = user?.barangay?.buoys?.[0]?.id;
-   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
+  const sensor = alert?.sensor_type;
   useEffect(() => {
     if (isOpen) {
       const audio = new Audio("/sound/dangersound.mp3");
@@ -44,9 +45,11 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
         body: JSON.stringify({
           alert_id: alert.id,
           buoy_code: String(buoyCode),
+          sensor_stype: String(sensor),
         }),
       });
-
+      console.log("testing ng mga may bitaw",sensor);
+      
       if (!response.ok) {
         throw new Error(`Failed to send alert: ${response.status}`);
       }

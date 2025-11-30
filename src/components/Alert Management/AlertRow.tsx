@@ -12,12 +12,14 @@ export interface Alert {
 interface AlertRowProps {
   alert: Alert; // Pinalitan ang 'any' ng 'Alert'
   selectedAlertId: number | null;
-  onSelect: (id: number) => void;
+  sensorTypes: string | null;
+  onSelect: (id: number,sensors: string) => void;
 }
 
 export const AlertRow: React.FC<AlertRowProps> = ({
   alert,
   selectedAlertId,
+  sensorTypes,
   onSelect,
 }) => {
   const getAlertStyle = (level: string) => {
@@ -75,7 +77,7 @@ export const AlertRow: React.FC<AlertRowProps> = ({
           type="radio"
           name="selectedAlert"
           checked={selectedAlertId === alert.id}
-          onChange={() => onSelect(alert.id)}
+          onChange={() => onSelect(alert.id,alert.sensor_type!)}
           className="h-4 w-4 text-[#453EFE] focus:ring-[#453EFE] border-gray-300 cursor-pointer"
         />
       </div>

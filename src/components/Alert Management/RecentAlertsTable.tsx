@@ -13,7 +13,8 @@ interface RecentAlertsTableProps {
     selectedAlertId: number | null;
     startIndex: number;
     setCurrentPage: (page: number) => void;
-    handleSelectAlert: (id: number) => void;
+    handleSelectAlert: (id: number,sensors: string) => void;
+    sensorTypes: string | null;
     handleBroadcast: () => void; 
 }
 
@@ -29,7 +30,8 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
     startIndex,
     setCurrentPage,
     handleSelectAlert,
-    handleBroadcast
+    handleBroadcast,
+    sensorTypes
 }) => {
     
     const handleBroadcastClick = () => {
@@ -84,6 +86,7 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
                     key={alert.id}
                     alert={alert}
                     selectedAlertId={selectedAlertId}
+                    sensorTypes={sensorTypes}
                     onSelect={handleSelectAlert}
                   />
                 ))

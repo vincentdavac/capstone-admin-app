@@ -24,6 +24,7 @@ const AlertManagement: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedAlertId, setSelectedAlertId] = useState<number | null>(null);
   const { broadcastToSelected } = useBroadcastAlert();
+  const [sensorTypes, setSensor] = useState<string | null>(null);
   useBroadcastAlert();
 
   const itemsPerPage = 5;
@@ -35,12 +36,15 @@ const AlertManagement: React.FC = () => {
     alertReadings: "",
   });
 
-  const handleSelectAlert = (id: number) => {
+  const handleSelectAlert = (id: number,sensors: string) => {
     setSelectedAlertId(id);
+    setSensor(sensors);
   };
+  
   const handleBroadcast = async () => {
-    await broadcastToSelected(selectedAlertId);
+    await broadcastToSelected(selectedAlertId,sensorTypes);
     setSelectedAlertId(null);
+    setSensor(null);
   };
 
   const filteredAlerts = alertsGet || [];
@@ -155,6 +159,7 @@ const AlertManagement: React.FC = () => {
               setCurrentPage={setCurrentPage}
               handleSelectAlert={handleSelectAlert}
               handleBroadcast={handleBroadcast}
+              sensorTypes={sensorTypes}
             />
             <AlertModal
               isOpen={showAlert}

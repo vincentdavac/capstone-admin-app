@@ -7,7 +7,7 @@ export function useBroadcastAlert() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const { token, user } = useContext(AppContext)!;
-  const broadcastToSelected = async (selectedAlertId: number | null) => {
+  const broadcastToSelected = async (selectedAlertId: number | null,sensorTypes: string | null ) => {
     const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
     if (!token) return;
     try {
@@ -25,7 +25,9 @@ export function useBroadcastAlert() {
       const payload = {
         alert_id: selectedAlertId,
         buoy_code: String(buoyCode),
+        sensorTypes: sensorTypes
       };
+      console.log(payload);
       setLoading(true);
       const url = `${api_endpoint}/broadcast-alert`;
       const response = await fetch(url, {

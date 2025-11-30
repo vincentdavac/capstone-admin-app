@@ -5,8 +5,20 @@ import { useAlert } from "../../../context/AlertContext";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import { CustomAlertLevel } from "../../../components/Alert Management/CustomAlertLevel";
 import { RecentAlertsTable } from "../../../components/Alert Management/RecentAlertsTable";
+import {insertingAlerts } from "../../../api_hooks/dashboardHooks";
+import { AppContext } from "../../../context/AppContext";
+import { useContext } from "react";
+import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
+import AlertModal from "../../Barangay/AlertManagement/alertModal";
 
 const AlertManagement: React.FC = () => {
+  const { user } = useContext(AppContext)!;
+  const buoyId = user?.barangay?.buoys?.[0]?.id;
+  if (!buoyId) {
+     return <div>Loading...</div>;
+  }
+  const {showAlert,currentAlert,handleClose} = useAlertMonitor(buoyId?.toString(),5000);
+  insertingAlerts();
   useAlert();
   const { alertsGet, loading, error } = fetchAlertsAlerts();
   const [currentPage, setCurrentPage] = useState(1);
@@ -144,6 +156,11 @@ const AlertManagement: React.FC = () => {
               handleSelectAlert={handleSelectAlert}
               handleBroadcast={handleBroadcast}
             />
+            <AlertModal
+        isOpen={showAlert}
+        alert={currentAlert}
+        onClose={handleClose}
+      />
           </div>
         </div>
       </div>

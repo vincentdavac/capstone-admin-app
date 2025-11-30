@@ -9,7 +9,7 @@ import ChatWindow from "../../../components/Chat Support/Barangay/ChatWindow";
 import API_BASE_URL from "../../../config/coreApi";
 import { AppContext } from "../../../context/AppContext";
 import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
-
+import {insertingAlerts } from "../../../api_hooks/dashboardHooks";
 interface user {
   id: number;
   attributes: {
@@ -107,10 +107,10 @@ interface Props {
 
 const BarangayChatSupport = ({ alertsRef }: Props) => {
   const { token, user, echoInstance } = useContext(AppContext)!;
-
   const [receiverId, setReceiverId] = useState<number | null>(null);
   const [chatList, setChatList] = useState<ChatListItem[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
+  insertingAlerts();
 
   // Map API response to ChatListItem[]
   const mapApiResponseToChatList = (

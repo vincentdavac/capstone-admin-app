@@ -11,7 +11,7 @@ import UsersPagination from "../../../components/Manage User/UsersPagination";
 
 import UpdateUserModal from "./UpdateUserModal";
 import ArchiveUserModal from "./ArchiveUserModal";
-
+import {insertingAlerts } from "../../../api_hooks/dashboardHooks";
 interface BuoyData {
   id: number;
   buoyCode: string;
@@ -61,8 +61,8 @@ interface Props {
 }
 
 const BarangayManageUsers = ({ alertsRef }: Props) => {
+  insertingAlerts();
   const { user, token } = useContext(AppContext)!;
-
   // state:
   const [showUpdate, setShowUpdate] = useState(false);
   const [showArchive, setShowArchive] = useState(false);

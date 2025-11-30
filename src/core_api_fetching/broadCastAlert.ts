@@ -22,7 +22,10 @@ export function useBroadcastAlert() {
         setError("User has no assigned prototype");
         return;
       }
-      const payload = { alert_id: selectedAlertId, buoy_code: String(buoyCode)};
+      const payload = {
+        alert_id: selectedAlertId,
+        buoy_code: String(buoyCode),
+      };
       setLoading(true);
       const url = `${api_endpoint}/broadcast-alert`;
       const response = await fetch(url, {
@@ -39,20 +42,19 @@ export function useBroadcastAlert() {
         throw new Error("Failed to broadcast alert");
       }
       const result = await response.json();
-      
-        if (result.reset > 0) {
-        (`Will reset after ${result.reset} seconds`);
+      if (result.reset > 0) {
+        `Will reset after ${result.reset} seconds`;
         const endPoint = `${api_endpoint}/reset-relay`;
         setTimeout(async () => {
           await fetch(endPoint, {
-            method: 'POST',
+            method: "POST",
             headers: {
               Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
             },
-            body: JSON.stringify({ buoy_code: String(buoyCode)})
+            body: JSON.stringify({ buoy_code: String(buoyCode) }),
           });
-        }, result.reset * 1000); 
+        }, result.reset * 1000);
       }
       setSuccess(true);
       return result;

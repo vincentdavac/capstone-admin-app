@@ -1,14 +1,25 @@
- import allAlert from "../core_api_fetching/allAlerts";
- import { useEffect } from "react";
- export function insertingAlerts() {
- useEffect(() => {
+import allAlert from "../core_api_fetching/allAlerts";
+import { useEffect } from "react";
+import { AppContext } from "../context/AppContext";
+import { useContext } from "react";
+export function insertingAlerts() {
+  const { token, user } = useContext(AppContext)!;
+  const buoyId = user?.barangay?.buoys?.[0]?.id;
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
+  useEffect(() => {
     let mount = true;
     const alertController = new AbortController();
-
     const allInsertAlerts = async () => {
       if (!mount) return;
       try {
-        await allAlert.post({ signal: alertController.signal });
+        await allAlert.post({
+          signal: alertController.signal,
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({alert_id: buoyId,buoy_code: String(buoyCode)}),
+        });
       } catch (error) {
         console.error(" failed to send alert: ", error);
       }

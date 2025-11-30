@@ -7,8 +7,7 @@ const allAlert = {
         method: "POST",
         ...config,
         headers: {
-          Accept: "application/json",
-          "Content-Type": "application/json",
+          ...config?.headers,
         },
       });
 

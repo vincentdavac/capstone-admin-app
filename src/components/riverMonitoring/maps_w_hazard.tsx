@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-
 import * as echarts from "echarts";
 import { ref, onValue } from "firebase/database";
 import { database } from "../../firebaseCredentials/firebase";
-
+import { AppContext } from "../../context/AppContext";
+import { useContext } from "react";
 export default function MapsWithHazard() {
   const [sstData, setSST] = useState<number>(0);
   const [loading, setLoading] = useState(true);
@@ -16,13 +16,11 @@ export default function MapsWithHazard() {
   const waterTemperature = useRef(null);
   const waterPressure = useRef(null);
   const rainGauge = useRef(null);
-
+   const { user } = useContext(AppContext)!;
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   // --- Data Fetching UseEffects (Unchanged) ---
   useEffect(() => {
-    const sstRef = ref(
-      database,
-      "BME280/SURROUNDING_TEMPERATURE"
-    );
+   const sstRef = ref(database, `/${buoyCode}/BME280/SURROUNDING_TEMPERATURE`);
 
     const unsubscribe = onValue(
       sstRef,
@@ -46,8 +44,7 @@ export default function MapsWithHazard() {
   }, []);
   
   useEffect(() => {
-    const humidityDBRef = ref(database, "BME280/HUMIDITY");
-
+    const humidityDBRef = ref(database, `/${buoyCode}/BME280/HUMIDITY`);
     const unsubscribe = onValue(humidityDBRef, (snapshot) => {
       if (snapshot.exists()) {
         const val = Number(snapshot.val());
@@ -120,50 +117,71 @@ export default function MapsWithHazard() {
     };
 
     const targetNode = document.documentElement;
-    const observer = new MutationObserver((mutationsList) => {
-        for (const mutation of mutationsList) {
-            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                const isDark = targetNode.classList.contains('dark');
-                
-                charts.forEach((chart, index) => {
-                    const seriesData = chart.getOption().series[0];
-                    if (index === 0) updateEChartsOptions(chart, seriesData, isDark, sstData > 0 ? sstData * 1.2 : 3);
-                    else updateEChartsOptions(chart, seriesData, isDark);
-                });
 
-                if (humidityRef.current) {
-                    const container = humidityRef.current;
-                    const fillY = 15 + (170 - (percentage / 100) * 170);
-                    const circleFill = isDark ? '#1f2937' : '#f0f9ff';
-                    const circleStroke = isDark ? '#60a5fa' : '#3b82f6';
-                    
-                    container.innerHTML = `
-                    <svg viewBox="0 0 200 200" style="width:100%;height:100%;max-width:200px;max-height:200px;margin:0 auto;">
-                        <defs>
-                          <clipPath id="circleClip"><circle cx="100" cy="100" r="85" /></clipPath>
-                          <pattern id="wave" x="0" y="0" width="400" height="200" patternUnits="userSpaceOnUse">
-                            <path d="M0,50 Q50,35 100,50 T200,50 T300,50 T400,50 V200 H0 Z" fill="#3b82f6" opacity="0.85">
-                              <animateTransform attributeName="transform" type="translate" from="0,0" to="-200,0" dur="3s" repeatCount="indefinite" />
-                            </path>
-                          </pattern>
-                        </defs>
-                        <circle cx="100" cy="100" r="90" fill="none" stroke="${circleStroke}" stroke-width="5" />
-                        <circle cx="100" cy="100" r="85" fill="${circleFill}" /> 
-                        <g clip-path="url(#circleClip)">
-                          <rect x="0" y="${fillY}" width="200" height="200" fill="url(#wave)">
-                            <animate attributeName="y" from="200" to="${fillY}" dur="2s" fill="freeze" />
-                          </rect>
-                        </g>
-                        <text x="100" y="112" text-anchor="middle" font-size="46" font-weight="bold" fill="#ffffff" style="text-shadow:0 2px 4px rgba(0,0,0,0.3)">
-                          ${percentage.toFixed(0)}%
-                        </text>
-                    </svg>`;
+const observer = new MutationObserver((mutationsList) => {
+    for (const mutation of mutationsList) {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            const isDark = targetNode.classList.contains('dark');
+
+            charts.forEach((chart, index) => {
+                const option = chart.getOption() as echarts.EChartsOption;
+
+                const seriesArray = Array.isArray(option.series)
+                    ? option.series
+                    : option.series
+                    ? [option.series]
+                    : [];
+
+                const seriesData = seriesArray[0]; 
+
+                if (!seriesData) return;
+
+                if (index === 0) {
+                    updateEChartsOptions(
+                        chart,
+                        seriesData,
+                        isDark,
+                        sstData > 0 ? sstData * 1.2 : 3
+                    );
+                } else {
+                    updateEChartsOptions(chart, seriesData, isDark);
                 }
+            });
+
+            if (humidityRef.current) {
+                const container = humidityRef.current;
+                const fillY = 15 + (170 - (percentage / 100) * 170);
+                const circleFill = isDark ? '#1f2937' : '#f0f9ff';
+                const circleStroke = isDark ? '#60a5fa' : '#3b82f6';
+
+                container.innerHTML = `
+                <svg viewBox="0 0 200 200" style="width:100%;height:100%;max-width:200px;max-height:200px;margin:0 auto;">
+                    <defs>
+                      <clipPath id="circleClip"><circle cx="100" cy="100" r="85" /></clipPath>
+                      <pattern id="wave" x="0" y="0" width="400" height="200" patternUnits="userSpaceOnUse">
+                        <path d="M0,50 Q50,35 100,50 T200,50 T300,50 T400,50 V200 H0 Z" fill="#3b82f6" opacity="0.85">
+                          <animateTransform attributeName="transform" type="translate" from="0,0" to="-200,0" dur="3s" repeatCount="indefinite" />
+                        </path>
+                      </pattern>
+                    </defs>
+                    <circle cx="100" cy="100" r="90" fill="none" stroke="${circleStroke}" stroke-width="5" />
+                    <circle cx="100" cy="100" r="85" fill="${circleFill}" /> 
+                    <g clip-path="url(#circleClip)">
+                      <rect x="0" y="${fillY}" width="200" height="200" fill="url(#wave)">
+                        <animate attributeName="y" from="200" to="${fillY}" dur="2s" fill="freeze" />
+                      </rect>
+                    </g>
+                    <text x="100" y="112" text-anchor="middle" font-size="46" font-weight="bold" fill="#ffffff" style="text-shadow:0 2px 4px rgba(0,0,0,0.3)">
+                      ${percentage.toFixed(0)}%
+                    </text>
+                </svg>`;
             }
         }
-    });
+    }
+});
 
-    observer.observe(targetNode, { attributes: true });
+observer.observe(targetNode, { attributes: true });
+
 
     if (windSpeed.current) {
       const windSpeedGauge = echarts.init(windSpeed.current);
@@ -201,9 +219,8 @@ export default function MapsWithHazard() {
         ],
       });
       charts.push(windSpeedGauge);
-
       const unsubscribe = onValue(
-        ref(database, "ANEMOMETER/WIND_SPEED_km_h"),
+        ref(database, `/${buoyCode}/ANEMOMETER/WIND_SPEED_km_h`),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -272,7 +289,8 @@ export default function MapsWithHazard() {
       charts.push(gaugeChart);
 
       const unsubscribe = onValue(
-        ref(database, "BME280/SURROUNDING_TEMPERATURE"),
+      
+        ref(database, `/${buoyCode}/BME280/SURROUNDING_TEMPERATURE`),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -328,8 +346,9 @@ export default function MapsWithHazard() {
         ],
       });
       charts.push(pressureGauge);
+      `/${buoyCode}/BME280/ATMOSPHERIC_PRESSURE`
       const unsubscribe = onValue(
-        ref(database, "BME280/ATMOSPHERIC_PRESSURE"),
+        ref(database,`/${buoyCode}/BME280/ATMOSPHERIC_PRESSURE`),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -404,8 +423,9 @@ export default function MapsWithHazard() {
         ],
       });
       charts.push(levelGauge);
+      
       const unsubscribe = onValue(
-        ref(database, "MS5837/WATER_LEVEL_METER"),
+        ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_METER`),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -472,8 +492,9 @@ export default function MapsWithHazard() {
         ],
       });
       charts.push(tempGauge);
+     
       const unsubscribe = onValue(
-        ref(database, "MS5837/WATER_TEMPERATURE"),
+        ref(database, `/${buoyCode}/MS5837/WATER_TEMPERATURE`),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -553,8 +574,9 @@ export default function MapsWithHazard() {
         ],
       });
       charts.push(pressureGauge);
+       
       const unsubscribe = onValue(
-        ref(database, "MS5837/WATER_PRESSURE"),
+        ref(database,`/${buoyCode}/MS5837/WATER_PRESSURE`),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();
@@ -642,8 +664,9 @@ export default function MapsWithHazard() {
         ],
       });
       charts.push(rainGaugeChart);
+      
       const unsubscribe = onValue(
-        ref(database, "RAIN_GAUGE/FALL_COUNT_MILIMETERS"),
+        ref(database,`/${buoyCode}/RAIN_GAUGE/FALL_COUNT_MILIMETERS`),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();

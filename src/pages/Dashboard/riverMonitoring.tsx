@@ -1,10 +1,15 @@
 // import HistoricalCard from "../../components/riverMonitoring/historicalCard";
 import SearchBuoy from "../../components/riverMonitoring/search";
 import MapsWithHazard from "../../components/riverMonitoring/maps_w_hazard";
-import {insertingAlerts } from "../../api_hooks/dashboardHooks";
+import { useEffect } from 'react';import {insertingAlerts } from "../../api_hooks/dashboardHooks";
 
 const riverMonitoring = () => {
   insertingAlerts();
+
+  useEffect(() => {
+    document.title = "River Monitoring | X-Stream";
+  }, []);
+
   return (
     <div className="">
       <SearchBuoy />

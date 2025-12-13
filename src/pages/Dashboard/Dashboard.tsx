@@ -12,6 +12,7 @@ import MapDashboard from "../../components/dashboard_content/map";
 // import setWaterPressureAlert from "../../core_api_fetching/setWaterPressureAlert";
 // import insertHistorical from "../../core_api_fetching/setHistorical";
 import {insertingAlerts } from "../../api_hooks/dashboardHooks";
+import { useEffect } from 'react';
 export default function Dashboard() {
   insertingAlerts();
   // useEffect(() => {
@@ -93,6 +94,11 @@ export default function Dashboard() {
   //   }, 5000);
   //   return () => clearInterval(interval);
   // }, []);
+
+  useEffect(() => {
+    document.title = "Dashboard | X-Stream ";
+  }, []);
+
   return (
     <div>
       <DashboardCards />

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 
 const staticChartData = [
@@ -251,6 +251,10 @@ const MonitoringTable: React.FC = () => {
 
 const SurroundingTable: React.FC = () => {
   const [selectedData] = useState("waterLevel");
+
+  useEffect(() => {
+    document.title = "Surrounding Temperature | X-Stream";
+  }, []);
 
   return (
     // Outer padding for responsiveness

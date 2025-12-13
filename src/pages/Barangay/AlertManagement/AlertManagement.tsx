@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { fetchAlertsAlerts } from "../../../api_hooks/fetchAllAlerts";
 import { useBroadcastAlert } from "../../../core_api_fetching/broadCastAlert";
 import { useAlert } from "../../../context/AlertContext";
@@ -35,6 +35,10 @@ const AlertManagement: React.FC = () => {
     alert_level: "White" as "White" | "Blue" | "Red",
     alertReadings: "",
   });
+
+  useEffect(() => {
+    document.title = "Alert Management | X-Stream";
+  }, []);
 
   const handleSelectAlert = (id: number,sensors: string) => {
     setSelectedAlertId(id);

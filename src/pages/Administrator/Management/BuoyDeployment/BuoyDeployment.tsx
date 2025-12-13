@@ -69,6 +69,10 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
   const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
 
+  useEffect(() => {
+    document.title = "Buoy Deployment | X-Stream";
+  }, []);
+
   const fetchBuoys = async () => {
     setLoading(true);
     try {

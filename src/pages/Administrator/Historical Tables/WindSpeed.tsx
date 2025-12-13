@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb"; // Assuming PageBreadcrumb is imported
 
 const staticChartDataWind = [
@@ -199,6 +199,11 @@ const MonitoringTable: React.FC = () => {
 };
 
 const WindSpeed: React.FC = () => {
+
+    useEffect(() => {
+    document.title = "Wind Speed | X-Stream";
+  }, []);
+
     return (
         <div className="p-4 lg:p-6">
             

@@ -2,12 +2,18 @@ import Slider from "../../../../preview/Slider";
 import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
 import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
 import TableSlider from "./TableSlider";
+import { useEffect } from 'react';
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
 const CustomizationSlider = ({ alertsRef }: Props) => {
+
+  useEffect(() => {
+    document.title = "Slider | X-Stream";
+  }, []);
+
   return (
     <div className=" bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
       <PageBreadcrumb pageTitle="Customize Slider" />

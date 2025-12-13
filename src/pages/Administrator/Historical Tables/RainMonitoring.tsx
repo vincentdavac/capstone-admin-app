@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb"; 
 
 const staticChartDataRain = [
@@ -202,6 +202,11 @@ const MonitoringTable: React.FC = () => {
 };
 
 const RainMonitoring: React.FC = () => {
+
+    useEffect(() => {
+    document.title = "Rain Monitoring | X-Stream";
+  }, []);
+
     return (
         <div className="p-4 lg:p-6">
             <PageBreadcrumb pageTitle="Rain Monitoring" />

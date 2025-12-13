@@ -1,7 +1,7 @@
 import Footer from "../../../../preview/Footer";
 import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
 import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FooterTable from "./FooterTable";
 
 interface Props {
@@ -12,6 +12,11 @@ const CustomizationFooter = ({ alertsRef }: Props) => {
   const [refresh, setRefresh] = useState(false); // trigger refetch
 
   const handleRefresh = () => setRefresh((prev) => !prev);
+  
+  useEffect(() => {
+    document.title = "Footer | X-Stream";
+  }, []);
+
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
       <PageBreadcrumb pageTitle="Customize Footer" />

@@ -2,7 +2,7 @@ import Team from "../../../../preview/Team";
 import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
 import TeamTable from "./TeamTable";
 import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -12,6 +12,10 @@ const CustomizationTeam = ({ alertsRef }: Props) => {
   const [refresh, setRefresh] = useState(false); // trigger refetch
 
   const handleRefresh = () => setRefresh((prev) => !prev);
+
+  useEffect(() => {
+    document.title = "Team | X-Stream";
+  }, []);
 
   return (
     <div className=" bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">

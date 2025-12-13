@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb"; 
 
 const staticChartDataRainGauge = [
@@ -201,6 +201,11 @@ const MonitoringTable: React.FC = () => {
 };
 
 const RainGauge: React.FC = () => {
+
+    useEffect(() => {
+    document.title = "Rain Gauge | X-Stream";
+  }, []);
+
     return (
         <div className="p-4 lg:p-6">
             

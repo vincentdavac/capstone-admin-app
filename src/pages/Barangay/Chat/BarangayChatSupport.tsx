@@ -112,6 +112,10 @@ const BarangayChatSupport = ({ alertsRef }: Props) => {
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   insertingAlerts();
 
+  useEffect(() => {
+    document.title = "Chat Support | X-Stream";
+  }, []);
+
   // Map API response to ChatListItem[]
   const mapApiResponseToChatList = (
     apiData: ChatListItemProps[]

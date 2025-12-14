@@ -57,6 +57,10 @@ const Barangay = ({ alertsRef }: Props) => {
   const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
 
+  useEffect(() => {
+    document.title = "Barangay | X-Stream";
+  }, []);
+
   // ✅ Fetch Barangays
   const fetchBarangays = async () => {
     setLoading(true);

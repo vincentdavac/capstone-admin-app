@@ -2,7 +2,7 @@ import Prototype from "../../../../preview/Prototype"; // Assuming this is the c
 import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
 import PrototypeTable from "./PrototypeTable";
 import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -12,6 +12,10 @@ const CustomizationPrototype = ({ alertsRef }: Props) => {
   const [refresh, setRefresh] = useState(false); // trigger refetch
 
   const handleRefresh = () => setRefresh((prev) => !prev);
+  
+  useEffect(() => {
+    document.title = "Prototype | X-Stream";
+  }, []);
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white transition-colors duration-300">

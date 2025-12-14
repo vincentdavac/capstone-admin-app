@@ -44,6 +44,10 @@ const FeedbackArchivedTable = ({ alertsRef, onRefresh }: Props) => {
   const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
 
+  useEffect(() => {
+    document.title = "Feedbacks | X-Stream";
+  }, []);
+
   // Fetch Feedbacks
   const fetchFeedbacks = async () => {
     setLoading(true);

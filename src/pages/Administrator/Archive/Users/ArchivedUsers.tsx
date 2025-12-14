@@ -72,6 +72,10 @@ const ArchivedUsers = ({ alertsRef }: Props) => {
     null
   ) as React.RefObject<HTMLInputElement>;
 
+  useEffect(() => {
+    document.title = "Users | X-Stream";
+  }, []);
+
   // handlers:
   const handleUpdateClick = (u: UserData) => {
     setSelectedUser(u);

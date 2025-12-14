@@ -76,6 +76,10 @@ const ManageUsers = ({ alertsRef }: Props) => {
     null
   ) as React.RefObject<HTMLInputElement>;
 
+  useEffect(() => {
+    document.title = "Manage Users | X-Stream";
+  }, []);
+
   // handlers:
   const handleUpdateClick = (u: UserData) => {
     setSelectedUser(u);

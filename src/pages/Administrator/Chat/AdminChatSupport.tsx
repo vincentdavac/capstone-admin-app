@@ -117,6 +117,10 @@ const AdminChatSupport = ({ alertsRef }: Props) => {
   const [chatList, setChatList] = useState<ChatListItem[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
 
+  useEffect(() => {
+    document.title = "Chat Support | X-Stream";
+  }, []);
+
   // Map API response to ChatListItem[]
   const mapApiResponseToChatList = (
   apiData: ChatListItemProps[]

@@ -3,7 +3,7 @@ import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
 import AboutTableSlider from "./AboutTable";
 import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
 import CardTable from "./CardTable";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -13,6 +13,10 @@ const CustomizationAbout = ({ alertsRef }: Props) => {
   const [refresh, setRefresh] = useState(false); // trigger refetch
 
   const handleRefresh = () => setRefresh((prev) => !prev);
+  
+  useEffect(() => {
+    document.title = "About Us | X-Stream";
+  }, []);
 
   return (
     <div className="bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">

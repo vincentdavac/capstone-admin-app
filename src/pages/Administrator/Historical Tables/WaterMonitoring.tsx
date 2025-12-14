@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb"; // Import added
 
 // --- START: ADAPTED STATIC CHART DATA AND COMPONENT ---
@@ -208,6 +208,11 @@ const MonitoringTable: React.FC = () => {
 
 // --- START: MAIN COMPONENT (WaterMonitoring) ---
 const WaterMonitoring: React.FC = () => {
+
+    useEffect(() => {
+    document.title = "Water Temperature | X-Stream";
+  }, []);
+
     return (
         // Outer padding for responsiveness
         <div className="p-4 lg:p-6">

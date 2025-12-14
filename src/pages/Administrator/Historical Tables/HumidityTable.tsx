@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 const staticChartDataHumidity = [
     { name: 'Mar', value: 70 },
@@ -199,6 +199,11 @@ const MonitoringTable: React.FC = () => {
 };
 
 const HumidityTable: React.FC = () => {
+
+    useEffect(() => {
+    document.title = "Humidity Temperature | X-Stream";
+  }, []);
+
     return (
         <div className="p-4 lg:p-6">
             <PageBreadcrumb pageTitle="Humidity Temperature" />

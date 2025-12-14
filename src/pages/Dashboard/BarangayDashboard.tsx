@@ -4,11 +4,17 @@ import { ThemeProvider } from "../../components/Barangay Dashboard/ThemeContext"
 import { StatCard } from "../../components/Barangay Dashboard/StatCard";
 import { WaterDepthChart } from "../../components/Barangay Dashboard/WaterDepthChart";
 import { AppContext } from "../../context/AppContext";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { useAlertMonitor } from "../../api_hooks/alertMonitoringHooks";
 import AlertModal from "../Barangay/AlertManagement/alertModal";
+
 const BarangayDashboardContent: React.FC = () => {
   const { user } = useContext(AppContext)!;
+
+  useEffect(() => {
+    document.title = "Dashboard | X-Stream";
+  }, []);
+
   const buoyId = user?.barangay?.buoys?.[0]?.id;
   if (!buoyId) {
   return <div>Loading...</div>;

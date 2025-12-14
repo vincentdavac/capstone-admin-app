@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb"; 
 
 const staticChartDataPressure = [
@@ -205,6 +205,11 @@ const MonitoringTable: React.FC = () => {
 };
 
 const AtmosphericPressure: React.FC = () => {
+
+    useEffect(() => {
+    document.title = "Atmospheric Pressure | X-Stream";
+  }, []);
+
     return (
         <div className="p-4 lg:p-6">
             

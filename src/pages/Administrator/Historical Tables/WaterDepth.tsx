@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 
 const staticChartDataDepth = [
@@ -206,6 +206,11 @@ const MonitoringTable: React.FC = () => {
 };
 
 const WaterDepth: React.FC = () => {
+
+    useEffect(() => {
+    document.title = "Water Level | X-Stream";
+  }, []);
+
     return (
         <div className="p-4 lg:p-6">
             

@@ -52,37 +52,68 @@ export default function NotFound() {
     <>
       <PageMeta title="404 Not Found" description="This is 404 Not Found" />
 
-      <div className="relative flex flex-col items-center justify-center min-h-screen p-6 overflow-hidden z-1">
+      <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-gray-50/50 to-white dark:from-gray-900/50 dark:to-gray-900">
         <GridShape />
-        <div className="mx-auto w-full max-w-[242px] text-center sm:max-w-[472px]">
-          <h1 className="mb-8 font-bold text-gray-800 text-title-md dark:text-white/90 xl:text-title-2xl">
-            ERROR
-          </h1>
 
-          <img src="/images/error/404.svg" alt="404" className="dark:hidden" />
-          <img
-            src="/images/error/404-dark.svg"
-            alt="404"
-            className="hidden dark:block"
-          />
+        <div className="relative z-20 flex min-h-screen flex-col items-center justify-center px-6 text-center -mt-8">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold tracking-tight text-gray-900 dark:text-white/95 sm:text-4xl">
+              Page Not Found
+            </h1>
+          </div>
 
-          <p className="mt-10 mb-6 text-base text-gray-700 dark:text-gray-400 sm:text-lg">
-            We can’t seem to find the page you are looking for!
-          </p>
+          <div className="relative w-full max-w-[280px] sm:max-w-[340px] md:max-w-[380px] mb-8">
+            <div className="absolute inset-0 -z-10 rounded-2xl bg-gradient-to-r from-blue-500/5 to-purple-500/5 blur-xl" />
+            <img
+              src="/images/error/404.svg"
+              alt="404"
+              className="mx-auto block w-full dark:hidden"
+            />
+            <img
+              src="/images/error/404-dark.svg"
+              alt="404"
+              className="mx-auto hidden w-full dark:block"
+            />
+          </div>
 
-          {/* 🔥 Button triggers the redirect logic */}
+          <div className="mb-8 max-w-md">
+            <p className="text-base text-gray-600 dark:text-gray-400 sm:text-lg">
+              We can't seem to find the page you are looking for!
+            </p>
+          </div>
 
           <button
             onClick={handleBack}
-            className="inline-flex items-center justify-center rounded-lg border border-gray-300 bg-white px-5 py-3.5 text-sm font-medium text-gray-700 shadow-theme-xs hover:bg-gray-50 hover:text-gray-800 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-white/[0.03] dark:hover:text-gray-200"
+            className="bg-white text-gray-800 px-8 py-3.5 rounded-lg hover:bg-gray-50 transition-colors flex items-center justify-center text-sm font-semibold shadow-lg hover:shadow-xl border-2 border-gray-300 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700 group"
           >
+            <svg
+              className="mr-3 h-4 w-4 transition-transform duration-300 group-hover:-translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
             Back to Home
           </button>
         </div>
 
-        <p className="absolute text-sm text-center text-gray-500 -translate-x-1/2 bottom-6 left-1/2 dark:text-gray-400">
-          &copy; {new Date().getFullYear()} - Capstone Project
-        </p>
+        <div className="pointer-events-none fixed bottom-0 left-0 z-10 w-full overflow-hidden">
+          <div className="relative">
+            <img
+              src="/images/error/404notfound-forwhitebg.svg"
+              alt="Wave"
+              className="block w-full h-auto max-w-none select-none transform translate-y-2"
+            />
+            
+            <div className="absolute inset-0 bg-gradient-to-t from-white dark:from-gray-900 via-transparent to-transparent h-32" />
+          </div>
+        </div>
       </div>
     </>
   );

@@ -35,10 +35,7 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
 }) => {
     
     const handleBroadcastClick = () => {
-        console.log('Broadcast Alert clicked!');
         handleBroadcast();
-        alert('Broadcasting Alert...');
-        
     };
 
     return (

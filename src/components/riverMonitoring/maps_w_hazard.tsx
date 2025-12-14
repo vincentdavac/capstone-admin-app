@@ -220,7 +220,7 @@ observer.observe(targetNode, { attributes: true });
       });
       charts.push(windSpeedGauge);
       const unsubscribe = onValue(
-        ref(database, `/${buoyCode}/ANEMOMETER/WIND_SPEED_km_h`),
+        ref(database, `/${buoyCode}/ANEMOMETER/WIND_SPEED_km-h`),
         (snapshot) => {
           if (snapshot.exists()) {
             const val = snapshot.val();

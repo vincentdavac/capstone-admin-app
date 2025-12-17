@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useContext, useEffect, useState } from "react";
 import { Button } from "../common/Loader/Button";
 import {
@@ -5,6 +6,9 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
 } from "lucide-react";
+
+import GetStartedModal from "../components/common/modals/GetStartedModal";
+import LearnMoreModal from "../components/common/modals/LearnMoreModal";
 
 import { AppContext } from "../context/AppContext";
 import API_BASE_URL from "../config/coreApi";
@@ -26,7 +30,11 @@ export default function Slider() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // 🔥 Fetch sliders from API
+  // Modal
+  const [openGetStarted, setOpenGetStarted] = useState(false);
+  const [openLearnMore, setOpenLearnMore] = useState(false);
+
+  //  Fetch sliders from API
   const fetchSliders = async () => {
     try {
       const res = await fetch(`${API_BASE_URL}/sliders`, {
@@ -111,8 +119,11 @@ export default function Slider() {
             </p>
 
             <div className="flex flex-col gap-4 sm:flex-row">
-              <Button>Get Started</Button>
-              <Button variant="outline">
+              <Button onClick={() => setOpenGetStarted(true)}>
+                Get Started
+              </Button>
+
+              <Button variant="outline" onClick={() => setOpenLearnMore(true)}>
                 <span className="flex items-center">
                   Learn More
                   <ArrowRightIcon size={18} className="ml-2" />
@@ -168,6 +179,16 @@ export default function Slider() {
                   />
                 ))}
               </div>
+
+              <GetStartedModal
+                open={openGetStarted}
+                onClose={() => setOpenGetStarted(false)}
+              />
+
+              <LearnMoreModal
+                open={openLearnMore}
+                onClose={() => setOpenLearnMore(false)}
+              />
             </div>
           </div>
         </div>

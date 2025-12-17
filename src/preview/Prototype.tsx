@@ -90,7 +90,8 @@ export default function Prototype({ refresh }: Props) {
           <h2 className="mb-2 text-2xl font-bold tracking-wide text-[#1E3A8A] dark:text-blue-400 sm:text-3xl md:text-5xl transition-colors duration-300">
             THE X-STREAM PROTOTYPE
           </h2>
-          <p className="max-w-4xl mx-auto pt-5 text-center leading-relaxed text-[#023E8A] dark:text-gray-300 sm:text-xl md:text-xl transition-colors duration-300">
+
+          <p className="max-w-6xl mx-auto pt-5 text-justify leading-relaxed text-[#023E8A] dark:text-gray-300 sm:text-xl md:text-xl transition-colors duration-300">
             The X-STREAM prototype showcases a solar-powered buoy model equipped
             with sensors for monitoring water levels, rainfall, wind speed,
             temperature, and humidity. It also demonstrates GPS tracking, siren

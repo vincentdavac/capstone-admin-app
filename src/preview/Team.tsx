@@ -104,7 +104,7 @@ export default function Team({ refresh }: Props) {
           <h2 className="mb-2 text-3xl font-bold text-white md:text-5xl">
             MEET OUR TEAM
           </h2>
-          <p className="mx-auto max-w-4xl pt-2 text-lg font-light text-white md:text-xl">
+          <p className="mx-auto max-w 6xl pt-2 text-lg font-light text-white md:text-xl">
             The dedicated team of innovators behind X-STREAM, working together
             to create safer and smarter coastal communities.
           </p>

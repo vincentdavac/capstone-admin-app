@@ -1,22 +1,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useContext, useEffect, useState } from "react";
-import { StarIcon } from "lucide-react";
+import { useState, useEffect, useContext } from "react";
+import { StarIcon } from "@heroicons/react/24/solid";
 import API_BASE_URL from "../config/coreApi";
 import { AppContext } from "../context/AppContext";
+import Modal from "./FeedbackModal.tsx"; // we'll create a simple modal component
 
-// 🧩 Feedback Interface
-export interface FeedbackData {
+interface FeedbackData {
   id: number;
   attributes: {
     userName: string;
     userImage: string;
     rate: number;
     feedback: string;
-    isArchived: boolean;
     createdDate: string;
-    createdTime: string;
-    updatedDate: string;
-    updatedTime: string;
   };
 }
 
@@ -29,9 +25,11 @@ export default function Testimonials({ refresh }: Props) {
   const [loading, setLoading] = useState(true);
   const [feedbacks, setFeedbacks] = useState<FeedbackData[]>([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [selectedFeedback, setSelectedFeedback] = useState<FeedbackData | null>(
+    null
+  );
   const itemsPerPage = 4;
 
-  // ✅ Fetch active feedbacks
   const fetchActiveFeedbacks = async () => {
     setLoading(true);
     try {
@@ -42,9 +40,7 @@ export default function Testimonials({ refresh }: Props) {
         },
       });
       const data = await res.json();
-      if (res.ok && data.data) {
-        setFeedbacks(data.data);
-      }
+      if (res.ok && data.data) setFeedbacks(data.data);
     } catch (err) {
       console.error("Error fetching active feedbacks:", err);
     } finally {
@@ -108,19 +104,24 @@ export default function Testimonials({ refresh }: Props) {
         </div>
 
         {/* Feedback Cards */}
-        <div className="flex flex-col md:flex-row gap-5 justify-center">
+        <div className="flex flex-wrap justify-center gap-5">
           {currentFeedbacks.map((f, index) => {
-            const { userName, userImage, rate, feedback } = f.attributes;
+            const { userName, userImage, rate, feedback, createdDate } =
+              f.attributes;
             const gradients = [
               "from-blue-400 to-cyan-400",
               "from-cyan-400 to-blue-500",
               "from-blue-500 to-cyan-400",
             ];
 
+            // Truncate feedback for card view (optional, 160 chars)
+            const truncated =
+              feedback.length > 160 ? feedback.slice(0, 160) + "..." : feedback;
+
             return (
               <div
                 key={f.id}
-                className="group relative flex min-w-[80vw] md:min-w-0 md:flex-1 flex-col transition-transform duration-300 snap-center"
+                className="group relative flex flex-col w-full sm:w-[280px] md:w-[300px] transition-transform duration-300"
               >
                 <div
                   className={`absolute -inset-1 bg-gradient-to-r ${
@@ -133,8 +134,7 @@ export default function Testimonials({ refresh }: Props) {
                     {[...Array(5)].map((_, i) => (
                       <StarIcon
                         key={i}
-                        size={20}
-                        className={`${
+                        className={`h-5 w-5 ${
                           i < rate
                             ? "fill-yellow-400 text-yellow-400"
                             : "fill-white/80 text-white/60"
@@ -143,11 +143,20 @@ export default function Testimonials({ refresh }: Props) {
                     ))}
                   </div>
 
-                  <p className="montserrat mb-6 flex-1 text-lg font-light text-white/90 text-justify leading-relaxed">
-                    "{feedback}"
+                  <p className="montserrat mb-2 text-base font-light text-white/90 text-justify leading-relaxed break-words">
+                    "{truncated}"
                   </p>
 
-                  <div className="flex items-center">
+                  {feedback.length > 160 && (
+                    <button
+                      className="text-sm text-blue-300 hover:text-white transition-colors"
+                      onClick={() => setSelectedFeedback(f)}
+                    >
+                      See More
+                    </button>
+                  )}
+
+                  <div className="flex items-center mt-4">
                     <div className="mr-4 h-12 w-12 overflow-hidden rounded-full border-2 border-white/30">
                       <img
                         src={userImage}
@@ -159,6 +168,9 @@ export default function Testimonials({ refresh }: Props) {
                       <h4 className="montserrat font-light text-white">
                         {userName}
                       </h4>
+                      <p className="montserrat font-light text-sm italic text-white">
+                        {createdDate}
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -182,6 +194,37 @@ export default function Testimonials({ refresh }: Props) {
           ))}
         </div>
       </div>
+
+      {/* Modal */}
+      {selectedFeedback && (
+        <Modal onClose={() => setSelectedFeedback(null)}>
+          <div className="relative p-6 flex flex-col gap-4 break-words">
+            {/* User info */}
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 overflow-hidden rounded-full border-2 border-gray-300">
+                <img
+                  src={selectedFeedback.attributes.userImage}
+                  alt={selectedFeedback.attributes.userName}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div className="flex flex-col">
+                <h4 className="text-lg font-semibold text-gray-900">
+                  {selectedFeedback.attributes.userName}
+                </h4>
+                <p className="text-sm italic text-gray-500">
+                  {selectedFeedback.attributes.createdDate}
+                </p>
+              </div>
+            </div>
+
+            {/* Feedback text */}
+            <p className="text-base text-gray-900 leading-relaxed break-words text-justify">
+              {selectedFeedback.attributes.feedback}
+            </p>
+          </div>
+        </Modal>
+      )}
     </section>
   );
 }

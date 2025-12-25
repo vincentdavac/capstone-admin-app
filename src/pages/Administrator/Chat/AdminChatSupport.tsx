@@ -10,6 +10,12 @@ import API_BASE_URL from "../../../config/coreApi";
 import { AppContext } from "../../../context/AppContext";
 import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
 
+import { useOutletContext } from "react-router";
+
+type OutletContextType = {
+  fetchUnreadChatCount: () => void;
+};
+
 interface user {
   id: number;
   attributes: {
@@ -56,7 +62,7 @@ interface ChatListItem {
   isRead: boolean;
   receiverID?: number;
   lastSenderId: number;
-  userType?: string; 
+  userType?: string;
 }
 
 interface Message {
@@ -111,6 +117,8 @@ interface Props {
 }
 
 const AdminChatSupport = ({ alertsRef }: Props) => {
+  const { fetchUnreadChatCount } = useOutletContext<OutletContextType>();
+
   const { token, user, echoInstance } = useContext(AppContext)!;
 
   const [receiverId, setReceiverId] = useState<number | null>(null);
@@ -121,34 +129,39 @@ const AdminChatSupport = ({ alertsRef }: Props) => {
     document.title = "Chat Support | X-Stream";
   }, []);
 
+  //  Example: refresh unread count after opening chat
+  useEffect(() => {
+    fetchUnreadChatCount();
+  }, [fetchUnreadChatCount]);
+
   // Map API response to ChatListItem[]
   const mapApiResponseToChatList = (
-  apiData: ChatListItemProps[]
-    ): ChatListItem[] => {
-      if (!Array.isArray(apiData)) return [];
+    apiData: ChatListItemProps[]
+  ): ChatListItem[] => {
+    if (!Array.isArray(apiData)) return [];
 
-      return apiData
-        .filter((item) => item && item.chat && item.user)
-        .map((item) => {
-          const lastMessage = item.chat.attributes.message;
-          const lastSenderId = item.chat.attributes.senderId;
+    return apiData
+      .filter((item) => item && item.chat && item.user)
+      .map((item) => {
+        const lastMessage = item.chat.attributes.message;
+        const lastSenderId = item.chat.attributes.senderId;
 
-          // Determine if last message is read for this admin
-          const isRead =
-            lastSenderId === user?.id || item.chat.attributes.isRead === true;
+        // Determine if last message is read for this admin
+        const isRead =
+          lastSenderId === user?.id || item.chat.attributes.isRead === true;
 
-          return {
-            id: item.chat.id,
-            name: `${item.user.attributes.firstName} ${item.user.attributes.lastName}`,
-            lastMessage,
-            avatar: item.user.attributes.image,
-            isRead,
-            receiverID: item.user.id,
-            lastSenderId,
-            userType: item.user.attributes.userType, // ADD THIS LINE
-          };
-        });
-    };
+        return {
+          id: item.chat.id,
+          name: `${item.user.attributes.firstName} ${item.user.attributes.lastName}`,
+          lastMessage,
+          avatar: item.user.attributes.image,
+          isRead,
+          receiverID: item.user.id,
+          lastSenderId,
+          userType: item.user.attributes.userType, // ADD THIS LINE
+        };
+      });
+  };
 
   const fetchChatList = async () => {
     try {
@@ -205,61 +218,81 @@ const AdminChatSupport = ({ alertsRef }: Props) => {
   };
 
   useEffect(() => {
-    if (!echoInstance) return;
+    if (!echoInstance || !user?.userType) return;
 
-    console.log("Listening to admin.chats");
+    let channelName = "";
 
-    const channel = echoInstance.private("admin.chats");
+    if (user.userType === "admin") {
+      channelName = "admin.chats";
+    } else if (user.userType === "barangay") {
+      channelName = "barangay.chats";
+    } else {
+      channelName = "user.chats";
+    }
 
-    channel.listen(".message.sent", (event: any) => {
-      console.log("Global admin chat update:", event);
+    console.log(`Listening to ${channelName}`);
+
+    const channel = echoInstance.private(channelName);
+
+    const handleMessage = (event: any) => {
+      console.log(`Global ${channelName} chat update:`, event);
       fetchChatList();
-    });
-
-    return () => {
-      echoInstance.leave("admin.chats");
+      fetchUnreadChatCount();
     };
-  }, [echoInstance]);
 
-  // useEffect(() => {
-  //   if (!selectedChatId) return;
-  //   const interval = setInterval(() => {
-  //     fetchChatBox(selectedChatId);
-  //     fetchChatList();
-  //   }, 1000); // every 3 seconds
+    channel.listen(".message.sent", handleMessage);
 
-  //   return () => clearInterval(interval);
-  // }, [selectedChatId]);
+    //  CLEANUP — prevents duplicate listeners
+    // return () => {
+    //   channel.stopListening(".message.sent");
+    //   echoInstance.leave(channelName);
+    // };
+  }, [echoInstance, user?.userType]);
 
-  // Enhanced debugging in your component
-
-  // Fixed useEffect for listening to messages
   useEffect(() => {
     if (!echoInstance || !selectedChatId) return;
 
-    console.log("🔊 Listening to chat channel:", selectedChatId);
+    const channelName = `chat.${selectedChatId}`;
 
-    const channel = echoInstance.private(`chat.${selectedChatId}`);
+    console.log("Listening to chat channel:", channelName);
 
-    // Remove the leading dot from the event name
-    channel.listen(".message.sent", (event: any) => {
-      console.log("📩 Real-time message received:", event);
+    const channel = echoInstance.private(channelName);
 
+    const handleMessage = (event: any) => {
+      console.log("Real-time message received:", event);
+
+      // Update chat list (last message, ordering)
       fetchChatList();
+
+      // Mark this chat as read
       markChatAsRead(selectedChatId);
+
+      // Append / refresh messages in chat box
       fetchChatBox(selectedChatId);
-    });
 
-    // Add error handling
-    channel.error((error: any) => {
-      console.error("Channel error:", error);
-    });
-
-    return () => {
-      console.log("Leaving chat channel:", selectedChatId);
-      echoInstance.leave(`chat.${selectedChatId}`);
+      // Update global unread count
+      fetchUnreadChatCount();
     };
-  }, [echoInstance, selectedChatId]);
+
+    channel.listen(".message.sent", handleMessage);
+
+    channel.error((error: any) => {
+      console.error(`Channel error (${channelName}):`, error);
+    });
+
+    //  Cleanup when switching chats or unmounting
+    return () => {
+      console.log("Leaving chat channel:", channelName);
+      channel.stopListening(".message.sent");
+      echoInstance.leave(channelName);
+    };
+  }, [
+    echoInstance,
+    selectedChatId,
+    fetchChatList,
+    fetchUnreadChatCount,
+    markChatAsRead,
+  ]);
 
   useEffect(() => {
     if (token) fetchChatList();
@@ -354,6 +387,7 @@ const AdminChatSupport = ({ alertsRef }: Props) => {
     if (selectedChatId) {
       fetchChatBox(selectedChatId);
       markChatAsRead(selectedChatId);
+      fetchUnreadChatCount();
     }
   }, [selectedChatId]);
 
@@ -362,7 +396,7 @@ const AdminChatSupport = ({ alertsRef }: Props) => {
       <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 h-[80vh] flex items-center justify-center">
         <div className="flex justify-center items-center gap-2 text-gray-500">
           <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
-          Please wait, loading chat...
+          Please wait, loading Chat...
         </div>
       </div>
     );

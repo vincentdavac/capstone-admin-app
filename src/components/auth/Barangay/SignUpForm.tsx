@@ -396,11 +396,11 @@ export default function SignUpForm({ alertsRef }: Props) {
                   </button>
                 </p>
               </div>
-              {/* ✅ Show message until Terms/Privacy read */}
+              {/* Show message until Terms/Privacy read */}
               {!termsAcknowledged && (
                 <span className="text-xs text-red-500 mt-1 block"></span>
               )}
-              {/* ✅ Added reCAPTCHA */}
+              {/* Added reCAPTCHA */}
               <div className="flex justify-center">
                 <ReCAPTCHA sitekey={SITE_KEY} onChange={handleCaptcha} />
               </div>
@@ -420,7 +420,7 @@ export default function SignUpForm({ alertsRef }: Props) {
             <p className="text-sm font-normal text-center text-gray-700 dark:text-gray-400 sm:text-start">
               Already have an account?{" "}
               <Link
-                to="/admin/signin"
+                to="/barangay/signin"
                 className="text-brand-500 hover:text-brand-600 dark:text-brand-400"
               >
                 Sign In

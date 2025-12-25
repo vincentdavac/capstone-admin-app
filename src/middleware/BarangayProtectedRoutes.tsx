@@ -1,15 +1,15 @@
-// UserRoute.tsx
+// ProtectedRoute.tsx
 import { useContext } from "react";
 import { Navigate } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import { AlertsContainerRef } from "../components/Alert/AlertsContainer";
 
-interface UserRouteProps {
+interface ProtectedRouteProps {
   children: React.ReactNode;
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
-const UserRoute = ({ children }: UserRouteProps) => {
+const BarangayProtectedRoutes = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useContext(AppContext)!; // Read loading state
 
   // Show loading indicator while checking auth
@@ -21,17 +21,24 @@ const UserRoute = ({ children }: UserRouteProps) => {
     );
   }
 
-  // Redirect based on role
-  if (user?.userType === "admin") {
+  // Only redirect after loading is complete
+  if (!user) {
+    return <Navigate to="/barangay/signin" replace />;
+  }
+
+  //  Role-based access enforcement
+  if (user.userType === "admin" && !location.pathname.startsWith("/admin")) {
     return <Navigate to="/admin/dashboard" replace />;
   }
 
-  if (user?.userType === "barangay") {
+  if (
+    user.userType === "barangay" &&
+    !location.pathname.startsWith("/barangay")
+  ) {
     return <Navigate to="/barangay/dashboard" replace />;
   }
 
-  // Not logged in → allow access (signin/signup)
   return <>{children}</>;
 };
 
-export default UserRoute;
+export default BarangayProtectedRoutes;

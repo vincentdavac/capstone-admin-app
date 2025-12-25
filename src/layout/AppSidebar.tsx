@@ -5,9 +5,9 @@ import { AppContext } from "../context/AppContext";
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
+  unreadChatCount: number;
 }
 
-// Assume these icons are imported from an icon library
 import {
   ChevronDownIcon,
   HorizontaLDots,
@@ -309,11 +309,11 @@ const filterNavItemsByUserType = (items: NavItem[], userType?: string) => {
     .filter(Boolean) as NavItem[];
 };
 
-const AppSidebar = ({ alertsRef }: Props) => {
+const AppSidebar = ({ alertsRef, unreadChatCount }: Props) => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const location = useLocation();
 
-  // ✅ Move useContext here
+  // Move useContext here
   const { user } = useContext(AppContext)!;
   const lastType = user?.userType;
 
@@ -422,7 +422,20 @@ const AppSidebar = ({ alertsRef }: Props) => {
                 {nav.icon}
               </span>
               {(isExpanded || isHovered || isMobileOpen) && (
-                <span className="menu-item-text">{nav.name}</span>
+                <span className="relative menu-item-text">
+                  {nav.name}
+
+                  {nav.name === "Chat support" && unreadChatCount > 0 && (
+                    <span
+                      className="absolute -top-2 -right-4 flex items-center justify-center
+      min-w-[18px] h-[18px] px-1
+      text-[10px] font-bold text-white
+      bg-red-500 rounded-full"
+                    >
+                      {unreadChatCount}
+                    </span>
+                  )}
+                </span>
               )}
               {(isExpanded || isHovered || isMobileOpen) && (
                 <ChevronDownIcon
@@ -453,7 +466,20 @@ const AppSidebar = ({ alertsRef }: Props) => {
                   {nav.icon}
                 </span>
                 {(isExpanded || isHovered || isMobileOpen) && (
-                  <span className="menu-item-text">{nav.name}</span>
+                  <span className="flex items-center w-full">
+                    <span className="menu-item-text">{nav.name}</span>
+
+                    {nav.name === "Chat support" && unreadChatCount > 0 && (
+                      <span
+                        className="ml-auto flex items-center justify-center
+      min-w-[18px] h-[18px] px-1
+      text-[10px] font-bold text-white
+      bg-red-500 rounded-full"
+                      >
+                        {unreadChatCount}
+                      </span>
+                    )}
+                  </span>
                 )}
               </Link>
             )

@@ -9,7 +9,14 @@ import ChatWindow from "../../../components/Chat Support/Barangay/ChatWindow";
 import API_BASE_URL from "../../../config/coreApi";
 import { AppContext } from "../../../context/AppContext";
 import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
-import {insertingAlerts } from "../../../api_hooks/dashboardHooks";
+import { insertingAlerts } from "../../../api_hooks/dashboardHooks";
+
+import { useOutletContext } from "react-router";
+
+type OutletContextType = {
+  fetchUnreadChatCount: () => void;
+};
+
 interface user {
   id: number;
   attributes: {
@@ -53,8 +60,7 @@ interface ChatListItem {
   isRead: boolean;
   receiverID?: number;
   lastSenderId: number;
-  userType?: string; 
-
+  userType?: string;
 }
 interface Message {
   sender: string;
@@ -106,6 +112,8 @@ interface Props {
 }
 
 const BarangayChatSupport = ({ alertsRef }: Props) => {
+  const { fetchUnreadChatCount } = useOutletContext<OutletContextType>();
+
   const { token, user, echoInstance } = useContext(AppContext)!;
   const [receiverId, setReceiverId] = useState<number | null>(null);
   const [chatList, setChatList] = useState<ChatListItem[]>([]);
@@ -115,6 +123,11 @@ const BarangayChatSupport = ({ alertsRef }: Props) => {
   useEffect(() => {
     document.title = "Chat Support | X-Stream";
   }, []);
+
+  //  Example: refresh unread count after opening chat
+  useEffect(() => {
+    fetchUnreadChatCount();
+  }, [fetchUnreadChatCount]);
 
   // Map API response to ChatListItem[]
   const mapApiResponseToChatList = (
@@ -140,7 +153,7 @@ const BarangayChatSupport = ({ alertsRef }: Props) => {
           isRead,
           receiverID: item.user.id,
           lastSenderId,
-          userType: item.user.attributes.userType, 
+          userType: item.user.attributes.userType,
         };
       });
   };
@@ -200,61 +213,81 @@ const BarangayChatSupport = ({ alertsRef }: Props) => {
   };
 
   useEffect(() => {
-    if (!echoInstance) return;
+    if (!echoInstance || !user?.userType) return;
 
-    console.log("Listening to admin.chats");
+    let channelName = "";
 
-    const channel = echoInstance.private("admin.chats");
+    if (user.userType === "admin") {
+      channelName = "admin.chats";
+    } else if (user.userType === "barangay") {
+      channelName = "barangay.chats";
+    } else {
+      channelName = "user.chats";
+    }
 
-    channel.listen(".message.sent", (event: any) => {
-      console.log("Global admin chat update:", event);
+    console.log(`Listening to ${channelName}`);
+
+    const channel = echoInstance.private(channelName);
+
+    const handleMessage = (event: any) => {
+      console.log(`Global ${channelName} chat update:`, event);
       fetchChatList();
-    });
-
-    return () => {
-      echoInstance.leave("admin.chats");
+      fetchUnreadChatCount();
     };
-  }, [echoInstance]);
 
-  // useEffect(() => {
-  //   if (!selectedChatId) return;
-  //   const interval = setInterval(() => {
-  //     fetchChatBox(selectedChatId);
-  //     fetchChatList();
-  //   }, 1000); // every 3 seconds
+    channel.listen(".message.sent", handleMessage);
 
-  //   return () => clearInterval(interval);
-  // }, [selectedChatId]);
+    //  CLEANUP — prevents duplicate listeners
+    // return () => {
+    //   channel.stopListening(".message.sent");
+    //   echoInstance.leave(channelName);
+    // };
+  }, [echoInstance, user?.userType]);
 
-  // Enhanced debugging in your component
-
-  // Fixed useEffect for listening to messages
   useEffect(() => {
     if (!echoInstance || !selectedChatId) return;
 
-    console.log("🔊 Listening to chat channel:", selectedChatId);
+    const channelName = `chat.${selectedChatId}`;
 
-    const channel = echoInstance.private(`chat.${selectedChatId}`);
+    console.log("Listening to chat channel:", channelName);
 
-    // Remove the leading dot from the event name
-    channel.listen(".message.sent", (event: any) => {
-      console.log("📩 Real-time message received:", event);
+    const channel = echoInstance.private(channelName);
 
+    const handleMessage = (event: any) => {
+      console.log("Real-time message received:", event);
+
+      // Update chat list (last message, ordering)
       fetchChatList();
+
+      // Mark this chat as read
       markChatAsRead(selectedChatId);
+
+      // Append / refresh messages in chat box
       fetchChatBox(selectedChatId);
-    });
 
-    // Add error handling
-    channel.error((error: any) => {
-      console.error("Channel error:", error);
-    });
-
-    return () => {
-      console.log("Leaving chat channel:", selectedChatId);
-      echoInstance.leave(`chat.${selectedChatId}`);
+      // Update global unread count
+      fetchUnreadChatCount();
     };
-  }, [echoInstance, selectedChatId]);
+
+    channel.listen(".message.sent", handleMessage);
+
+    channel.error((error: any) => {
+      console.error(`Channel error (${channelName}):`, error);
+    });
+
+    //  Cleanup when switching chats or unmounting
+    return () => {
+      console.log("Leaving chat channel:", channelName);
+      channel.stopListening(".message.sent");
+      echoInstance.leave(channelName);
+    };
+  }, [
+    echoInstance,
+    selectedChatId,
+    fetchChatList,
+    fetchUnreadChatCount,
+    markChatAsRead,
+  ]);
 
   useEffect(() => {
     if (token) fetchChatList();
@@ -325,7 +358,7 @@ const BarangayChatSupport = ({ alertsRef }: Props) => {
 
   const fetchChatBox = async (chatId: number) => {
     try {
-    const res = await fetch(`${API_BASE_URL}/chat/${chatId}`, {
+      const res = await fetch(`${API_BASE_URL}/chat/${chatId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",

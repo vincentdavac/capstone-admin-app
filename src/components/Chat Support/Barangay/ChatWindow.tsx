@@ -4,6 +4,7 @@ import { PaperAirplaneIcon } from "@heroicons/react/24/solid";
 import ChatBubble from "./ChatBubble";
 import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
 import API_BASE_URL from "../../../config/coreApi";
+import { MessagesSquare } from "lucide-react";
 
 interface ChatListItem {
   id: number;
@@ -164,75 +165,84 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   return (
     <div className="w-3/4 flex flex-col flex-grow min-w-0">
       {/* Message History */}
-      <div className="flex-1 p-6 overflow-y-auto space-y-4">
-        {currentMessages.map((message, index) => {
-          const isResident = message.type === "inbound";
-          const isNewGroup =
-            index === 0 || currentMessages[index - 1].type !== message.type;
-          const avatar = message.avatar;
+      <div className="flex-1 p-6 overflow-y-auto">
+        {currentMessages.length === 0 ? (
+          <div className="h-full w-full flex flex-col items-center justify-center text-center text-gray-400">
+            <MessagesSquare className="w-35 h-35 mb-6 text-gray-300" />
 
-          return (
-            <div
-              key={index}
-              className={`flex ${
-                isResident ? "justify-start" : "justify-end"
-              } items-start`}
-            >
-              {/* Avatar + Message */}
-              {isResident && (
-                <div className="flex items-start max-w-[70%]">
-                  <div className="w-8 h-8 mr-3 flex-shrink-0">
-                    {isNewGroup && (
-                      <img
-                        className="w-full h-full rounded-full object-cover"
-                        src={avatar}
-                        alt="Resident Avatar"
-                      />
-                    )}
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <ChatBubble text={message.text} type="inbound" />
-                    {/* Image attachment - Clickable */}
-                    {message.attachment && (
-                      <img
-                        src={message.attachment}
-                        alt="Attachment"
-                        className="mt-1 max-w-xs rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                        onClick={() => openImageModal(message.attachment!)}
-                      />
-                    )}
-                    {/* Timestamp */}
-                    {message.time && (
-                      <span className="text-xs text-gray-400 mt-1">
-                        {message.time} {message.isRead ? "✓ Seen" : ""}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              )}
+            <p className="text-lg font-medium text-gray-500">No messages yet</p>
 
-              {!isResident && (
-                <div className="flex justify-end items-end max-w-[70%] flex-col">
-                  <ChatBubble text={message.text} type="outbound" />
-                  {/* Image attachment - Clickable */}
-                  {message.attachment && (
-                    <img
-                      src={message.attachment}
-                      alt="Attachment"
-                      className="mt-1 max-w-xs rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
-                      onClick={() => openImageModal(message.attachment!)}
-                    />
+            <p className="mt-1 text-sm text-gray-400">Start a conversation</p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {currentMessages.map((message, index) => {
+              const isResident = message.type === "inbound";
+              const isNewGroup =
+                index === 0 || currentMessages[index - 1].type !== message.type;
+              const avatar = message.avatar;
+
+              return (
+                <div
+                  key={index}
+                  className={`flex ${
+                    isResident ? "justify-start" : "justify-end"
+                  } items-start`}
+                >
+                  {/* Avatar + Message */}
+                  {isResident && (
+                    <div className="flex items-start max-w-[70%]">
+                      <div className="w-8 h-8 mr-3 flex-shrink-0">
+                        {isNewGroup && (
+                          <img
+                            className="w-full h-full rounded-full object-cover"
+                            src={avatar}
+                            alt="Resident Avatar"
+                          />
+                        )}
+                      </div>
+                      <div className="flex flex-col items-start">
+                        <ChatBubble text={message.text} type="inbound" />
+                        {message.attachment && (
+                          <img
+                            src={message.attachment}
+                            alt="Attachment"
+                            className="mt-1 max-w-xs rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                            onClick={() => openImageModal(message.attachment!)}
+                          />
+                        )}
+                        {message.time && (
+                          <span className="text-xs text-gray-400 mt-1">
+                            {message.time} {message.isRead ? "✓ Seen" : ""}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   )}
-                  {message.time && (
-                    <span className="text-xs text-gray-400 mt-1 text-right">
-                      {message.time} {message.isRead ? "✓ Seen" : ""}
-                    </span>
+
+                  {!isResident && (
+                    <div className="flex justify-end items-end max-w-[70%] flex-col">
+                      <ChatBubble text={message.text} type="outbound" />
+                      {message.attachment && (
+                        <img
+                          src={message.attachment}
+                          alt="Attachment"
+                          className="mt-1 max-w-xs rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                          onClick={() => openImageModal(message.attachment!)}
+                        />
+                      )}
+                      {message.time && (
+                        <span className="text-xs text-gray-400 mt-1 text-right">
+                          {message.time} {message.isRead ? "✓ Seen" : ""}
+                        </span>
+                      )}
+                    </div>
                   )}
                 </div>
-              )}
-            </div>
-          );
-        })}
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* Message Input */}

@@ -1,11 +1,192 @@
-import { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useContext, useEffect, useState } from "react";
 import { Dropdown } from "../ui/dropdown/Dropdown";
 import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { Link } from "react-router";
+import { AppContext } from "../../context/AppContext";
+import API_BASE_URL from "../../config/coreApi";
+
+interface NotificationSender {
+  id: number;
+  name: string;
+  image: string;
+}
+
+interface NotificationAttributes {
+  senderId: number;
+  receiverId: number | null;
+  barangayId: number | null;
+  receiverRole: "admin" | "barangay" | "user";
+  title: string;
+  message: string;
+  status: "read" | "unread";
+  isRead: boolean;
+  readDate: string | null;
+  readTime: string | null;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+}
+interface Notification {
+  id: number;
+  attributes: NotificationAttributes;
+  sender: NotificationSender;
+}
+
+interface UnreadNotificationsResponse {
+  status: "success" | "error";
+  message: string;
+  data: {
+    notifications: Notification[];
+    unread_notifications: number;
+  };
+}
 
 export default function NotificationDropdown() {
   const [isOpen, setIsOpen] = useState(false);
-  const [notifying, setNotifying] = useState(true);
+  const { token, user, echoInstance } = useContext(AppContext)!;
+  const userType = user?.userType;
+
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [notificationCount, setNotificationCount] = useState<number>(0);
+
+  useEffect(() => {
+    if (!echoInstance || !userType) return;
+
+    let channelName = "";
+
+    if (userType === "admin") {
+      channelName = "admin.notifications";
+    } else if (userType === "barangay") {
+      channelName = "barangay.notifications";
+    } else {
+      return;
+    }
+
+    const channel = echoInstance.private(channelName);
+
+    const handleNotification = (event: any) => {
+      console.log("Realtime notification received:", event);
+
+      // Re-fetch unread notifications + count
+      fetchNotifications();
+    };
+
+    channel.listen(".notification.sent", handleNotification);
+
+    // cleanup to avoid duplicate listeners
+    return () => {
+      channel.stopListening(".notification.sent");
+      echoInstance.leave(channelName);
+    };
+  }, [echoInstance, userType]);
+
+  const fetchNotifications = async () => {
+    if (!token || !userType) return;
+
+    let endpoint = "";
+
+    if (userType === "admin") {
+      endpoint = "/unread/admin";
+    } else if (userType === "barangay") {
+      endpoint = "/unread/barangay";
+    } else {
+      // optional: user notifications later
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}${endpoint}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+
+      const data: UnreadNotificationsResponse = await res.json();
+
+      if (res.ok && data.data) {
+        setNotifications(data.data.notifications);
+        setNotificationCount(data.data.unread_notifications);
+      } else {
+        console.error("Failed to fetch notifications:", data);
+      }
+    } catch (error) {
+      console.error("Error fetching notifications:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, [userType, token]);
+
+  const markNotificationAsRead = async (notificationId: number) => {
+    if (!token || !userType) return;
+
+    let endpoint = "";
+
+    if (userType === "admin") {
+      endpoint = `/read/admin/${notificationId}`;
+    } else if (userType === "barangay") {
+      endpoint = `/read/barangay/${notificationId}`;
+    } else {
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE_URL}${endpoint}?_method=PATCH`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        // Update UI immediately
+        setNotifications((prev) => prev.filter((n) => n.id !== notificationId));
+
+        setNotificationCount((prev) => Math.max(prev - 1, 0));
+      } else {
+        console.error("Failed to mark notification as read:", data);
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+    }
+  };
+
+  //  Mark All as Read
+  const markAllAsRead = async () => {
+    if (!token || !userType) return;
+
+    const endpoint =
+      userType === "admin" ? "/read-all/admin" : "/read-all/barangay";
+
+    try {
+      const res = await fetch(`${API_BASE_URL}${endpoint}?_method=PATCH`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        // Clear notifications in UI
+        setNotifications([]);
+        setNotificationCount(0);
+      } else {
+        console.error("Failed to mark all as read:", data);
+      }
+    } catch (error) {
+      console.error("Error marking all as read:", error);
+    }
+  };
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -17,7 +198,6 @@ export default function NotificationDropdown() {
 
   const handleClick = () => {
     toggleDropdown();
-    setNotifying(false);
   };
   return (
     <div className="relative">
@@ -25,13 +205,17 @@ export default function NotificationDropdown() {
         className="relative flex items-center justify-center text-gray-500 transition-colors bg-white border border-gray-200 rounded-full dropdown-toggle hover:text-gray-700 h-11 w-11 hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white"
         onClick={handleClick}
       >
-        <span
-          className={`absolute right-0 top-0.5 z-10 h-2 w-2 rounded-full bg-orange-400 ${
-            !notifying ? "hidden" : "flex"
-          }`}
-        >
-          <span className="absolute inline-flex w-full h-full bg-orange-400 rounded-full opacity-75 animate-ping"></span>
-        </span>
+        {notificationCount > 0 && (
+          <span
+            className="absolute -top-1 -right-1
+            min-w-[18px] h-[18px] px-1
+            flex items-center justify-center
+            text-[10px] font-bold text-white
+            bg-red-500 rounded-full"
+          >
+            {notificationCount > 9 ? "9+" : notificationCount}
+          </span>
+        )}
         <svg
           className="fill-current"
           width="20"
@@ -47,12 +231,11 @@ export default function NotificationDropdown() {
           />
         </svg>
       </button>
-<Dropdown
-  isOpen={isOpen}
-  onClose={closeDropdown}
-  className="absolute -right-[240px] mt-[17px] flex h-[480px] w-[350px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark sm:w-[361px] lg:right-0 z-40"
->
-
+      <Dropdown
+        isOpen={isOpen}
+        onClose={closeDropdown}
+        className="absolute -right-[240px] mt-[17px] flex h-[480px] w-[350px] flex-col rounded-2xl border border-gray-200 bg-white p-3 shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark sm:w-[361px] lg:right-0 z-40"
+      >
         <div className="flex items-center justify-between pb-3 mb-3 border-b border-gray-100 dark:border-gray-700">
           <h5 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
             Notification
@@ -79,49 +262,81 @@ export default function NotificationDropdown() {
         </div>
         <ul className="flex flex-col h-auto overflow-y-auto custom-scrollbar">
           {/* Example notification items */}
-          <li>
-            <DropdownItem
-              onItemClick={closeDropdown}
-              className="flex gap-3 rounded-lg border-b border-gray-100 p-3 px-4.5 py-3 hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
-            >
-              <span className="relative block w-full h-10 rounded-full z-1 max-w-10">
-                <img
-                  width={40}
-                  height={40}
-                  src="/images/user/user-05.jpg"
-                  alt="User"
-                  className="overflow-hidden rounded-full"
-                />
-                <span className="absolute bottom-0 right-0 z-10 h-2.5 w-full max-w-2.5 rounded-full border-[1.5px] border-white bg-error-500 dark:border-gray-900"></span>
-              </span>
 
-              <span className="block">
-                <span className="mb-1.5 block space-x-1 text-theme-sm text-gray-500 dark:text-gray-400">
-                  <span className="font-medium text-gray-800 dark:text-white/90">
-                    Brandon Philips
-                  </span>
-                  <span>requests permission to change</span>
-                  <span className="font-medium text-gray-800 dark:text-white/90">
-                    Project - Nganter App
-                  </span>
-                </span>
+          <ul className="flex flex-col h-auto overflow-y-auto custom-scrollbar">
+            {notifications.length === 0 && (
+              <li className="py-6 text-center text-sm text-gray-500 dark:text-gray-400">
+                No new notifications
+              </li>
+            )}
 
-                <span className="flex items-center gap-2 text-gray-500 text-theme-xs dark:text-gray-400">
-                  <span>Project</span>
-                  <span className="w-1 h-1 bg-gray-400 rounded-full"></span>
-                  <span>1 hr ago</span>
-                </span>
-              </span>
-            </DropdownItem>
-          </li>
+            {notifications.map((notification) => (
+              <li key={notification.id} className="relative">
+                {/* Dismiss Button */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    markNotificationAsRead(notification.id);
+                  }}
+                  className="absolute top-2 right-2 z-20 flex h-5 w-5 items-center justify-center
+  rounded-full text-gray-400 hover:bg-gray-200 hover:text-gray-700
+  dark:hover:bg-gray-700 dark:hover:text-white"
+                >
+                  ✕
+                </button>
+
+                <DropdownItem
+                  onItemClick={() => {}}
+                  className="flex gap-3 rounded-lg border-b border-gray-100 p-3
+          hover:bg-gray-100 dark:border-gray-800 dark:hover:bg-white/5"
+                >
+                  {/* Sender Image */}
+                  <span className="relative block h-10 w-10 shrink-0 rounded-full">
+                    <img
+                      src={notification.sender.image}
+                      alt={notification.sender.name}
+                      className="h-full w-full rounded-full object-cover"
+                    />
+
+                    {!notification.attributes.isRead && (
+                      <span
+                        className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full
+              border-[1.5px] border-white bg-error-500 dark:border-gray-900"
+                      />
+                    )}
+                  </span>
+
+                  {/* Content */}
+                  <div className="flex flex-1 flex-col">
+                    <span className="text-theme-sm font-semibold text-gray-800 dark:text-white/90">
+                      {notification.attributes.title}
+                    </span>
+
+                    <span className="mt-0.5 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {notification.attributes.message}
+                    </span>
+
+                    <span className="mt-2 flex items-center gap-2 text-theme-xs text-gray-400 dark:text-gray-500">
+                      <span>{notification.attributes.createdDate}</span>
+                      <span className="h-1 w-1 rounded-full bg-gray-400"></span>
+                      <span>{notification.attributes.createdTime}</span>
+                    </span>
+                  </div>
+                </DropdownItem>
+              </li>
+            ))}
+          </ul>
+
           {/* Add more items as needed */}
         </ul>
-        <Link
-          to="/"
-          className="block px-4 py-2 mt-3 text-sm font-medium text-center text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
+
+        <button
+          onClick={markAllAsRead}
+          className="block px-4 py-2 mt-3 w-full text-sm font-medium text-center text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700"
         >
-          View All Notifications
-        </Link>
+          Mark All as Read
+        </button>
       </Dropdown>
     </div>
   );

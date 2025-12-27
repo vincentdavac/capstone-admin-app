@@ -1,90 +1,98 @@
-import { ArrowUpIcon, GroupIcon } from "../../icons";
-import { fetchUserCounts } from "../../api_hooks/countUsers";
+import { ArrowUpIcon, Buoy, ManageUsers } from "../../icons";
+import { MapPinHouse, Megaphone } from "lucide-react";
+
 import Badge from "../ui/badge/Badge";
-const dashboardCards = () => {
-  const { counts, loading, error } = fetchUserCounts();
+
+const DashboardCards = () => {
   return (
-    // Siguraduhin na ang pangunahing lalagyan ay gumagamit ng buong lapad
     <div className="w-full flex items-start justify-start pl-1">
-      {/* Conditional rendering para sa loading at error states */}
-      {loading && <p className="dark:text-white">Loading...</p>}
-      {error && <p className="text-red-500">{error}</p>}
-      
-      {counts && (
-        // BINAGO: Gumamit ng Grid layout (grid-cols-4 sa malaking screen, grid-cols-2 sa katamtaman)
-        // Ito ay magsisiguro na 4 cards ang magkakatabi kung malaki ang screen.
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full">
-          
-          {/* Card 1: Ang grid na ang bahala sa lapad, kaya tinanggal ang w-full/sm:w-[360px] */}
-          <div className="rounded-lg text-gray-800 dark:text-white text-xl font-semibold border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-            <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-              <GroupIcon className="text-gray-800 size-6 dark:text-white/90" />
-            </div>
-            <div className="flex items-end justify-between">
-              <div>
-                <span className="text-sm text-gray-500 dark:text-gray-400">Total Users</span>
-                <h4 className="mt-2 font-bold text-gray-800 dark:text-white text-2xl">{counts.data}</h4>
-              </div>
-              <Badge color="success">
-                <ArrowUpIcon />
-                11.01%
-              </Badge>
-            </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full">
+        {/* Card 1: Registered Barangays */}
+        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
+          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
+            <ManageUsers className="size-6 text-gray-800 dark:text-white/90" />
           </div>
-
-          {/* Card 2 */}
-          <div className="rounded-lg text-gray-800 dark:text-white text-xl font-semibold border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-            <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-              <GroupIcon className="text-gray-800 size-6 dark:text-white/90" />
+          <div className="flex items-end justify-between">
+            <div>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                Registered Barangays
+              </span>
+              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
+                10
+              </h4>
             </div>
-            <div className="flex items-end justify-between">
-              <div>
-                <span className="text-sm text-gray-500 dark:text-gray-400">Deployed Buoys</span>
-                <h4 className="mt-2 font-bold text-gray-800 dark:text-white text-2xl">3,782</h4>
-              </div>
-              <Badge color="success">
-                <ArrowUpIcon />
-                11.01%
-              </Badge>
-            </div>
-          </div>
-
-          {/* Card 3 */}
-          <div className="rounded-lg text-gray-800 dark:text-white text-xl font-semibold border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-            <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-              <GroupIcon className="text-gray-800 size-6 dark:text-white/90" />
-            </div>
-            <div className="flex items-end justify-between">
-              <div>
-                <span className="text-sm text-gray-500 dark:text-gray-400">Pending Concerns</span>
-                <h4 className="mt-2 font-bold text-gray-800 dark:text-white text-2xl">3,782</h4>
-              </div>
-              <Badge color="success">
-                <ArrowUpIcon />
-                11.01%
-              </Badge>
-            </div>
-          </div>
-
-          {/* Card 4 */}
-          <div className="rounded-lg text-gray-800 dark:text-white text-xl font-semibold border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-            <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-              <GroupIcon className="text-gray-800 size-6 dark:text-white/90" />
-            </div>
-            <div className="flex items-end justify-between">
-              <div>
-                <span className="text-sm text-gray-500 dark:text-gray-400">Posted Alerts</span>
-                <h4 className="mt-2 font-bold text-gray-800 dark:text-white text-2xl">3,782</h4>
-              </div>
-              <Badge color="success">
-                <ArrowUpIcon />
-                11.01%
-              </Badge>
-            </div>
+            <Badge color="success">
+              <ArrowUpIcon />
+              11.01%
+            </Badge>
           </div>
         </div>
-      )}
+
+        {/* Card 2: Deployed Buoy Devices */}
+        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
+          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
+            <Buoy className="size-6 text-gray-800 dark:text-white/90" />
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                Deployed Buoy Devices
+              </span>
+              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
+                3,782
+              </h4>
+            </div>
+            <Badge color="success">
+              <ArrowUpIcon />
+              11.01%
+            </Badge>
+          </div>
+        </div>
+
+        {/* Card 3: Active Barangays */}
+        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
+          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
+            <MapPinHouse className="size-6 text-gray-800 dark:text-white/90" />
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                Active Barangays
+              </span>
+              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
+                3,782
+              </h4>
+            </div>
+            <Badge color="success">
+              <ArrowUpIcon />
+              11.01%
+            </Badge>
+          </div>
+        </div>
+
+        {/* Card 4: Barangay Alerts Posted */}
+        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
+          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
+            <Megaphone  className="size-6 text-gray-800 dark:text-white/90" />
+          </div>
+          <div className="flex items-end justify-between">
+            <div>
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                Barangay Alerts Posted
+              </span>
+              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
+                3,782
+              </h4>
+            </div>
+            <Badge color="warning">
+              <ArrowUpIcon />
+              11.01%
+            </Badge>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
-export default dashboardCards;
+
+export default DashboardCards;

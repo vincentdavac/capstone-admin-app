@@ -86,7 +86,7 @@ const ArchiveUserModal: React.FC<Props> = ({
             "Content-Type": "application/json",
             Accept: "application/json",
           },
-          // ✅ Only send is_active
+          // Only send is_active
           body: JSON.stringify({
             is_active: 0,
           }),

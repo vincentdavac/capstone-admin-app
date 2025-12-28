@@ -35,6 +35,7 @@ import {
   MapPinHouse,
   Megaphone,
   MessagesSquare,
+  Phone,
   Thermometer,
   Waves,
   Wind,
@@ -278,6 +279,12 @@ const othersItems: NavItem[] = [
         name: "Feedbacks",
         path: "/admin/archived-feedbacks",
         icon: <Comment className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Hotlines",
+        path: "/admin/archived-hotlines",
+        icon: <Phone className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       // BARANGAY

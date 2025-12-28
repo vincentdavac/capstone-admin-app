@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { X, ImageOff } from "lucide-react";
 import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";

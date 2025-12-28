@@ -77,6 +77,7 @@ import FeedbackArchivedTable from "./pages/Administrator/Archive/Feedbacks/Feedb
 import BarangayManageUsers from "./pages/Barangay/ManageUsers/BarangayManageUsers";
 import BarangayArchivedUsers from "./pages/Barangay/Archive/Users/BarangayArchivedUsers";
 import BarangayProtectedRoutes from "./middleware/BarangayProtectedRoutes";
+import HotlinesArchivedTable from "./pages/Administrator/Archive/Hotlines/HotlinesTable";
 
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -134,10 +135,19 @@ export default function App({ alertsRef }: AppProps) {
           />
           <Route
             index
+            path="/admin/archived-hotlines"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <HotlinesArchivedTable alertsRef={alertsRef} />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            index
             path="/admin/dashboard"
             element={
               <ProtectedRoute alertsRef={alertsRef}>
-                <Dashboard />
+                <Dashboard alertsRef={alertsRef} />
               </ProtectedRoute>
             }
           />
@@ -155,7 +165,7 @@ export default function App({ alertsRef }: AppProps) {
             index
             element={
               <ProtectedRoute alertsRef={alertsRef}>
-                <Dashboard />
+                <Dashboard alertsRef={alertsRef} />
               </ProtectedRoute>
             }
           />

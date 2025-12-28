@@ -1,15 +1,39 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/rules-of-hooks */
+
 import { useContext, useState, useEffect } from "react";
 import API_BASE_URL from "../../config/coreApi";
 import { AppContext } from "../../context/AppContext";
-import { Phone } from "lucide-react";
+import { Archive, Phone, Plus, Upload } from "lucide-react";
+import AddHotlinesModal from "./Hotlines/AddHotlinesModal";
+import UpdateHotlinesModal from "./Hotlines/UpdateHotlinesModal";
+import ArchiveHotlinesModal from "./Hotlines/ArchiveHotlinesModal";
+import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
 
-const dangerLevel = () => {
+interface Props {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
+
+/*  Hotline Interface */
+interface HotlineData {
+  id: number;
+  description: string;
+  number: string;
+}
+
+const dangerLevel = ({ alertsRef }: Props) => {
   const { token } = useContext(AppContext)!;
 
-  // Disaster Alert State
+  const [showAdd, setShowAdd] = useState(false);
+  const [showUpdate, setShowUpdate] = useState(false);
+  const [showArchive, setShowArchive] = useState(false);
+
+  const [selectedHotlines, setSelectedHotlines] = useState<HotlineData | null>(
+    null
+  );
+
+  /* ================= Disaster Alert ================= */
   const [selected, setSelected] = useState<"WHITE" | "BLUE" | "RED">("WHITE");
 
   const alertStatus = {
@@ -22,6 +46,7 @@ const dangerLevel = () => {
   const getButtonClass = (color: "WHITE" | "BLUE" | "RED") => {
     const base =
       "flex items-center justify-center w-full h-[35px] rounded-full px-3 cursor-pointer border transition-colors";
+
     switch (color) {
       case "WHITE":
         return `${base} ${
@@ -44,11 +69,10 @@ const dangerLevel = () => {
     }
   };
 
-  // Hotlines state
-  const [hotlines, setHotlines] = useState<
-    { id: number; description: string; number: string }[]
-  >([]);
+  /* ================= Hotlines ================= */
+  const [hotlines, setHotlines] = useState<HotlineData[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchHotlines = async () => {
     setLoading(true);
@@ -59,17 +83,17 @@ const dangerLevel = () => {
           Accept: "application/json",
         },
       });
+
       const res = await response.json();
+
       if (response.ok && res.data) {
-        // Map to only required fields
-        const data = res.data.map((item: any) => ({
-          id: item.id,
-          description: item.attributes.description,
-          number: item.attributes.number,
-        }));
-        setHotlines(data);
-      } else {
-        console.error("Failed to fetch hotlines:", res);
+        setHotlines(
+          res.data.map((item: any) => ({
+            id: item.id,
+            description: item.attributes.description,
+            number: item.attributes.number,
+          }))
+        );
       }
     } catch (error) {
       console.error("Error fetching hotlines:", error);
@@ -82,75 +106,125 @@ const dangerLevel = () => {
     fetchHotlines();
   }, []);
 
+  const filteredHotlines = hotlines.filter((h) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      h.description.toLowerCase().includes(term) ||
+      h.number.toLowerCase().includes(term)
+    );
+  });
+
+  /* ================= Archive Handler ================= */
+  const handleArchiveClick = (hotline: HotlineData) => {
+    setSelectedHotlines(hotline);
+    setShowArchive(true);
+  };
+
   return (
-    <>
-      <div className="grid grid-cols-1 gap-3">
-        {/* Disaster Alert */}
-        <div className="w-full lg:w-[512px] h-auto bg-white dark:bg-gray-800 shadow rounded-2xl border border-[#D9D9D9] dark:border-gray-700 flex flex-col">
-          {/* Header */}
-          <div className="w-full px-4 pt-4 text-center">
-            <h3 className="text-lg font-medium mb-2 text-gray-900 dark:text-white">
-              Disaster Alert Level
-            </h3>
-          </div>
-          <hr className="w-full border-t border-gray-300 dark:border-gray-600" />
-
-          {/* Buttons */}
-          <div className="grid grid-cols-3 gap-2 sm:gap-4 w-full p-4 self-center mt-3 justify-center">
-            {(["WHITE", "BLUE", "RED"] as const).map((color) => (
-              <button
-                key={color}
-                className={getButtonClass(color)}
-                onClick={() => setSelected(color)}
-              >
-                {color}
-              </button>
-            ))}
-          </div>
-
-          {/* Alert Status */}
-          <div className="text-center mt-2 px-4 pb-4">
-            <p className="text-gray-700 dark:text-gray-400 text-sm leading-snug">
-              {alertStatus[selected]}
-            </p>
-          </div>
+    <div className="grid grid-cols-1 gap-3">
+      {/* ================= DISASTER ALERT ================= */}
+      <div className="w-full lg:w-[512px] bg-white dark:bg-gray-800 shadow rounded-2xl border border-[#D9D9D9] dark:border-gray-700 flex flex-col">
+        <div className="w-full px-4 pt-4 text-center">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+            Disaster Alert Level
+          </h3>
         </div>
 
-        <div className="w-full lg:w-[512px] min-h-[300px] lg:h-[495px] bg-white dark:bg-gray-800 shadow-xl rounded-2xl border border-[#D9D9D9] dark:border-gray-700 p-4 overflow-auto">
-          {/* Header */}
-          <div className="w-full px-4 text-center">
-            <h3 className="text-lg font-medium mb-2 text-gray-900 dark:text-white">
-              Emergency Hotlines
-            </h3>
-          </div>
-          <hr className="w-full border-t border-gray-300 dark:border-gray-600 mb-4" />
+        <hr className="my-3 border-gray-300 dark:border-gray-600" />
 
+        <div className="grid grid-cols-3 gap-3 px-4">
+          {(["WHITE", "BLUE", "RED"] as const).map((color) => (
+            <button
+              key={color}
+              className={getButtonClass(color)}
+              onClick={() => setSelected(color)}
+            >
+              {color}
+            </button>
+          ))}
+        </div>
+
+        <p className="px-4 py-4 text-sm text-center text-gray-700 dark:text-gray-400">
+          {alertStatus[selected]}
+        </p>
+      </div>
+
+      {/* ================= HOTLINES ================= */}
+      <div className="w-full lg:w-[512px] h-[495px] bg-white dark:bg-gray-800 shadow-xl rounded-2xl border border-[#D9D9D9] dark:border-gray-700 p-4 flex flex-col">
+        <div className="flex justify-between items-center">
+          <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+            Emergency Hotlines
+          </h3>
+
+          <button
+            onClick={() => setShowAdd(true)}
+            className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
+          >
+            <Plus className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="mt-4">
+          <input
+            type="text"
+            placeholder="Search hotline..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="h-11 w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-transparent px-4 text-sm text-gray-800 dark:text-white focus:ring-2 focus:ring-[#453EFE]"
+          />
+        </div>
+
+        <hr className="my-4 border-gray-300 dark:border-gray-600" />
+
+        <div className="flex-1 overflow-y-auto pr-1">
           {loading ? (
             <p className="text-center text-gray-500 dark:text-gray-400">
               Loading...
             </p>
-          ) : hotlines.length === 0 ? (
+          ) : filteredHotlines.length === 0 ? (
             <p className="text-center text-gray-500 dark:text-gray-400">
-              No hotlines available.
+              No hotlines found.
             </p>
           ) : (
             <ul className="space-y-3">
-              {hotlines.map((line) => (
+              {filteredHotlines.map((line) => (
                 <li
                   key={line.id}
-                  className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-[#D9D9D9] dark:border-gray-700 shadow-md hover:shadow-lg transition-all"
+                  className="p-4 rounded-xl border border-[#D9D9D9] dark:border-gray-700 shadow-md hover:shadow-lg transition bg-white dark:bg-gray-800"
                 >
-                  <div className="flex items-start gap-4">
-                    <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl flex-shrink-0">
-                      <Phone className="w-6 h-6 text-gray-800 dark:text-white/90" />
+                  <div className="flex justify-between items-center">
+                    <div className="flex gap-4">
+                      <div className="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-xl">
+                        <Phone className="w-6 h-6 text-gray-800 dark:text-white/90" />
+                      </div>
+
+                      <div>
+                        <p className="text-sm font-semibold text-gray-800 dark:text-white">
+                          {line.description}
+                        </p>
+                        <p className="text-2xl font-bold text-gray-800 dark:text-white">
+                          {line.number}
+                        </p>
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-2 flex-1">
-                      <span className="font-semibold text-gray-800 dark:text-white text-sm">
-                        {line.description}
-                      </span>
-                      <span className="font-bold text-2xl text-gray-800 dark:text-white">
-                        {line.number}
-                      </span>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setSelectedHotlines(line);
+                          setShowUpdate(true);
+                        }}
+                        className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
+                      >
+                        <Upload className="w-5 h-5" />
+                      </button>
+
+                      <button
+                        onClick={() => handleArchiveClick(line)}
+                        className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg transition"
+                      >
+                        <Archive className="w-5 h-5" />
+                      </button>
                     </div>
                   </div>
                 </li>
@@ -158,8 +232,41 @@ const dangerLevel = () => {
             </ul>
           )}
         </div>
+
+        {/* ================= MODALS ================= */}
+        {showAdd && (
+          <AddHotlinesModal
+            show={showAdd}
+            onClose={() => setShowAdd(false)}
+            token={token ?? ""}
+            alertsRef={alertsRef}
+            onAdded={fetchHotlines}
+          />
+        )}
+
+        {showUpdate && selectedHotlines && (
+          <UpdateHotlinesModal
+            show={showUpdate}
+            onClose={() => setShowUpdate(false)}
+            data={selectedHotlines}
+            token={token ?? ""}
+            alertsRef={alertsRef}
+            onUpdated={fetchHotlines}
+          />
+        )}
+
+        {showArchive && selectedHotlines && (
+          <ArchiveHotlinesModal
+            show={showArchive}
+            onClose={() => setShowArchive(false)}
+            data={selectedHotlines}
+            token={token ?? ""}
+            alertsRef={alertsRef}
+            onArchived={fetchHotlines}
+          />
+        )}
       </div>
-    </>
+    </div>
   );
 };
 

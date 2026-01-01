@@ -9,17 +9,20 @@ import { useAlertMonitor } from "../../api_hooks/alertMonitoringHooks";
 import AlertModal from "../Barangay/AlertManagement/alertModal";
 
 const BarangayDashboardContent: React.FC = () => {
-  const { user } = useContext(AppContext)!;
+  const {user} = useContext(AppContext)!;
 
   useEffect(() => {
     document.title = "Dashboard | X-Stream";
   }, []);
 
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   const buoyId = user?.barangay?.buoys?.[0]?.id;
-  if (!buoyId) {
-  return <div>Loading...</div>;
-}
-  const {showAlert,currentAlert,handleClose} = useAlertMonitor(buoyId?.toString(),5000);
+  console.log("Test data lang po ito",buoyId);
+  
+//   if (!buoyId) {
+//   return <div>Loading...</div>;
+// }
+  const {showAlert,currentAlert,handleClose} = useAlertMonitor(buoyCode?.toString() ?? '',50000,buoyId?.toString() ?? '');
   return (
     <div className="min-h-screen p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 transition-colors duration-300">
       {/* 4 KPI Cards */}

@@ -12,12 +12,13 @@ import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
 import AlertModal from "../../Barangay/AlertManagement/alertModal";
 
 const AlertManagement: React.FC = () => {
-  const { user } = useContext(AppContext)!;
+  const {user} = useContext(AppContext)!;
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   const buoyId = user?.barangay?.buoys?.[0]?.id;
-  if (!buoyId) {
-     return <div>Loading...</div>;
-  }
-  const {showAlert,currentAlert,handleClose} = useAlertMonitor(buoyId?.toString(),5000);
+  // if (!buoyId) {
+  //    return <div>Loading...</div>;
+  // }
+  const {showAlert,currentAlert,handleClose} = useAlertMonitor(buoyCode?.toString() ?? '',5000,buoyId?.toString() ?? '');
   insertingAlerts();
   useAlert();
   const { alertsGet, loading, error } = fetchAlertsAlerts();

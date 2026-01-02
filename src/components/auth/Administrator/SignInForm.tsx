@@ -3,7 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { EyeCloseIcon, EyeIcon } from "../../../icons";
 import Label from "../../form/Label";
 import Input from "../../form/input/InputField";
-import Checkbox from "../../form/input/Checkbox";
+// import Checkbox from "../../form/input/Checkbox";
 import API_BASE_URL from "../../../config/coreApi";
 import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
 import { AppContext } from "../../../context/AppContext";
@@ -21,7 +21,7 @@ export default function SignInForm({ alertsRef }: Props) {
   const navigate = useNavigate();
 
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+  // const [isChecked, setIsChecked] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -110,13 +110,13 @@ export default function SignInForm({ alertsRef }: Props) {
       localStorage.setItem("token", encryptedToken);
       console.log("Encrypted Token:", encryptedToken);
 
-      // ✅ FIX: Set the ENCRYPTED token, not the decrypted one
+      // FIX: Set the ENCRYPTED token, not the decrypted one
       setEncryptedToken(encryptedToken);
 
-      // ✅ Show success message first
+      // Show success message first
       alertsRef.current?.addAlert("success", "Login successful!");
 
-      // ✅ Wait a bit for context to update before navigating
+      // Wait a bit for context to update before navigating
       setTimeout(() => {
         navigate("/admin/dashboard");
       }, 300);
@@ -191,13 +191,13 @@ export default function SignInForm({ alertsRef }: Props) {
               </div>
 
               {/* Remember me + Forgot password */}
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+              <div className="flex items-center justify-end">
+                {/* <div className="flex items-center gap-3">
                   <Checkbox checked={isChecked} onChange={setIsChecked} />
                   <span className="block font-normal text-gray-700 text-theme-sm dark:text-gray-400">
                     Keep me logged in
                   </span>
-                </div>
+                </div> */}
                 <Link
                   to="/admin/forgot-password"
                   className="text-sm text-brand-500 hover:text-brand-600 dark:text-brand-400"

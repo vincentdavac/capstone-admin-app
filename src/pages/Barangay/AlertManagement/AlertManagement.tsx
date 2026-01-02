@@ -3,22 +3,25 @@ import { fetchAlertsAlerts } from "../../../api_hooks/fetchAllAlerts";
 import { useBroadcastAlert } from "../../../core_api_fetching/broadCastAlert";
 import { useAlert } from "../../../context/AlertContext";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-import { CustomAlertLevel } from "../../../components/Alert Management/CustomAlertLevel";
 import { RecentAlertsTable } from "../../../components/Alert Management/RecentAlertsTable";
-import {insertingAlerts } from "../../../api_hooks/dashboardHooks";
+import { insertingAlerts } from "../../../api_hooks/dashboardHooks";
 import { AppContext } from "../../../context/AppContext";
 import { useContext } from "react";
 import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
 import AlertModal from "../../Barangay/AlertManagement/alertModal";
 
 const AlertManagement: React.FC = () => {
-  const {user} = useContext(AppContext)!;
+  const { user } = useContext(AppContext)!;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   const buoyId = user?.barangay?.buoys?.[0]?.id;
   // if (!buoyId) {
   //    return <div>Loading...</div>;
   // }
-  const {showAlert,currentAlert,handleClose} = useAlertMonitor(buoyCode?.toString() ?? '',5000,buoyId?.toString() ?? '');
+  const { showAlert, currentAlert, handleClose } = useAlertMonitor(
+    buoyCode?.toString() ?? "",
+    5000,
+    buoyId?.toString() ?? ""
+  );
   insertingAlerts();
   useAlert();
   const { alertsGet, loading, error } = fetchAlertsAlerts();
@@ -29,25 +32,18 @@ const AlertManagement: React.FC = () => {
   useBroadcastAlert();
 
   const itemsPerPage = 5;
-  const [newAlertData, setNewAlertData] = useState({
-    searchBuoy: "",
-    dateTime: "",
-    sensorType: "Select sensor type",
-    alert_level: "White" as "White" | "Blue" | "Red",
-    alertReadings: "",
-  });
 
   useEffect(() => {
     document.title = "Alert Management | X-Stream";
   }, []);
 
-  const handleSelectAlert = (id: number,sensors: string) => {
+  const handleSelectAlert = (id: number, sensors: string) => {
     setSelectedAlertId(id);
     setSensor(sensors);
   };
-  
+
   const handleBroadcast = async () => {
-    await broadcastToSelected(selectedAlertId,sensorTypes);
+    await broadcastToSelected(selectedAlertId, sensorTypes);
     setSelectedAlertId(null);
     setSensor(null);
   };
@@ -60,29 +56,39 @@ const AlertManagement: React.FC = () => {
     startIndex + itemsPerPage
   );
 
-  const handleLevelChange = (level: "White" | "Blue" | "Red") => {
-    setNewAlertData((prev) => ({
-      ...prev,
-      alert_level: level,
-    }));
+  /* ================= Disaster Alert ================= */
+  const [selected, setSelected] = useState<"WHITE" | "BLUE" | "RED">("WHITE");
+
+  const alertStatus = {
+    WHITE:
+      "Normal operations are maintained with continuous monitoring, coordinated efforts among teams, and systematic reporting to ensure smooth processes and timely issue resolution.",
+    BLUE: "Early stage of emergency: heightened monitoring, coordination, & reporting. 50% of the DRRMD personnel shall remain on duty and on standby for possible deployment.",
+    RED: "Imminent emergency: highest level monitoring, coordination, and Reporting. 100% of the DRRMD personnel shall remain on duty and on standby for immediate deployment.",
   };
 
-  const getDescriptionText = (level: "White" | "Blue" | "Red") => {
-    switch (level) {
-      case "White":
-        return (
-          <>
-            Normal Operation
-            <br />
-            Monitoring, Coordination and Reporting
-          </>
-        );
-      case "Blue":
-        return "Monitoring situation and preparing response capabilities.";
-      case "Red":
-        return "Imminent emergency situation Highest level monitoring, coordination, and reporting";
-      default:
-        return "";
+  const getButtonClass = (color: "WHITE" | "BLUE" | "RED") => {
+    const base =
+      "flex items-center justify-center w-full h-[35px] rounded-full px-3 cursor-pointer border transition-colors";
+
+    switch (color) {
+      case "WHITE":
+        return `${base} ${
+          selected === "WHITE"
+            ? "bg-gray-100 border-gray-400 dark:bg-gray-700 dark:border-gray-500 text-gray-900 dark:text-white"
+            : "bg-white border-gray-300 dark:bg-gray-800 dark:border-gray-600"
+        }`;
+      case "BLUE":
+        return `${base} ${
+          selected === "BLUE"
+            ? "bg-blue-500 text-white border-blue-600"
+            : "border-blue-400 text-blue-600 dark:text-blue-400"
+        }`;
+      case "RED":
+        return `${base} ${
+          selected === "RED"
+            ? "bg-red-500 text-white border-red-600"
+            : "border-red-500 text-red-600 dark:text-red-400"
+        }`;
     }
   };
 
@@ -90,52 +96,37 @@ const AlertManagement: React.FC = () => {
     <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
       <PageBreadcrumb pageTitle="Alert Management" />
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-        <div className="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-xl sm:text-2xl font-normal text-gray-500 dark:text-gray-300">
-            Create New Alert
-          </h2>
-        </div>
-
         {/* Main Content (Left: Create Alert, Right: Recent Alerts) */}
         <div className="p-4 sm:p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - New Layout (Create Alert and Flowchart) */}
             <div className="space-y-6 lg:pr-8 lg:border-r border-gray-200 dark:border-gray-700">
               <div className="space-y-6">
-                <div className="w-full bg-white dark:bg-gray-900 shadow rounded-2xl border border-[#D9D9D9] dark:border-gray-700 flex flex-col p-4">
-                  <div className="w-full text-center">
-                    <h3 className="text-lg font-medium mb-2 text-gray-700 dark:text-gray-300">
+                {/* ================= DISASTER ALERT ================= */}
+                <div className="w-full lg:w-[648px] bg-white dark:bg-gray-800 shadow rounded-2xl border border-[#D9D9D9] dark:border-gray-700 flex flex-col">
+                  <div className="w-full px-4 pt-4 text-center">
+                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
                       Disaster Alert Level
                     </h3>
                   </div>
-                  <hr className="w-full border-t border-gray-300 dark:border-gray-600" />
 
-                  {/* Alert Level Radio Buttons - USING CUSTOM COMPONENT */}
-                  <div className="flex gap-4 w-full p-4 self-center mt-2 justify-center">
-                    <CustomAlertLevel
-                      level="White"
-                      colorClass="text-gray-800 dark:text-gray-200"
-                      isSelected={newAlertData.alert_level === "White"}
-                      onSelect={handleLevelChange}
-                    />
-                    <CustomAlertLevel
-                      level="Blue"
-                      colorClass="text-blue-600 dark:text-blue-400"
-                      isSelected={newAlertData.alert_level === "Blue"}
-                      onSelect={handleLevelChange}
-                    />
-                    <CustomAlertLevel
-                      level="Red"
-                      colorClass="text-red-600 dark:text-red-400"
-                      isSelected={newAlertData.alert_level === "Red"}
-                      onSelect={handleLevelChange}
-                    />
+                  <hr className="my-3 border-gray-300 dark:border-gray-600" />
+
+                  <div className="grid grid-cols-3 gap-3 px-4">
+                    {(["WHITE", "BLUE", "RED"] as const).map((color) => (
+                      <button
+                        key={color}
+                        className={getButtonClass(color)}
+                        onClick={() => setSelected(color)}
+                      >
+                        {color}
+                      </button>
+                    ))}
                   </div>
 
-                  {/* Dynamic Description Text */}
-                  <div className="text-center mt-2 px-4 text-gray-700 dark:text-gray-400 text-sm leading-snug whitespace-pre-line">
-                    {getDescriptionText(newAlertData.alert_level)}
-                  </div>
+                  <p className="px-4 py-4 text-sm text-center text-gray-700 dark:text-gray-400">
+                    {alertStatus[selected]}
+                  </p>
                 </div>
 
                 {/* Flowchart Image Box */}
@@ -147,6 +138,7 @@ const AlertManagement: React.FC = () => {
                   />
                 </div>
               </div>
+
               {/* NEW LAYOUT ENDS HERE */}
             </div>
 

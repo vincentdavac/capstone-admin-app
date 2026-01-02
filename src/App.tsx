@@ -304,7 +304,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/barangay/dashboard"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <BarangayDashboard />
+                <BarangayDashboard alertsRef={alertsRef} />
               </BarangayProtectedRoutes>
             }
           />
@@ -430,6 +430,15 @@ export default function App({ alertsRef }: AppProps) {
               <BarangayProtectedRoutes alertsRef={alertsRef}>
                 <BarangayArchivedUsers alertsRef={alertsRef} />
               </BarangayProtectedRoutes>
+            }
+          />
+          <Route
+            index
+            path="/barangay/archived-hotlines"
+            element={
+              <ProtectedRoute alertsRef={alertsRef}>
+                <HotlinesArchivedTable alertsRef={alertsRef} />
+              </ProtectedRoute>
             }
           />
         </Route>

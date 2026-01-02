@@ -3,13 +3,13 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 
 import { useContext, useState, useEffect } from "react";
-import API_BASE_URL from "../../config/coreApi";
-import { AppContext } from "../../context/AppContext";
+import API_BASE_URL from "../../../config/coreApi";
+import { AppContext } from "../../../context/AppContext";
 import { Archive, Phone, Plus, Upload } from "lucide-react";
-import AddHotlinesModal from "./Hotlines/AddHotlinesModal";
-import UpdateHotlinesModal from "./Hotlines/UpdateHotlinesModal";
-import ArchiveHotlinesModal from "./Hotlines/ArchiveHotlinesModal";
-import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
+import AddHotlinesModal from "../BarangayHotlines/AddHotlinesModal";
+import UpdateHotlinesModal from "../BarangayHotlines/UpdateHotlinesModal";
+import ArchiveHotlinesModal from "../BarangayHotlines/ArchiveHotlinesModal";
+import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
 
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -33,42 +33,6 @@ const dangerLevel = ({ alertsRef }: Props) => {
   const [selectedHotlines, setSelectedHotlines] = useState<HotlineData | null>(
     null
   );
-
-  /* ================= Disaster Alert ================= */
-  const [selected, setSelected] = useState<"WHITE" | "BLUE" | "RED">("WHITE");
-
-  const alertStatus = {
-    WHITE:
-      "Normal operations are maintained with continuous monitoring, coordinated efforts among teams, and systematic reporting to ensure smooth processes and timely issue resolution.",
-    BLUE: "Early stage of emergency: heightened monitoring, coordination, & reporting. 50% of the DRRMD personnel shall remain on duty and on standby for possible deployment.",
-    RED: "Imminent emergency: highest level monitoring, coordination, and Reporting. 100% of the DRRMD personnel shall remain on duty and on standby for immediate deployment.",
-  };
-
-  const getButtonClass = (color: "WHITE" | "BLUE" | "RED") => {
-    const base =
-      "flex items-center justify-center w-full h-[35px] rounded-full px-3 cursor-pointer border transition-colors";
-
-    switch (color) {
-      case "WHITE":
-        return `${base} ${
-          selected === "WHITE"
-            ? "bg-gray-100 border-gray-400 dark:bg-gray-700 dark:border-gray-500 text-gray-900 dark:text-white"
-            : "bg-white border-gray-300 dark:bg-gray-800 dark:border-gray-600"
-        }`;
-      case "BLUE":
-        return `${base} ${
-          selected === "BLUE"
-            ? "bg-blue-500 text-white border-blue-600"
-            : "border-blue-400 text-blue-600 dark:text-blue-400"
-        }`;
-      case "RED":
-        return `${base} ${
-          selected === "RED"
-            ? "bg-red-500 text-white border-red-600"
-            : "border-red-500 text-red-600 dark:text-red-400"
-        }`;
-    }
-  };
 
   /* ================= Hotlines ================= */
   const [hotlines, setHotlines] = useState<HotlineData[]>([]);
@@ -124,35 +88,8 @@ const dangerLevel = ({ alertsRef }: Props) => {
 
   return (
     <div className="grid grid-cols-1 gap-3">
-      {/* ================= DISASTER ALERT ================= */}
-      <div className="w-full lg:w-[488px] bg-white dark:bg-gray-800 shadow rounded-2xl border border-[#D9D9D9] dark:border-gray-700 flex flex-col">
-        <div className="w-full px-4 pt-4 text-center">
-          <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-            Disaster Alert Level
-          </h3>
-        </div>
-
-        <hr className="my-3 border-gray-300 dark:border-gray-600" />
-
-        <div className="grid grid-cols-3 gap-3 px-4">
-          {(["WHITE", "BLUE", "RED"] as const).map((color) => (
-            <button
-              key={color}
-              className={getButtonClass(color)}
-              onClick={() => setSelected(color)}
-            >
-              {color}
-            </button>
-          ))}
-        </div>
-
-        <p className="px-4 py-4 text-sm text-center text-gray-700 dark:text-gray-400">
-          {alertStatus[selected]}
-        </p>
-      </div>
-
       {/* ================= HOTLINES ================= */}
-      <div className="w-full lg:w-[488px] h-[495px] bg-white dark:bg-gray-800 shadow-sm rounded-2xl border border-[#D9D9D9] dark:border-gray-700 p-4 flex flex-col">
+      <div className="w-full lg:w-[488px] h-[550px] bg-white dark:bg-gray-800 shadow- rounded-2xl border border-[#D9D9D9] dark:border-gray-700 p-4 flex flex-col">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-medium text-gray-900 dark:text-white">
             Emergency Hotlines
@@ -213,14 +150,14 @@ const dangerLevel = ({ alertsRef }: Props) => {
                     <div className="flex gap-2">
                       <button
                         onClick={() => {
-                          if (!line.isGlobal) return;
+                          if (line.isGlobal) return;
                           setSelectedHotlines(line);
                           setShowUpdate(true);
                         }}
-                        disabled={!line.isGlobal}
+                        disabled={line.isGlobal}
                         className={`w-9 h-9 flex items-center justify-center rounded-lg transition
                         ${
-                          line.isGlobal
+                          !line.isGlobal
                             ? "bg-[#453EFE] hover:bg-indigo-700 text-white"
                             : "bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed opacity-60"
                         }`}
@@ -230,13 +167,13 @@ const dangerLevel = ({ alertsRef }: Props) => {
 
                       <button
                         onClick={() => {
-                          if (!line.isGlobal) return;
+                          if (line.isGlobal) return;
                           handleArchiveClick(line);
                         }}
-                        disabled={!line.isGlobal}
+                        disabled={line.isGlobal}
                         className={`w-9 h-9 flex items-center justify-center rounded-lg transition
                         ${
-                          line.isGlobal
+                          !line.isGlobal
                             ? "bg-[#453EFE] hover:bg-indigo-700 text-white"
                             : "bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed opacity-60"
                         }`}

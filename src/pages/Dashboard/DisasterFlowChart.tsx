@@ -52,20 +52,35 @@ const DisasterFlowChart = () => {
   return (
     <div
       className="
-        w-full
-        lg:max-w-[955px]   /* wider container */
-        min-h-[680px]        /* ensure enough height */
-        bg-white
-        dark:bg-gray-800
-        backdrop-blur-xl
-        shadow-2xl
-        rounded-2xl
-        border
-        border-[#D9D9D9]
-        dark:border-gray-700
-        p-4
-        overflow-auto
-      "
+    w-full
+    max-w-full
+    sm:max-w-[640px]
+    md:max-w-[768px]
+    lg:max-w-[955px]
+    xl:max-w-[1100px]
+    2xl:max-w-[1280px]
+
+    min-h-[60vh]
+    lg:min-h-[700px]
+
+    mx-auto
+    px-3
+    sm:px-4
+    md:px-6
+
+    bg-white
+    dark:bg-gray-800
+    backdrop-blur-xl
+    shadow-sm
+    rounded-2xl
+    border
+    border-[#D9D9D9]
+    dark:border-gray-700
+
+    py-4
+    overflow-x-hidden
+    overflow-y-auto
+  "
       style={{
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",

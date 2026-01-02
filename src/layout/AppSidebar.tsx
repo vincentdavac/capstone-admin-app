@@ -294,6 +294,12 @@ const othersItems: NavItem[] = [
         icon: <ManageUsers className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
+      {
+        name: "Hotlines",
+        path: "/barangay/archived-hotlines",
+        icon: <Phone className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
     ],
   },
 ];

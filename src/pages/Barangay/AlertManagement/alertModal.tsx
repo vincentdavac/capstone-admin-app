@@ -2,6 +2,7 @@ import { Bell, X } from "lucide-react";
 import { useEffect, useContext, useState } from "react";
 import { AppContext } from "../../../context/AppContext";
 import api_endpoint from "../../../config/coreApi";
+
 interface Alert {
   id: number;
   alertId: string;
@@ -12,18 +13,21 @@ interface Alert {
   recorded_at: string;
   alert_shown: boolean;
 }
+
 interface AlertModalProps {
   isOpen: boolean;
   alert: Alert | null;
   onClose: () => void;
   isSending?: boolean;
 }
+
 const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
-  const { user,token } = useContext(AppContext)!;
+  const { user, token } = useContext(AppContext)!;
   const [isSending, setIsSending] = useState(false);
-  const buoyId = user?.barangay?.buoys?.[0]?.id;
+  // const buoyId = user?.barangay?.buoys?.[0]?.id;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   const sensor = alert?.sensor_type;
+
   useEffect(() => {
     if (isOpen) {
       const audio = new Audio("/sound/dangersound.mp3");
@@ -48,8 +52,8 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
           sensor_stype: String(sensor),
         }),
       });
-      console.log("testing ng mga may bitaw",sensor);
-      
+      console.log("testing ng mga may bitaw", sensor);
+
       if (!response.ok) {
         throw new Error(`Failed to send alert: ${response.status}`);
       }
@@ -76,58 +80,79 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
   };
 
   if (!isOpen || !alert) return null;
+
   const getAlertTitle = (level: string): string => {
-    if (level === "Red") return "Red ALERT";
-    if (level === "Blue") return "Blue ALERT";
+    if (level === "Red") return "RED ALERT";
+    if (level === "Blue") return "BLUE ALERT";
     return "ALERT";
   };
 
+  // for dynamic color based don sa alert
+  const isRed = alert.alert_level === "Red";
+  const theme = {
+    overlay: isRed ? "bg-red-900/40" : "bg-blue-900/40",
+    iconBg: isRed ? "bg-red-500" : "bg-blue-600",
+    textDesc: isRed ? "text-red-600" : "text-blue-600",
+    sendBtn: isRed ? "bg-red-500 hover:bg-red-600" : "bg-blue-600 hover:bg-blue-700",
+  };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 p-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full border-4 border-red-500">
-        <div className="flex justify-end p-4">
-          <button
-            onClick={onClose}
-            className="text-red-500 hover:text-red-700"
-            disabled={isSending}
-          >
-            <X size={32} strokeWidth={3} />
-          </button>
-        </div>
+    <div className={`fixed inset-0 ${theme.overlay} backdrop-blur-sm flex items-center justify-center z-[9999] p-4`}>
+      <div className="relative bg-white/95 dark:bg-gray-900/95 border border-white/20 rounded-2xl shadow-2xl w-full max-w-lg p-8 z-[10000] overflow-y-auto max-h-[90vh]">
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
+          disabled={isSending}
+        >
+          <X size={20} />
+        </button>
 
-        <div className="px-8 pb-8">
-          <div className="bg-red-50 rounded-2xl p-8 mb-6 flex items-start gap-6">
-            <div className="bg-red-500 rounded-2xl p-6 flex-shrink-0">
-              <Bell size={40} className="text-white" />
+        <div className="flex flex-col items-center text-center">
+          <div className={`${theme.iconBg} rounded-2xl p-5 mb-4 shadow-lg shadow-black/10`}>
+            <Bell size={30} className="text-white" />
+          </div>
+
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            {getAlertTitle(alert.alert_level)}
+          </h3>
+
+          <p className={`text-s font-semibold mb-6 break-words ${theme.textDesc}`}>
+            {alert.description}
+          </p>
+
+          <div className="w-full bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 mb-8 text-left text-sm space-y-2 border border-gray-100 dark:border-gray-700">
+            <div className="flex justify-between">
+              <span className="text-gray-500">Sensor:</span>
+              <span className="font-medium text-gray-800 dark:text-gray-200">
+                {alert.sensor_type}
+              </span>
             </div>
-
-            <div className="flex-1">
-              <h2 className="text-3xl font-bold mb-3">
-                {getAlertTitle(alert.alert_level)}
-              </h2>
-              <p className="text-red-600 mt-1 text-md break-words">
-                {alert.description}
-              </p>
-              <div className="mt-4 text-sm text-gray-600">
-                <div>Sensor: {alert.sensor_type}</div>
-                <div>Buoy: {buoyId}</div>
-                <div>Time: {new Date(alert.recorded_at).toLocaleString()}</div>
-              </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Buoy:</span>
+              <span className="font-medium text-gray-800 dark:text-gray-200">
+                {buoyCode}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Time:</span>
+              <span className="font-medium text-gray-800 dark:text-gray-200">
+                {new Date(alert.recorded_at).toLocaleString()}
+              </span>
             </div>
           </div>
 
-          <div className="flex justify-center gap-6">
+          <div className="flex gap-4 w-full">
             <button
               onClick={onClose}
               disabled={isSending}
-              className="px-12 py-4 border-2 border-red-500 text-black rounded-full font-semibold text-lg hover:bg-red-50 transition min-w-[200px] disabled:opacity-50"
+              className="flex-1 px-4 py-3 bg-gray-200 text-gray-800 rounded-xl font-bold hover:bg-gray-300 transition-all active:scale-95 disabled:opacity-50"
             >
               Close
             </button>
             <button
               onClick={handleSend}
               disabled={isSending}
-              className="px-12 py-4 bg-red-500 text-white rounded-full font-semibold text-lg hover:bg-red-600 transition min-w-[200px] disabled:opacity-50"
+              className={`flex-1 px-4 py-3 ${theme.sendBtn} text-white rounded-xl font-bold shadow-md transition-all active:scale-95 disabled:opacity-50`}
             >
               {isSending ? "Sending..." : "Send"}
             </button>
@@ -137,4 +162,5 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
     </div>
   );
 };
+
 export default AlertModal;

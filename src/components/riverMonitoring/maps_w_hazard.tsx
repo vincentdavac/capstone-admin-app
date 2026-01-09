@@ -4,7 +4,7 @@ import { ref, onValue } from "firebase/database";
 import { database, auth } from "../../firebaseCredentials/firebase";
 import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
-
+import { signInAnonymously } from 'firebase/auth';
 export default function MapsWithHazard() {
   const [sstData, setSST] = useState<number>(0);
   const [loading, setLoading] = useState(true);
@@ -19,8 +19,17 @@ export default function MapsWithHazard() {
   const rainGauge = useRef(null);
   const { user } = useContext(AppContext)!;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
+  console.log("teststststs",buoyCode);
+  
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged(() => {});
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+       if(!user){
+        console.log("hwkwkwkwkwk");
+      }else{
+        signInAnonymously(auth)
+      }
+    });
+     
     return unsubscribe;
   }, []);
   // --- Helper Functions for Styling ---
@@ -195,7 +204,7 @@ export default function MapsWithHazard() {
       charts.push(chart);
       unsubscribers.push(
         onValue(
-          ref(database, `/${buoyCode}/ANEMOMETER/WIND_SPEED_km-h`),
+          ref(database, `/${buoyCode}/ANEMOMETER/WIND_SPEED_km_h`),
           (s) =>
             s.exists() &&
             chart.setOption({ series: [{ data: [{ value: s.val() }] }] })

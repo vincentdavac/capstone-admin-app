@@ -4,7 +4,7 @@ import { ref, onValue } from "firebase/database";
 import { database, auth } from "../../firebaseCredentials/firebase";
 import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
-import { signInAnonymously } from 'firebase/auth';
+import { signInAnonymously } from "firebase/auth";
 export default function MapsWithHazard() {
   const [sstData, setSST] = useState<number>(0);
   const [loading, setLoading] = useState(true);
@@ -19,17 +19,17 @@ export default function MapsWithHazard() {
   const rainGauge = useRef(null);
   const { user } = useContext(AppContext)!;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
-  console.log("teststststs",buoyCode);
-  
+  console.log("teststststs", buoyCode);
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-       if(!user){
+      if (!user) {
         console.log("hwkwkwkwkwk");
-      }else{
-        signInAnonymously(auth)
+      } else {
+        signInAnonymously(auth);
       }
     });
-     
+
     return unsubscribe;
   }, []);
   // --- Helper Functions for Styling ---
@@ -211,54 +211,48 @@ export default function MapsWithHazard() {
         )
       );
     }
-
-    // Initialize Surroundings Temp (GaugeRef)
     if (gaugeRef.current) {
       const chart = echarts.init(gaugeRef.current);
       chart.setOption({
         series: [
           {
             type: "gauge",
-            startAngle: 180,
-            endAngle: 0,
-            center: ["50%", "75%"],
+            center: ["50%", "55%"],
             radius: "110%",
-            min: 0,
-            max: 3,
-            axisLine: {
+             axisLine: {
               lineStyle: {
-                width: 6,
+                width: 10,
                 color: [
-                  [1 / 3, "#7CFFB2"],
-                  [2 / 3, "#FDDD60"],
-                  [1, "#ff1100ff"],
+                  [0.31, "#D3D3D3"],
+                  [0.655, "#37a2da"],
+                  [1, "#fd666d"],
                 ],
               },
             },
-            axisTick: { length: 8, lineStyle: { color: "auto", width: 1.5 } },
-            axisLabel: {
-              fontSize: 10,
-              distance: -30,
-              rotate: "tangential",
-              formatter: "{value}°C",
-            },
+            axisLabel: { distance: 20, fontSize: 10 },
             detail: {
-              fontSize: 13,
-              fontWeight: "bold",
-              offsetCenter: [0, "-25%"],
-              formatter: "{value}°C",
+              formatter: "{value} °C",
+              fontSize: 15,
+              offsetCenter: [0, "60%"],
             },
+
             data: [{ value: 0 }],
           },
         ],
       });
+
       charts.push(chart);
+
       unsubscribers.push(
         onValue(
           ref(database, `/${buoyCode}/BME280/SURROUNDING_TEMPERATURE`),
-          (s) =>
-            s.exists() &&
-            chart.setOption({ series: [{ data: [{ value: s.val() }] }] })
+          (s) => {
+            if (s.exists()) {
+              chart.setOption({
+                series: [{ data: [{ value: s.val() }] }],
+              });
+            }
+          }
         )
       );
     }

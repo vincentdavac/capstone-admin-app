@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import * as echarts from "echarts";
 import { ref, onValue } from "firebase/database";
-import { database } from "../../firebaseCredentials/firebase";
+import { database, auth } from "../../firebaseCredentials/firebase";
 import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 
@@ -19,7 +19,10 @@ export default function MapsWithHazard() {
   const rainGauge = useRef(null);
   const { user } = useContext(AppContext)!;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
-
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(() => {});
+    return unsubscribe;
+  }, []);
   // --- Helper Functions for Styling ---
   const renderHumidity = (
     container: HTMLDivElement,

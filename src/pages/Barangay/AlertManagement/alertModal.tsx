@@ -93,11 +93,15 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
     overlay: isRed ? "bg-red-900/40" : "bg-blue-900/40",
     iconBg: isRed ? "bg-red-500" : "bg-blue-600",
     textDesc: isRed ? "text-red-600" : "text-blue-600",
-    sendBtn: isRed ? "bg-red-500 hover:bg-red-600" : "bg-blue-600 hover:bg-blue-700",
+    sendBtn: isRed
+      ? "bg-red-500 hover:bg-red-600"
+      : "bg-blue-600 hover:bg-blue-700",
   };
 
   return (
-    <div className={`fixed inset-0 ${theme.overlay} backdrop-blur-sm flex items-center justify-center z-[9999] p-4`}>
+    <div
+      className={`fixed inset-0 ${theme.overlay} backdrop-blur-sm flex items-center justify-center z-[9999] p-4`}
+    >
       <div className="relative bg-white/95 dark:bg-gray-900/95 border border-white/20 rounded-2xl shadow-2xl w-full max-w-lg p-8 z-[10000] overflow-y-auto max-h-[90vh]">
         <button
           onClick={onClose}
@@ -108,7 +112,9 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
         </button>
 
         <div className="flex flex-col items-center text-center">
-          <div className={`${theme.iconBg} rounded-2xl p-5 mb-4 shadow-lg shadow-black/10`}>
+          <div
+            className={`${theme.iconBg} rounded-2xl p-5 mb-4 shadow-lg shadow-black/10`}
+          >
             <Bell size={30} className="text-white" />
           </div>
 
@@ -116,7 +122,9 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
             {getAlertTitle(alert.alert_level)}
           </h3>
 
-          <p className={`text-s font-semibold mb-6 break-words ${theme.textDesc}`}>
+          <p
+            className={`text-s font-semibold mb-6 break-words ${theme.textDesc}`}
+          >
             {alert.description}
           </p>
 
@@ -136,11 +144,25 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
             <div className="flex justify-between">
               <span className="text-gray-500">Time:</span>
               <span className="font-medium text-gray-800 dark:text-gray-200">
-                {new Date(alert.recorded_at).toLocaleString()}
+                {new Date(alert.recorded_at).toLocaleTimeString("en-US", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                  second: "2-digit",
+                  hour12: true,
+                })}
+              </span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-gray-500">Date:</span>
+              <span className="font-medium text-gray-800 dark:text-gray-200">
+                {new Date(alert.recorded_at).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
               </span>
             </div>
           </div>
-
           <div className="flex gap-4 w-full">
             <button
               onClick={onClose}

@@ -81,7 +81,7 @@ export default function Footer({ refresh }: Props) {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
           {/* Left Column - Brand Info */}
           <div className="space-y-4">
-            <img src={attr.image} alt="logo" className=" w-25 h-auto" />
+            <img src={attr.image} alt="logo" className=" w-50 h-auto" />
             <p className="text-lg">{attr.caption}</p>
           </div>
 

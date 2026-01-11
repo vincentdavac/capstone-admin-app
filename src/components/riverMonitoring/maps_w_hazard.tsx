@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import * as echarts from "echarts";
 import { ref, onValue } from "firebase/database";
@@ -5,26 +6,26 @@ import { database, auth } from "../../firebaseCredentials/firebase";
 import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 import { signInAnonymously } from "firebase/auth";
+import { RefObject } from "@fullcalendar/core/preact.js";
 export default function MapsWithHazard() {
   const [sstData, setSST] = useState<number>(0);
-  const [loading, setLoading] = useState(true);
   const [percentage, setPercentage] = useState(0);
-  const gaugeRef = useRef(null);
+  const gaugeRef = useRef<HTMLDivElement | null>(null);
   const humidityRef = useRef<HTMLDivElement | null>(null);
-  const windSpeed = useRef(null);
-  const atmosphericPressure = useRef(null);
-  const waterLevel = useRef(null);
-  const waterTemperature = useRef(null);
-  const waterPressure = useRef(null);
-  const rainGauge = useRef(null);
+  const windSpeed = useRef<HTMLDivElement | null>(null);
+  const atmosphericPressure = useRef<HTMLDivElement | null>(null);
+  const waterLevel = useRef<HTMLDivElement | null>(null);
+  const waterTemperature = useRef<HTMLDivElement | null>(null);
+  const waterPressure = useRef<HTMLDivElement | null>(null);
+  const rainGauge = useRef<HTMLDivElement | null>(null);
   const { user } = useContext(AppContext)!;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
-  console.log("teststststs", buoyCode);
+  console.log("Buoy Code:", buoyCode);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (!user) {
-        console.log("hwkwkwkwkwk");
+      if (user) {
+        console.log("Authentication", user);
       } else {
         signInAnonymously(auth);
       }
@@ -63,6 +64,11 @@ export default function MapsWithHazard() {
             ${percent.toFixed(0)}%
           </text>
       </svg>`;
+  };
+
+  const toNumberOrZero = (value: any): number => {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
   };
 
   const updateEChartsOptions = (
@@ -136,7 +142,6 @@ export default function MapsWithHazard() {
     const sstRef = ref(database, `/${buoyCode}/BME280/SURROUNDING_TEMPERATURE`);
     const unsubscribe = onValue(sstRef, (snapshot) => {
       if (snapshot.exists()) setSST(snapshot.val());
-      setLoading(false);
     });
     return () => unsubscribe();
   }, [buoyCode]);
@@ -205,9 +210,13 @@ export default function MapsWithHazard() {
       unsubscribers.push(
         onValue(
           ref(database, `/${buoyCode}/ANEMOMETER/WIND_SPEED_km_h`),
-          (s) =>
-            s.exists() &&
-            chart.setOption({ series: [{ data: [{ value: s.val() }] }] })
+          (s) => {
+            const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+
+            chart.setOption({
+              series: [{ data: [{ value }] }],
+            });
+          }
         )
       );
     }
@@ -219,7 +228,7 @@ export default function MapsWithHazard() {
             type: "gauge",
             center: ["50%", "55%"],
             radius: "110%",
-             axisLine: {
+            axisLine: {
               lineStyle: {
                 width: 10,
                 color: [
@@ -247,11 +256,11 @@ export default function MapsWithHazard() {
         onValue(
           ref(database, `/${buoyCode}/BME280/SURROUNDING_TEMPERATURE`),
           (s) => {
-            if (s.exists()) {
-              chart.setOption({
-                series: [{ data: [{ value: s.val() }] }],
-              });
-            }
+            const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+
+            chart.setOption({
+              series: [{ data: [{ value }] }],
+            });
           }
         )
       );
@@ -287,9 +296,13 @@ export default function MapsWithHazard() {
       unsubscribers.push(
         onValue(
           ref(database, `/${buoyCode}/BME280/ATMOSPHERIC_PRESSURE`),
-          (s) =>
-            s.exists() &&
-            chart.setOption({ series: [{ data: [{ value: s.val() }] }] })
+          (s) => {
+            const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+
+            chart.setOption({
+              series: [{ data: [{ value }] }],
+            });
+          }
         )
       );
     }
@@ -327,12 +340,13 @@ export default function MapsWithHazard() {
       });
       charts.push(chart);
       unsubscribers.push(
-        onValue(
-          ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_METER`),
-          (s) =>
-            s.exists() &&
-            chart.setOption({ series: [{ data: [{ value: s.val() }] }] })
-        )
+        onValue(ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_METER`), (s) => {
+          const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+
+          chart.setOption({
+            series: [{ data: [{ value }] }],
+          });
+        })
       );
     }
 
@@ -360,12 +374,13 @@ export default function MapsWithHazard() {
       });
       charts.push(chart);
       unsubscribers.push(
-        onValue(
-          ref(database, `/${buoyCode}/MS5837/WATER_TEMPERATURE`),
-          (s) =>
-            s.exists() &&
-            chart.setOption({ series: [{ data: [{ value: s.val() }] }] })
-        )
+        onValue(ref(database, `/${buoyCode}/MS5837/WATER_TEMPERATURE`), (s) => {
+          const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+
+          chart.setOption({
+            series: [{ data: [{ value }] }],
+          });
+        })
       );
     }
 
@@ -402,12 +417,13 @@ export default function MapsWithHazard() {
       });
       charts.push(chart);
       unsubscribers.push(
-        onValue(
-          ref(database, `/${buoyCode}/MS5837/WATER_PRESSURE`),
-          (s) =>
-            s.exists() &&
-            chart.setOption({ series: [{ data: [{ value: s.val() }] }] })
-        )
+        onValue(ref(database, `/${buoyCode}/MS5837/WATER_PRESSURE`), (s) => {
+          const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+
+          chart.setOption({
+            series: [{ data: [{ value }] }],
+          });
+        })
       );
     }
 
@@ -446,9 +462,13 @@ export default function MapsWithHazard() {
       unsubscribers.push(
         onValue(
           ref(database, `/${buoyCode}/RAIN_GAUGE/FALL_COUNT_MILIMETERS`),
-          (s) =>
-            s.exists() &&
-            chart.setOption({ series: [{ data: [{ value: s.val() }] }] })
+          (s) => {
+            const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+
+            chart.setOption({
+              series: [{ data: [{ value }] }],
+            });
+          }
         )
       );
     }
@@ -478,7 +498,7 @@ export default function MapsWithHazard() {
     footerText,
   }: {
     title: string;
-    valueRef: React.RefObject<HTMLDivElement>;
+    valueRef: RefObject<HTMLDivElement | null>;
     footerText: string;
   }) => (
     <div className="flex flex-col p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">

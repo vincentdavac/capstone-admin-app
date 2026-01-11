@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function SignInForm({ alertsRef }: Props) {
-  const SECRET_KEY = "my-secret-key";
+  const SECRET_KEY = import.meta.env.VITE_SECRET_KEY ?? "";
 
   const { setEncryptedToken } = useContext(AppContext)!;
 
@@ -29,7 +29,7 @@ export default function SignInForm({ alertsRef }: Props) {
   });
   const [retryAfter, setRetryAfter] = useState<number | null>(null);
 
-  // ⏳ Countdown handler (no alerts)
+  // Countdown handler (no alerts)
   useEffect(() => {
     let timer: ReturnType<typeof setInterval>;
 
@@ -60,7 +60,7 @@ export default function SignInForm({ alertsRef }: Props) {
 
     const data = await res.json();
     if (!res.ok) {
-      // 🕓 Handle too many attempts (rate limiting)
+      // Handle too many attempts (rate limiting)
       if (res.status === 429) {
         const waitTime = data.retry_after ?? 60;
         setRetryAfter(waitTime);
@@ -72,7 +72,7 @@ export default function SignInForm({ alertsRef }: Props) {
         return;
       }
 
-      // ⚠️ Handle validation errors from Laravel
+      // Handle validation errors from Laravel
       if (data.errors) {
         Object.values(data.errors).forEach((messages) => {
           (messages as string[]).forEach((msg) => {

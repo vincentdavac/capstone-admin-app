@@ -1,17 +1,21 @@
 import Echo from "laravel-echo";
 import Pusher from "pusher-js";
 
+const AUTH_ENDPOINT = import.meta.env.VITE_ECHO_AUTH_ENDPOINT;
+const PUSHER_KEY = import.meta.env.VITE_PUSHER_KEY;
+const PUSHER_CLUSTER = import.meta.env.VITE_PUSHER_CLUSTER;
+
 // Assign Pusher to window before creating Echo
 window.Pusher = Pusher;
 
 export const createEcho = (token: string) => {
   return new Echo({
     broadcaster: "pusher",
-    key: "193ca11fdb9f0071d0d6",
-    cluster: "ap1",
+    key: PUSHER_KEY,
+    cluster: PUSHER_CLUSTER,
     forceTLS: false,
     encrypted: false,
-    authEndpoint: "http://127.0.0.1:8000/broadcasting/auth",
+    authEndpoint: AUTH_ENDPOINT,
     auth: {
       headers: {
         Authorization: `Bearer ${token}`,

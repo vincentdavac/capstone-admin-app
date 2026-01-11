@@ -14,7 +14,7 @@ interface Props {
 }
 
 export default function SignInForm({ alertsRef }: Props) {
-  const SECRET_KEY = "my-secret-key";
+  const SECRET_KEY = import.meta.env.VITE_SECRET_KEY ?? "";
 
   const { setEncryptedToken } = useContext(AppContext)!;
 
@@ -110,13 +110,13 @@ export default function SignInForm({ alertsRef }: Props) {
       localStorage.setItem("token", encryptedToken);
       console.log("Encrypted Token:", encryptedToken);
 
-      // ✅ FIX: Set the ENCRYPTED token, not the decrypted one
+      // FIX: Set the ENCRYPTED token, not the decrypted one
       setEncryptedToken(encryptedToken);
 
-      // ✅ Show success message first
+      // Show success message first
       alertsRef.current?.addAlert("success", "Login successful!");
 
-      // ✅ Wait a bit for context to update before navigating
+      // Wait a bit for context to update before navigating
       setTimeout(() => {
         navigate("/barangay/dashboard");
       }, 300);

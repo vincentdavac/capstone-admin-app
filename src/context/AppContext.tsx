@@ -68,7 +68,7 @@ interface MyComponentProps {
 }
 
 export default function AppProvider({ children }: MyComponentProps) {
-  const SECRET_KEY = "my-secret-key";
+  const SECRET_KEY = import.meta.env.VITE_SECRET_KEY ?? "";
 
   const [encryptedToken, setEncryptedToken] = useState<string | null>(
     localStorage.getItem("token")
@@ -95,7 +95,7 @@ export default function AppProvider({ children }: MyComponentProps) {
       setToken(null);
       setLoading(false); // Stop loading when no token exists
     }
-  }, [encryptedToken]);
+  }, [SECRET_KEY, encryptedToken]);
 
   // Fetch user data with token
   useEffect(() => {

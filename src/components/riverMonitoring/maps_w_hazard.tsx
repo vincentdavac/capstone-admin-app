@@ -7,6 +7,7 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 import { signInAnonymously } from "firebase/auth";
 import { RefObject } from "@fullcalendar/core/preact.js";
+
 export default function MapsWithHazard() {
   const [sstData, setSST] = useState<number>(0);
   const [percentage, setPercentage] = useState(0);

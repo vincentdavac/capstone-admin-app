@@ -122,8 +122,20 @@ const AboutUpdate = ({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-[9999]">
-      <div className="relative bg-gradient-to-br from-white/95 to-gray-100/95 dark:from-gray-900/95 dark:to-gray-800/95 border border-gray-200 dark:border-gray-700 rounded-3xl shadow-2xl w-full max-w-lg p-8 z-[10000] transition">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-md flex items-center justify-center z-[9999] px-4">
+      <div
+        className="
+    relative 
+    bg-gradient-to-br from-white/95 to-gray-100/95 
+    dark:from-gray-900/95 dark:to-gray-800/95 
+    border border-gray-200 dark:border-gray-700 
+    rounded-3xl shadow-2xl 
+    w-full max-w-lg 
+    max-h-[90vh] overflow-y-auto
+    p-8 z-[10000] transition
+    scrollbar-thin scrollbar-thumb-gray-400 dark:scrollbar-thumb-gray-600
+  "
+      >
         {/* Close */}
         <button
           onClick={onClose}

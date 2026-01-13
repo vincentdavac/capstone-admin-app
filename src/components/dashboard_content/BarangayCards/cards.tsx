@@ -87,7 +87,7 @@ const DashboardCards = () => {
                 Registered Users
               </span>
               <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.users.total}
+                {stats.users.total ?? 0}
               </h4>
             </div>
             {renderTrend(stats.users)}
@@ -105,7 +105,7 @@ const DashboardCards = () => {
                 Registered Hotlines
               </span>
               <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.hotlines.total}
+                {stats.hotlines.total ?? 0}
               </h4>
             </div>
             {renderTrend(stats.hotlines)}
@@ -123,7 +123,7 @@ const DashboardCards = () => {
                 Daily Messages
               </span>
               <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.messages.current_week}
+                {stats.messages.current_week ?? 0}
               </h4>
             </div>
             {renderTrend(stats.messages)}
@@ -141,15 +141,13 @@ const DashboardCards = () => {
                 Weekly Alerts
               </span>
               <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.alerts.current_week}
+                {stats.alerts.current_week ?? 0}
               </h4>
             </div>
             {renderTrend(stats.alerts)}
           </div>
         </div>
       </div>
-
-      
     </div>
   );
 };

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   MapPin,
   Navigation,
@@ -8,29 +8,93 @@ import {
   BellOff,
   Radio,
 } from "lucide-react";
+import { AppContext } from "../../context/AppContext";
+import API_BASE_URL from "../../config/coreApi";
 
-export default function BuoyCondition() {
+interface BuoyAttributes {
+  buoyCode: string;
+  riverName: string;
+  wallHeight: number;
+  riverHectare: number;
+  latitude: number;
+  longitude: number;
+  attachment: string | null;
+  status: string;
+  maintenanceAt: string | null;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+}
+
+interface MapsWithHazardProps {
+  buoy?: BuoyAttributes;
+  loading?: boolean;
+  distanceKm?: string;
+  currentLat?: number | null;
+  currentLng?: number | null;
+  batteryPercentage?: number | null;
+}
+
+export default function BuoyCondition({
+  buoy,
+  distanceKm: distanceFromMap,
+  currentLat,
+  currentLng,
+  batteryPercentage,
+}: MapsWithHazardProps) {
+  const { token, user } = useContext(AppContext)!;
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
+
   const [alarmEnabled, setAlarmEnabled] = useState(false);
-  const [batteryLevel, setBatteryLevel] = useState(85.0);
+  const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
+  const [distanceKm, setDistanceKm] = useState("0.00");
 
-  const initialLocation = { lat: 14.654321, lng: 120.987654 };
-  const currentLocation = { lat: 14.65489, lng: 120.9879 };
+  const initialLocation = { lat: buoy?.latitude, lng: buoy?.longitude };
+  const currentLocation = { lat: currentLat, lng: currentLng };
 
-  // Calculate drift distance in meters
-  const calculateDrift = () => {
-    const R = 6371e3;
-    const φ1 = (initialLocation.lat * Math.PI) / 180;
-    const φ2 = (currentLocation.lat * Math.PI) / 180;
-    const Δφ = ((currentLocation.lat - initialLocation.lat) * Math.PI) / 180;
-    const Δλ = ((currentLocation.lng - initialLocation.lng) * Math.PI) / 180;
+  //  Recalculate distance when GPS changes
+  useEffect(() => {
+    if (
+      !buoy ||
+      currentLat == null ||
+      currentLng == null ||
+      currentLat === 0 ||
+      currentLng === 0
+    ) {
+      setDistanceKm("0.00");
+      return;
+    }
+
+    const toRad = (value: number) => (value * Math.PI) / 180;
+
+    const R = 6371; // Earth radius (km)
+    const dLat = toRad(currentLat - buoy.latitude);
+    const dLng = toRad(currentLng - buoy.longitude);
 
     const a =
-      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(buoy.latitude)) *
+        Math.cos(toRad(currentLat)) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
 
-    return (R * c).toFixed(1);
-  };
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = (R * c).toFixed(2);
+
+    setDistanceKm(distance);
+  }, [buoy, currentLat, currentLng]);
+
+  useEffect(() => {
+    if (typeof batteryPercentage === "number") {
+      setBatteryLevel(batteryPercentage);
+    } else {
+      setBatteryLevel(0);
+    }
+  }, [batteryPercentage]);
+
+  // Use recalculated distance, fallback to map if needed
+  const driftDistance = distanceKm || distanceFromMap || "0.00";
 
   const getBatteryStatus = (level: any) => {
     if (level <= 25)
@@ -82,8 +146,44 @@ export default function BuoyCondition() {
     };
   };
 
-  const battery = getBatteryStatus(batteryLevel);
-  const driftDistance = calculateDrift();
+  const battery = getBatteryStatus(batteryPercentage);
+
+  const handleAlarmToggle = async () => {
+    if (!buoyCode) return;
+
+    const nextState = !alarmEnabled;
+    const relayState = nextState ? "on" : "off";
+
+    // Optimistic UI update
+    setAlarmEnabled(nextState);
+
+    try {
+      const res = await fetch(`${API_BASE_URL}/relay/switch`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          buoy_code: buoyCode,
+          relay_state: relayState,
+        }),
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        console.error("Relay switch failed:", result);
+        // rollback UI state if API fails
+        setAlarmEnabled(!nextState);
+      }
+    } catch (error) {
+      console.error("Error switching relay:", error);
+      // rollback UI state if request crashes
+      setAlarmEnabled(!nextState);
+    }
+  };
 
   return (
     <div className="p-5">
@@ -103,10 +203,10 @@ export default function BuoyCondition() {
             </div>
             <div className="space-y-1">
               <p className="font-mono text-sm text-slate-900 dark:text-white">
-                Lat: {initialLocation.lat}°
+                Latitude: {initialLocation.lat}°
               </p>
               <p className="font-mono text-sm text-slate-900 dark:text-white">
-                Lng: {initialLocation.lng}°
+                Longitude: {initialLocation.lng}°
               </p>
             </div>
             <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700/50">
@@ -131,10 +231,10 @@ export default function BuoyCondition() {
             </div>
             <div className="space-y-1">
               <p className="font-mono text-sm text-slate-900 dark:text-white">
-                Lat: {currentLocation.lat}°
+                Latitude: {currentLocation.lat}°
               </p>
               <p className="font-mono text-sm text-slate-900 dark:text-white">
-                Lng: {currentLocation.lng}°
+                Longitude: {currentLocation.lng}°
               </p>
             </div>
             <div className="mt-2 pt-2 border-t border-slate-200 dark:border-slate-700/50 flex items-center justify-between">
@@ -197,12 +297,9 @@ export default function BuoyCondition() {
               >
                 {batteryLevel}%
               </p>
-              <button
-                onClick={() => setBatteryLevel(Math.max(0, batteryLevel - 10))}
-                className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors"
-              >
-                Simulate drain
-              </button>
+              <p className="text-xs text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition-colors">
+                Battery Health Percentage
+              </p>
             </div>
           </div>
         </div>
@@ -254,7 +351,7 @@ export default function BuoyCondition() {
             {/* Toggle button */}
             <div className="flex items-center justify-center py-2">
               <button
-                onClick={() => setAlarmEnabled(!alarmEnabled)}
+                onClick={handleAlarmToggle}
                 className={`relative inline-flex h-10 w-20 items-center rounded-full transition-all duration-300 ${
                   alarmEnabled
                     ? "bg-gradient-to-r from-red-500 to-red-600 shadow-lg shadow-red-500/50"

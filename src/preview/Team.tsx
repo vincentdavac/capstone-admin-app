@@ -36,7 +36,7 @@ export default function Team({ refresh }: Props) {
   const startX = useRef(0);
   const scrollLeft = useRef(0);
 
-  // ✅ Fetch Active Team Members
+  // Fetch Active Team Members
   const fetchActiveTeams = async () => {
     setLoading(true);
 

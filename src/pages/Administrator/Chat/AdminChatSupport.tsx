@@ -396,7 +396,7 @@ const AdminChatSupport = ({ alertsRef }: Props) => {
       <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 h-[80vh] flex items-center justify-center">
         <div className="flex justify-center items-center gap-2 text-gray-500">
           <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
-          Please wait, loading chat...
+          Please wait while loading...
         </div>
       </div>
     );

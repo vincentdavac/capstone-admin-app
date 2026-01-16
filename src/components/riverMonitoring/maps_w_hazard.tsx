@@ -34,34 +34,37 @@ export default function MapsWithHazard() {
 
     return unsubscribe;
   }, []);
+
   // --- Helper Functions for Styling ---
   const renderHumidity = (
     container: HTMLDivElement,
     isDark: boolean,
     percent: number
   ) => {
-    const fillY = 15 + (170 - (percent / 100) * 170);
+    // In-adjust ang fillY calculation para sa mas malaking radius
+    const fillY = 10 + (180 - (percent / 100) * 180);
     const circleFill = isDark ? "#1f2937" : "#f0f9ff";
     const circleStroke = isDark ? "#60a5fa" : "#3b82f6";
 
+    // Pinalaki ang max-width/height at in-adjust ang circle radius (r) mula 85/90 patungong 95/98
     container.innerHTML = `
-      <svg viewBox="0 0 200 200" style="width:100%;height:100%;max-width:200px;max-height:200px;margin:0 auto;">
+      <svg viewBox="0 0 200 200" style="width:100%;height:100%;max-width:290px;max-height:290px;margin:0 auto;">
           <defs>
-            <clipPath id="circleClip"><circle cx="100" cy="100" r="85" /></clipPath>
+            <clipPath id="circleClip"><circle cx="100" cy="100" r="95" /></clipPath>
             <pattern id="wave" x="0" y="0" width="400" height="200" patternUnits="userSpaceOnUse">
               <path d="M0,50 Q50,35 100,50 T200,50 T300,50 T400,50 V200 H0 Z" fill="#3b82f6" opacity="0.85">
                 <animateTransform attributeName="transform" type="translate" from="0,0" to="-200,0" dur="3s" repeatCount="indefinite" />
               </path>
             </pattern>
           </defs>
-          <circle cx="100" cy="100" r="90" fill="none" stroke="${circleStroke}" stroke-width="5" />
-          <circle cx="100" cy="100" r="85" fill="${circleFill}" /> 
+          <circle cx="100" cy="100" r="98" fill="none" stroke="${circleStroke}" stroke-width="4" />
+          <circle cx="100" cy="100" r="95" fill="${circleFill}" /> 
           <g clip-path="url(#circleClip)">
             <rect x="0" y="${fillY}" width="200" height="200" fill="url(#wave)">
               <animate attributeName="y" from="200" to="${fillY}" dur="2s" fill="freeze" />
             </rect>
           </g>
-          <text x="100" y="112" text-anchor="middle" font-size="46" font-weight="bold" fill="#ffffff" style="text-shadow:0 2px 4px rgba(0,0,0,0.3)">
+          <text x="100" y="115" text-anchor="middle" font-size="52" font-weight="bold" fill="#ffffff" style="text-shadow:0 2px 4px rgba(0,0,0,0.5)">
             ${percent.toFixed(0)}%
           </text>
       </svg>`;
@@ -194,7 +197,16 @@ export default function MapsWithHazard() {
             center: ["50%", "60%"],
             max: 185,
             progress: { show: true, width: 12 },
-            axisLine: { lineStyle: { width: 12 } },
+            axisLine: {
+              lineStyle: {
+                width: 12,
+                color: [
+                  [0.31, "#D3D3D3"],
+                  [0.655, "#0076E8"],
+                  [1, "#E32F20"],
+                ],
+              },
+            },
             axisTick: { show: false },
             splitLine: { distance: 0, length: 5, lineStyle: { width: 1 } },
             axisLabel: { distance: 15, fontSize: 8 },
@@ -234,8 +246,8 @@ export default function MapsWithHazard() {
                 width: 10,
                 color: [
                   [0.31, "#D3D3D3"],
-                  [0.655, "#37a2da"],
-                  [1, "#fd666d"],
+                  [0.655, "#0076E8"],
+                  [1, "#E32F20"],
                 ],
               },
             },
@@ -278,10 +290,15 @@ export default function MapsWithHazard() {
             center: ["50%", "60%"],
             min: 0,
             max: 1000,
-            progress: {
-              show: true,
-              width: 12,
-              itemStyle: { color: "#58D9F9" },
+            axisLine: {
+              lineStyle: {
+                width: 10,
+                color: [
+                  [0.31, "#D3D3D3"],
+                  [0.655, "#0076E8"],
+                  [1, "#E32F20"],
+                ],
+              },
             },
             axisLabel: { distance: 15, fontSize: 8 },
             detail: {
@@ -323,9 +340,9 @@ export default function MapsWithHazard() {
               lineStyle: {
                 width: 10,
                 color: [
-                  [0.3, "#67e0e3"],
-                  [0.7, "#37a2da"],
-                  [1, "#fd666d"],
+                  [0.31, "#D3D3D3"],
+                  [0.655, "#0076E8"],
+                  [1, "#E32F20"],
                 ],
               },
             },
@@ -362,7 +379,16 @@ export default function MapsWithHazard() {
             radius: "110%",
             min: 0,
             max: 50,
-            axisLine: { lineStyle: { width: 10 } },
+            axisLine: {
+              lineStyle: {
+                width: 10,
+                color: [
+                  [0.31, "#D3D3D3"],
+                  [0.655, "#0076E8"],
+                  [1, "#E32F20"],
+                ],
+              },
+            },
             axisLabel: { distance: 20, fontSize: 10 },
             detail: {
               formatter: "{value}°C",
@@ -401,8 +427,8 @@ export default function MapsWithHazard() {
                 width: 10,
                 color: [
                   [0.31, "#D3D3D3"],
-                  [0.655, "#37a2da"],
-                  [1, "#fd666d"],
+                  [0.655, "#0076E8"],
+                  [1, "#E32F20"],
                 ],
               },
             },
@@ -443,9 +469,9 @@ export default function MapsWithHazard() {
               lineStyle: {
                 width: 10,
                 color: [
-                  [0.333, "#D3D3D3"],
-                  [0.778, "#37a2da"],
-                  [1, "#fd666d"],
+                  [0.31, "#D3D3D3"],
+                  [0.655, "#0076E8"],
+                  [1, "#E32F20"],
                 ],
               },
             },
@@ -506,7 +532,7 @@ export default function MapsWithHazard() {
       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1 text-center">
         {title}
       </h3>
-      <div ref={valueRef} className="w-full h-48 sm:h-56 lg:h-64 flex-grow" />
+      <div ref={valueRef} className="w-full h-48 sm:h-56 lg:h-64 flex-grow flex items-center justify-center" />
       <div className="w-full text-center mt-1 pt-1 border-t border-gray-200 dark:border-gray-700">
         <p className="text-sm text-gray-600 dark:text-gray-400 italic leading-snug">
           {footerText}

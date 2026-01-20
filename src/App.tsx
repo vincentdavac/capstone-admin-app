@@ -78,6 +78,7 @@ import BarangayManageUsers from "./pages/Barangay/ManageUsers/BarangayManageUser
 import BarangayArchivedUsers from "./pages/Barangay/Archive/Users/BarangayArchivedUsers";
 import BarangayProtectedRoutes from "./middleware/BarangayProtectedRoutes";
 import HotlinesArchivedTable from "./pages/Administrator/Archive/Hotlines/HotlinesTable";
+import BuoyLocation from "./pages/Administrator/Historical Tables/BuoyLocation";
 
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -358,6 +359,14 @@ export default function App({ alertsRef }: AppProps) {
           />
 
           {/* Historical data */}
+          <Route
+            path="/barangay/historical-data/buoy-location"
+            element={
+              <BarangayProtectedRoutes alertsRef={alertsRef}>
+                <BuoyLocation />
+              </BarangayProtectedRoutes>
+            }
+          />
           <Route
             path="/barangay/historical-data/surrounding-temperature"
             element={

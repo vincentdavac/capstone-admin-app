@@ -39,6 +39,7 @@ import {
   Thermometer,
   Waves,
   Wind,
+  MapPin
 } from "lucide-react";
 
 type NavItem = {
@@ -127,6 +128,12 @@ const navItems: NavItem[] = [
     name: "Historical Data",
     icon: <Management />,
     subItems: [
+       {
+        name: "Buoy Location",
+        path: "/barangay/historical-data/buoy-location",
+        icon: <MapPin className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
       {
         name: "Surroundings Temperature",
         path: "/barangay/historical-data/surrounding-temperature",

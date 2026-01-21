@@ -12,9 +12,9 @@ const riverMonitoring = () => {
   useEffect(() => {
     document.title = "River Monitoring | X-Stream";
   }, []);
-  const { data, loading, error,currentLng, currentLat } = buoyDataHooks();
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  const { data, loading, error,currentLng, currentLat,hectare } = buoyDataHooks();
+  // if (loading) return <div>Loading...</div>;
+  // if (error) return <div>Error: {error}</div>;
   if (!data) return <div>No data</div>;
 
   return (
@@ -25,6 +25,7 @@ const riverMonitoring = () => {
         onDistanceChange={setDistanceKm}
         currentLat={currentLat}
         currentLng={currentLng}
+        hectare={hectare}
       />
       <SearchBuoy />
       <MapsWithHazard />

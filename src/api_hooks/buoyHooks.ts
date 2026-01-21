@@ -10,6 +10,7 @@ interface BuoysData {
   error: string | null;
   currentLat: any
   currentLng: any
+  hectare: any
 
 }
 export const buoyDataHooks = (): BuoysData => {
@@ -18,6 +19,7 @@ export const buoyDataHooks = (): BuoysData => {
   const [error, setError] = useState<string | null>(null);
   const [currentLat, setCurrentLat] = useState<number | null>(null);
   const [currentLng, setCurrentLng] = useState<number | null>(null);
+  const [hectare, setHectare] = useState<number | null>(null);
   const { token, user } = useContext(AppContext)!;
   const buoyId = user?.barangay?.buoys?.[0]?.id ?? 0;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
@@ -69,14 +71,12 @@ export const buoyDataHooks = (): BuoysData => {
     setError(null);
 
     try {
-      const result = await getBuoyByid.fetchBuoyById(
-        Number(buoyId),
-        token,
-        signal,
-      );
+      const result = await getBuoyByid.fetchBuoyById(Number(buoyId), token,signal,);
       if (!signal.aborted) {
         setData(result);
         console.log("testettetete",result);
+        console.log("testettetetecc",result?.data.attributes.riverHectare);
+        setHectare(result?.data.attributes.riverHectare)
       }
     } catch (err) {
       if (err instanceof Error && err.name === "AbortError") {
@@ -109,6 +109,7 @@ export const buoyDataHooks = (): BuoysData => {
     loading,
     error,
     currentLat,
-    currentLng
+    currentLng,
+    hectare
   };
 };

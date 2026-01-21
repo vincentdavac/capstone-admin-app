@@ -24,6 +24,7 @@ interface MapsWithHazardProps {
   onDistanceChange?: (distanceKm: string) => void;
   currentLat?: number | null;
   currentLng?: number | null;
+  hectare?: number | null;
 }
 
 export default function Maps({
@@ -31,6 +32,7 @@ export default function Maps({
   onDistanceChange,
   currentLat,
   currentLng,
+  hectare,
 }: MapsWithHazardProps) {
   useEffect(() => {
     const mapElement = document.getElementById("map");
@@ -56,7 +58,7 @@ export default function Maps({
 
     let distanceKm = "0.00";
 
-    if (currentLocation) {
+    if (hectare &&currentLocation) {
       const distanceMeters = map.distance(initialLocation, currentLocation);
       distanceKm = (distanceMeters / 1000).toFixed(2);
 
@@ -76,7 +78,7 @@ export default function Maps({
           offset: [0, -10],
         });
       const circleMarker= L.circle(currentLocation, {
-        radius: 20, 
+        radius: hectare, 
         color: "#dc2626",
         fillColor: "#dc2626",
         fillOpacity: 0.3,
@@ -125,7 +127,7 @@ export default function Maps({
     <div className="grid grid-cols-1 gap-4 w-full">
       <div className="flex items-center justify-center w-full">
         <span className="text-gray-600 text-xl sm:text-2xl font-medium text-center">
-          MAP OVERVIEW
+          MAP OVERVIEW {hectare}
         </span>
       </div>
       <div className="flex flex-col gap-4 w-full">

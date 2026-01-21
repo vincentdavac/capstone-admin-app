@@ -10,9 +10,9 @@ import API_BASE_URL from "../../../config/coreApi";
 import { AppContext } from "../../../context/AppContext";
 import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
 import { insertingAlerts } from "../../../api_hooks/dashboardHooks";
-
 import { useOutletContext } from "react-router";
-
+import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
+import AlertModal from "../../Barangay/AlertManagement/alertModal";
 type OutletContextType = {
   fetchUnreadChatCount: () => void;
 };
@@ -113,13 +113,18 @@ interface Props {
 
 const BarangayChatSupport = ({ alertsRef }: Props) => {
   const { fetchUnreadChatCount } = useOutletContext<OutletContextType>();
-
   const { token, user, echoInstance } = useContext(AppContext)!;
   const [receiverId, setReceiverId] = useState<number | null>(null);
   const [chatList, setChatList] = useState<ChatListItem[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<number | null>(null);
   insertingAlerts();
-
+  const buoyId = user?.barangay?.buoys?.[0]?.id ?? 0;
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
+  const { showAlert, currentAlert, handleClose } = useAlertMonitor(
+    buoyCode?.toString() ?? "",
+    5000,
+    buoyId?.toString() ?? "",
+  );
   useEffect(() => {
     document.title = "Chat Support | X-Stream";
   }, []);
@@ -131,7 +136,7 @@ const BarangayChatSupport = ({ alertsRef }: Props) => {
 
   // Map API response to ChatListItem[]
   const mapApiResponseToChatList = (
-    apiData: ChatListItemProps[]
+    apiData: ChatListItemProps[],
   ): ChatListItem[] => {
     if (!Array.isArray(apiData)) return [];
 
@@ -175,7 +180,7 @@ const BarangayChatSupport = ({ alertsRef }: Props) => {
         console.error("Failed to fetch chatlist:", data);
         alertsRef.current?.addAlert(
           "error",
-          data.message || "Failed to load chats"
+          data.message || "Failed to load chats",
         );
       }
     } catch (error) {
@@ -195,14 +200,14 @@ const BarangayChatSupport = ({ alertsRef }: Props) => {
             Accept: "application/json",
             "Content-Type": "application/json",
           },
-        }
+        },
       );
       const data = await res.json();
       if (res.ok) {
         setChatList((prevList) =>
           prevList.map((chat) =>
-            chat.id === chatId ? { ...chat, isRead: true } : chat
-          )
+            chat.id === chatId ? { ...chat, isRead: true } : chat,
+          ),
         );
       } else {
         console.error("Failed to mark chat as read:", data);
@@ -451,6 +456,11 @@ const BarangayChatSupport = ({ alertsRef }: Props) => {
               onMessageSent={() => {
                 fetchChatBox(selectedChat.id);
               }}
+            />
+            <AlertModal
+              isOpen={showAlert}
+              alert={currentAlert}
+              onClose={handleClose}
             />
           </div>
         </div>

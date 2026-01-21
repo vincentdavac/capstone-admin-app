@@ -11,7 +11,9 @@ import UsersPagination from "../../../components/Manage User/UsersPagination";
 
 import UpdateUserModal from "./UpdateUserModal";
 import ArchiveUserModal from "./ArchiveUserModal";
-import {insertingAlerts } from "../../../api_hooks/dashboardHooks";
+import { insertingAlerts } from "../../../api_hooks/dashboardHooks";
+import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
+import AlertModal from "../../Barangay/AlertManagement/alertModal";
 interface BuoyData {
   id: number;
   buoyCode: string;
@@ -63,6 +65,8 @@ interface Props {
 const BarangayManageUsers = ({ alertsRef }: Props) => {
   insertingAlerts();
   const { user, token } = useContext(AppContext)!;
+  const buoyId = user?.barangay?.buoys?.[0]?.id ?? 0;
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   // state:
   const [showUpdate, setShowUpdate] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
@@ -73,7 +77,7 @@ const BarangayManageUsers = ({ alertsRef }: Props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const inputRef = useRef<HTMLInputElement>(
-    null
+    null,
   ) as React.RefObject<HTMLInputElement>;
 
   // handlers:
@@ -137,7 +141,12 @@ const BarangayManageUsers = ({ alertsRef }: Props) => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentUsers = filteredUsers.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
+  );
+  const { showAlert, currentAlert, handleClose } = useAlertMonitor(
+    buoyCode?.toString() ?? "",
+    5000,
+    buoyId?.toString() ?? "",
   );
   // --- END Logic ---
 
@@ -191,6 +200,11 @@ const BarangayManageUsers = ({ alertsRef }: Props) => {
         onArchived={fetchUsers}
         alertsRef={alertsRef}
         userData={selectedUser ?? undefined}
+      />
+       <AlertModal
+        isOpen={showAlert}
+        alert={currentAlert}
+        onClose={handleClose}
       />
     </div>
   );

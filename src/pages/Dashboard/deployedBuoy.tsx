@@ -8,9 +8,9 @@ import { AppContext } from "../../context/AppContext";
 import { ref, onValue } from "firebase/database";
 import { database, auth } from "../../firebaseCredentials/firebase";
 import { signInAnonymously } from "firebase/auth";
-
+import { useAlertMonitor } from "../../api_hooks/alertMonitoringHooks";
 import API_BASE_URL from "../../config/coreApi";
-
+import AlertModal from "../Barangay/AlertManagement/alertModal";
 interface BuoyAttributes {
   buoyCode: string;
   riverName: string;
@@ -52,7 +52,7 @@ const tropicalPage = () => {
   const [currentLat, setCurrentLat] = useState<number | null>(null);
   const [currentLng, setCurrentLng] = useState<number | null>(null);
   const [batteryPercentage, setBatteryPercentage] = useState<number | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -99,7 +99,7 @@ const tropicalPage = () => {
     return unsubscribe;
   }, []);
 
-  insertingAlerts(); // run on mount
+  insertingAlerts();
 
   const fetchBuoyById = async (buoyId: number, token: string) => {
     try {
@@ -110,7 +110,7 @@ const tropicalPage = () => {
             Authorization: `Bearer ${token}`,
             Accept: "application/json",
           },
-        }
+        },
       );
 
       const data = await response.json();
@@ -140,7 +140,11 @@ const tropicalPage = () => {
 
     getBuoy();
   }, [token, buoyId]);
-
+  const { showAlert, currentAlert, handleClose } = useAlertMonitor(
+    buoyCode?.toString() ?? "",
+    5000,
+    buoyId?.toString() ?? "",
+  );
   if (loading) {
     return (
       <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 h-[80vh] flex items-center justify-center">
@@ -172,6 +176,11 @@ const tropicalPage = () => {
         currentLat={currentLat}
         currentLng={currentLng}
         batteryPercentage={batteryPercentage}
+      />
+      <AlertModal
+        isOpen={showAlert}
+        alert={currentAlert}
+        onClose={handleClose}
       />
     </div>
   );

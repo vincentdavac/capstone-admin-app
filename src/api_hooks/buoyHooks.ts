@@ -8,10 +8,10 @@ interface BuoysData {
   data: buoyData | null;
   loading: boolean;
   error: string | null;
-  currentLat: any
-  currentLng: any
-  hectare: any
-
+  currentLat: any;
+  currentLng: any;
+  hectare: any;
+  WaterLevel: any
 }
 export const buoyDataHooks = (): BuoysData => {
   const [data, setData] = useState<buoyData | null>(null);
@@ -21,15 +21,21 @@ export const buoyDataHooks = (): BuoysData => {
   const [currentLng, setCurrentLng] = useState<number | null>(null);
   const [hectare, setHectare] = useState<number | null>(null);
   const { token, user } = useContext(AppContext)!;
+  const [WaterLevel, setWaterLevel] = useState<number | null>(null);
   const buoyId = user?.barangay?.buoys?.[0]?.id ?? 0;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   useEffect(() => {
     if (!buoyCode) return;
-
+    const waterLevel = ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_FEET`);
     const latRef = ref(database, `/${buoyCode}/GPS/LATITUDE`);
     const lngRef = ref(database, `/${buoyCode}/GPS/LONGITUDE`);
     const batteryRef = ref(database, `/${buoyCode}/BATTERY/PERCENTAGE`);
 
+    const unsubWater = onValue(waterLevel, (snapshot) => {
+      if (snapshot.exists()) {
+        setWaterLevel(Number(snapshot.val()));
+      }
+    });
     const unsubLat = onValue(latRef, (snapshot) => {
       if (snapshot.exists()) {
         setCurrentLat(Number(snapshot.val()));
@@ -44,7 +50,7 @@ export const buoyDataHooks = (): BuoysData => {
     return () => {
       unsubLat();
       unsubLng();
- 
+      unsubWater();
     };
   }, [buoyCode]);
 
@@ -60,7 +66,7 @@ export const buoyDataHooks = (): BuoysData => {
     return unsubscribe;
   }, []);
   console.log("firebase data", currentLat);
-  
+
   const fetchBuoy = async (signal: AbortSignal) => {
     if (!buoyId || !token) {
       setData(null);
@@ -71,12 +77,14 @@ export const buoyDataHooks = (): BuoysData => {
     setError(null);
 
     try {
-      const result = await getBuoyByid.fetchBuoyById(Number(buoyId), token,signal,);
+      const result = await getBuoyByid.fetchBuoyById(
+        Number(buoyId),
+        token,
+        signal,
+      );
       if (!signal.aborted) {
         setData(result);
-        console.log("testettetete",result);
-        console.log("testettetetecc",result?.data.attributes.riverHectare);
-        setHectare(result?.data.attributes.riverHectare)
+        setHectare(result?.data.attributes.riverHectare);
       }
     } catch (err) {
       if (err instanceof Error && err.name === "AbortError") {
@@ -110,6 +118,7 @@ export const buoyDataHooks = (): BuoysData => {
     error,
     currentLat,
     currentLng,
-    hectare
+    hectare,
+    WaterLevel,
   };
 };

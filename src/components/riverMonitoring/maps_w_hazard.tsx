@@ -358,7 +358,7 @@ export default function MapsWithHazard() {
       });
       charts.push(chart);
       unsubscribers.push(
-        onValue(ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_METER`), (s) => {
+        onValue(ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_FEET`), (s) => {
           const value = s.exists() ? toNumberOrZero(s.val()) : 0;
 
           chart.setOption({
@@ -565,7 +565,7 @@ export default function MapsWithHazard() {
           footerText="Normal Pressure indicates fair weather."
         />
         <SensorCard
-          title="Water Level (m)"
+          title="Water Level (ft)"
           valueRef={waterLevel}
           footerText="Elevated levels can indicate surge risks."
         />

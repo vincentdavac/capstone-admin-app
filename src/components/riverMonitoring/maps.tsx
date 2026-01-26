@@ -25,6 +25,7 @@ interface MapsWithHazardProps {
   currentLat?: number | null;
   currentLng?: number | null;
   hectare?: number | null;
+  WaterLevel?: number | null;
 }
 
 export default function Maps({
@@ -33,6 +34,7 @@ export default function Maps({
   currentLat,
   currentLng,
   hectare,
+  WaterLevel,
 }: MapsWithHazardProps) {
   useEffect(() => {
     const mapElement = document.getElementById("map");
@@ -58,7 +60,22 @@ export default function Maps({
 
     let distanceKm = "0.00";
 
-    if (hectare &&currentLocation) {
+    if (hectare && currentLocation && WaterLevel) {
+      var blue = "#3b82f6";
+      var red = "#dc2626";
+      var grey = "#e5e7eb";
+      var finalColor = "";
+      var maxWaterLevel = 13;
+      var percentage = (WaterLevel / maxWaterLevel) * 100;
+      if (percentage < 40) {
+        finalColor = grey;
+      } else if (percentage >= 41 && percentage <= 60) {
+        finalColor = blue;
+      } else if (percentage >= 61 && percentage <= 99) {
+        finalColor = blue;
+      } else if (percentage == 100) {
+        finalColor = red;
+      }
       const distanceMeters = map.distance(initialLocation, currentLocation);
       distanceKm = (distanceMeters / 1000).toFixed(2);
 
@@ -77,10 +94,10 @@ export default function Maps({
           direction: "top",
           offset: [0, -10],
         });
-      const circleMarker= L.circle(currentLocation, {
-        radius: hectare, 
-        color: "#dc2626",
-        fillColor: "#dc2626",
+      const circleMarker = L.circle(currentLocation, {
+        radius: hectare,
+        color: finalColor,
+        fillColor: finalColor,
         fillOpacity: 0.3,
         weight: 2,
       });
@@ -125,10 +142,30 @@ export default function Maps({
 
   return (
     <div className="grid grid-cols-1 gap-4 w-full">
-      <div className="flex items-center justify-center w-full">
-        <span className="text-gray-600 text-xl sm:text-2xl font-medium text-center">
-          MAP OVERVIEW {hectare}
+      <div className="flex items-center justify-between w-full">
+        <span className="text-gray-600 text-xl sm:text-2xl font-medium text-center flex-1 ml-60">
+         Current water level status
         </span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-white rounded border border-gray-500"></div>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              White Alert
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-blue-500 rounded border border-gray-300"></div>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+              Blue Alert
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-6 h-6 bg-red-500 rounded border border-gray-300"></div>
+            <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+             Red Alert
+            </span>
+          </div>
+        </div>
       </div>
       <div className="flex flex-col gap-4 w-full">
         <div className="border-2 border-[#D9D9D9] dark:border-gray-700 rounded-xl h-64 sm:h-80 lg:h-[605px] w-full shadow-lg dark:bg-gray-800 overflow-hidden">

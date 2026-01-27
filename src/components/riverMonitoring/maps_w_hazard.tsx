@@ -35,33 +35,31 @@ export default function MapsWithHazard() {
     return unsubscribe;
   }, []);
 
-  // --- Helper Functions for Styling ---
+  // --- Fixed Humidity Wave Effect Function ---
   const renderHumidity = (
     container: HTMLDivElement,
     isDark: boolean,
-    percent: number
+    percent: number,
   ) => {
-    // In-adjust ang fillY calculation para sa mas malaking radius
-    const fillY = 10 + (180 - (percent / 100) * 180);
+    const fillY = 200 - (percent / 100) * 200;
     const circleFill = isDark ? "#1f2937" : "#f0f9ff";
-    const circleStroke = isDark ? "#60a5fa" : "#3b82f6";
+    const circleStroke = "#2185C5";
 
-    // Pinalaki ang max-width/height at in-adjust ang circle radius (r) mula 85/90 patungong 95/98
     container.innerHTML = `
       <svg viewBox="0 0 200 200" style="width:100%;height:100%;max-width:290px;max-height:290px;margin:0 auto;">
           <defs>
             <clipPath id="circleClip"><circle cx="100" cy="100" r="95" /></clipPath>
             <pattern id="wave" x="0" y="0" width="400" height="200" patternUnits="userSpaceOnUse">
-              <path d="M0,50 Q50,35 100,50 T200,50 T300,50 T400,50 V200 H0 Z" fill="#3b82f6" opacity="0.85">
-                <animateTransform attributeName="transform" type="translate" from="0,0" to="-200,0" dur="3s" repeatCount="indefinite" />
+              <path d="M0,20 Q50,0 100,20 T200,20 T300,20 T400,20 V200 H0 Z" fill="#2185C5" opacity="0.85">
+                <animateTransform attributeName="transform" type="translate" from="0,0" to="-200,0" dur="2s" repeatCount="indefinite" />
               </path>
             </pattern>
           </defs>
           <circle cx="100" cy="100" r="98" fill="none" stroke="${circleStroke}" stroke-width="4" />
           <circle cx="100" cy="100" r="95" fill="${circleFill}" /> 
           <g clip-path="url(#circleClip)">
-            <rect x="0" y="${fillY}" width="200" height="200" fill="url(#wave)">
-              <animate attributeName="y" from="200" to="${fillY}" dur="2s" fill="freeze" />
+            <rect x="0" y="${fillY - 15}" width="400" height="220" fill="url(#wave)">
+              <animate attributeName="y" from="200" to="${fillY - 15}" dur="1.5s" fill="freeze" />
             </rect>
           </g>
           <text x="100" y="115" text-anchor="middle" font-size="52" font-weight="bold" fill="#ffffff" style="text-shadow:0 2px 4px rgba(0,0,0,0.5)">
@@ -79,13 +77,28 @@ export default function MapsWithHazard() {
     chart: echarts.ECharts,
     seriesOptions: any,
     isDark: boolean,
-    dynamicMax?: number
+    dynamicMax?: number,
   ) => {
     const textColor = isDark ? "#ccc" : "#464646";
     const axisLineColor = isDark ? "#9ca3af" : "#fff";
     let newOptions: echarts.EChartsOption = { series: [] };
 
-    if (seriesOptions.type === "gauge" && seriesOptions.center[1] === "75%") {
+    if (seriesOptions.type === "gauge" && seriesOptions.startAngle === 200) {
+      newOptions = {
+        series: [
+          {
+            axisTick: { lineStyle: { color: isDark ? "#666" : "#999" } },
+            splitLine: { lineStyle: { color: isDark ? "#666" : "#999" } },
+            axisLabel: { color: isDark ? "#aaa" : "#999" },
+          },
+          {},
+        ],
+      };
+    } else if (
+      seriesOptions.type === "gauge" &&
+      seriesOptions.center &&
+      seriesOptions.center[1] === "75%"
+    ) {
       newOptions = {
         series: [
           {
@@ -97,6 +110,7 @@ export default function MapsWithHazard() {
       };
     } else if (
       seriesOptions.type === "gauge" &&
+      seriesOptions.center &&
       seriesOptions.center[1] === "60%"
     ) {
       newOptions = {
@@ -113,6 +127,7 @@ export default function MapsWithHazard() {
       };
     } else if (
       seriesOptions.type === "gauge" &&
+      seriesOptions.center &&
       seriesOptions.center[1] === "55%"
     ) {
       newOptions = {
@@ -141,7 +156,6 @@ export default function MapsWithHazard() {
     chart.setOption(newOptions);
   };
 
-  // --- Data Fetching ---
   useEffect(() => {
     const sstRef = ref(database, `/${buoyCode}/BME280/SURROUNDING_TEMPERATURE`);
     const unsubscribe = onValue(sstRef, (snapshot) => {
@@ -161,7 +175,6 @@ export default function MapsWithHazard() {
     return () => unsubscribe();
   }, [buoyCode]);
 
-  // --- Charts Initialization and Theme Logic ---
   useEffect(() => {
     const charts: echarts.ECharts[] = [];
     const unsubscribers: (() => void)[] = [];
@@ -178,7 +191,7 @@ export default function MapsWithHazard() {
             chart,
             seriesData,
             isDark,
-            index === 0 ? (sstData > 0 ? sstData * 1.2 : 3) : undefined
+            index === 0 ? (sstData > 0 ? sstData * 1.2 : 3) : undefined,
           );
         }
       });
@@ -186,34 +199,166 @@ export default function MapsWithHazard() {
         renderHumidity(humidityRef.current, isDark, percentage);
     };
 
-    // Initialize Wind Speed
+    // 1. Surroundings Temperature
+    if (gaugeRef.current) {
+      const chart = echarts.init(gaugeRef.current);
+      chart.setOption({
+        series: [
+          {
+            type: "gauge",
+            center: ["50%", "65%"],
+            startAngle: 200,
+            endAngle: -20,
+            min: 0,
+            max: 60,
+            splitNumber: 12,
+            itemStyle: { color: "#FFAB91" },
+            progress: {
+              show: true,
+              width: 15,
+              itemStyle: { color: "#FFAB91" },
+            },
+            pointer: { show: false },
+            axisLine: { lineStyle: { width: 15, color: [[1, "#EBEFF4"]] } },
+            axisTick: {
+              distance: -40,
+              splitNumber: 5,
+              lineStyle: { width: 1, color: "#999" },
+            },
+            splitLine: {
+              distance: -42,
+              length: 10,
+              lineStyle: { width: 2, color: "#999" },
+            },
+            axisLabel: { distance: -15, color: "#999", fontSize: 12 },
+            detail: {
+              valueAnimation: true,
+              offsetCenter: [0, "-5%"],
+              fontSize: 17,
+              fontWeight: "bold",
+              color: "#FFAB91",
+              formatter: (value: number) => {
+                const fahrenheit = (value * 9) / 5 + 32;
+                return `${value.toFixed(2)} °C\n{f|${fahrenheit.toFixed(1)} °F}`;
+              },
+              rich: {
+                f: {
+                  fontSize: 17,
+                  color: "#FFAB91",
+                  padding: [10, 0],
+                  fontWeight: "bold",
+                },
+              },
+            },
+            data: [{ value: 0 }],
+          },
+          {
+            type: "gauge",
+            center: ["50%", "65%"],
+            startAngle: 200,
+            endAngle: -20,
+            min: 0,
+            max: 60,
+            itemStyle: { color: "#FD7347" },
+            progress: { show: true, width: 4 },
+            pointer: { show: false },
+            axisLine: { show: false },
+            axisTick: { show: false },
+            splitLine: { show: false },
+            axisLabel: { show: false },
+            detail: { show: false },
+            data: [{ value: 0 }],
+          },
+        ],
+      });
+      charts.push(chart);
+      unsubscribers.push(
+        onValue(
+          ref(database, `/${buoyCode}/BME280/SURROUNDING_TEMPERATURE`),
+          (s) => {
+            const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+            chart.setOption({
+              series: [{ data: [{ value }] }, { data: [{ value }] }],
+            });
+          },
+        ),
+      );
+    }
+
+// 2. Wind Speed (Updated UI to match image_552a74.png)
     if (windSpeed.current) {
       const chart = echarts.init(windSpeed.current);
       chart.setOption({
         series: [
           {
             type: "gauge",
-            radius: "110%",
-            center: ["50%", "60%"],
-            max: 185,
-            progress: { show: true, width: 12 },
+            startAngle: 225,
+            endAngle: -45,
+            min: 0,
+            max: 150,
+            splitNumber: 10,
+            radius: "100%", // Adjust based on container size
+            center: ["50%", "50%"],
             axisLine: {
               lineStyle: {
-                width: 12,
-                color: [
-                  [0.31, "#D3D3D3"],
-                  [0.655, "#0076E8"],
-                  [1, "#E32F20"],
-                ],
+                width: 10,
+                color: [[1, "#EBEFF4"]], // Light gray background track
               },
             },
-            axisTick: { show: false },
-            splitLine: { distance: 0, length: 5, lineStyle: { width: 1 } },
-            axisLabel: { distance: 15, fontSize: 8 },
+            progress: {
+              show: true,
+              width: 10,
+              itemStyle: {
+                color: "#4B70E2", // The blue color from your image
+              },
+            },
+            pointer: {
+              icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z", // Needle shape
+              length: "60%",
+              width: 6,
+              offsetCenter: [0, "5%"],
+              itemStyle: {
+                color: "#4B70E2",
+              },
+            },
+            axisTick: {
+              distance: 10,
+              length: 8,
+              lineStyle: {
+                color: "#999",
+                width: 1,
+              },
+            },
+            splitLine: {
+              distance: 10,
+              length: 15,
+              lineStyle: {
+                color: "#999",
+                width: 2,
+              },
+            },
+            axisLabel: {
+              distance: 25,
+              color: "#999",
+              fontSize: 11,
+            },
+            anchor: {
+              show: true,
+              showAbove: true,
+              size: 18,
+              itemStyle: {
+                borderWidth: 4,
+                borderColor: "#4B70E2",
+                color: "#fff",
+              },
+            },
             detail: {
-              fontSize: 13,
-              offsetCenter: [0, "60%"],
-              formatter: "{value}km/h",
+              valueAnimation: true,
+              fontSize: 22,
+              fontWeight: "bold",
+              offsetCenter: [0, "85%"],
+              formatter: "{value} km/h",
+              color: "#333",
             },
             data: [{ value: 0 }],
           },
@@ -225,89 +370,65 @@ export default function MapsWithHazard() {
           ref(database, `/${buoyCode}/ANEMOMETER/WIND_SPEED_km_h`),
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-
-            chart.setOption({
-              series: [{ data: [{ value }] }],
-            });
-          }
-        )
-      );
-    }
-    if (gaugeRef.current) {
-      const chart = echarts.init(gaugeRef.current);
-      chart.setOption({
-        series: [
-          {
-            type: "gauge",
-            center: ["50%", "55%"],
-            radius: "110%",
-            axisLine: {
-              lineStyle: {
-                width: 10,
-                color: [
-                  [0.31, "#D3D3D3"],
-                  [0.655, "#0076E8"],
-                  [1, "#E32F20"],
-                ],
-              },
-            },
-            axisLabel: { distance: 20, fontSize: 10 },
-            detail: {
-              formatter: "{value} °C",
-              fontSize: 15,
-              offsetCenter: [0, "60%"],
-            },
-
-            data: [{ value: 0 }],
+            chart.setOption({ series: [{ data: [{ value }] }] });
           },
-        ],
-      });
-
-      charts.push(chart);
-
-      unsubscribers.push(
-        onValue(
-          ref(database, `/${buoyCode}/BME280/SURROUNDING_TEMPERATURE`),
-          (s) => {
-            const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-
-            chart.setOption({
-              series: [{ data: [{ value }] }],
-            });
-          }
-        )
+        ),
       );
     }
 
-    // Initialize Atmospheric Pressure
+    // 3. Atmospheric Pressure (LAYOUT FIXED TO MATCH IMAGE)
     if (atmosphericPressure.current) {
       const chart = echarts.init(atmosphericPressure.current);
       chart.setOption({
         series: [
+          // Outer Scale (Red)
           {
             type: "gauge",
-            radius: "110%",
-            center: ["50%", "60%"],
-            min: 0,
-            max: 1000,
-            axisLine: {
-              lineStyle: {
-                width: 10,
-                color: [
-                  [0.31, "#D3D3D3"],
-                  [0.655, "#0076E8"],
-                  [1, "#E32F20"],
-                ],
-              },
+            min: 900,
+            max: 1100,
+            radius: "90%", // Mas malaki para dikit sa black
+            center: ["50%", "65%"], // Binaba para hindi putol ang 1000
+            startAngle: 210,
+            endAngle: -30,
+            splitNumber: 10,
+            axisLine: { lineStyle: { color: [[1, "#ff0000"]], width: 2 } },
+            splitLine: { distance: -10, length: 12, lineStyle: { color: "#ff0000", width: 2 } },
+            axisTick: { distance: -6, length: 6, lineStyle: { color: "#ff0000" } },
+            axisLabel: { distance: -35, color: "#ff0000", fontSize: 11, fontWeight: "bold" },
+            pointer: { 
+                icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z", 
+                length: "75%", 
+                width: 4, 
+                itemStyle: { color: "#000" } 
             },
-            axisLabel: { distance: 15, fontSize: 8 },
-            detail: {
-              fontSize: 13,
-              offsetCenter: [0, "60%"],
-              formatter: "{value} hPa",
+            anchor: { show: true, showAbove: true, size: 8, itemStyle: { color: "#000" } },
+            detail: { 
+                valueAnimation: true, 
+                formatter: "{value} mbar", 
+                color: "#333", 
+                fontSize: 18, 
+                fontWeight: "bold", 
+                offsetCenter: [0, "40%"] 
             },
-            data: [{ value: 0 }],
+            data: [{ value: 1013 }]
           },
+          // Inner Scale (Black)
+          {
+            type: "gauge",
+            min: 900,
+            max: 1100,
+            radius: "82%", // Halos dikit na sa red scale
+            center: ["50%", "65%"], 
+            startAngle: 210,
+            endAngle: -30,
+            splitNumber: 10,
+            axisLine: { lineStyle: { color: [[1, "#000"]], width: 2 } },
+            splitLine: { distance: -2, length: 10, lineStyle: { color: "#000", width: 2 } },
+            axisTick: { distance: 2, length: 5, lineStyle: { color: "#000" } },
+            axisLabel: { distance: 6, color: "#000", fontSize: 9, fontWeight: "bold" },
+            pointer: { show: false },
+            detail: { show: false }
+          }
         ],
       });
       charts.push(chart);
@@ -316,43 +437,73 @@ export default function MapsWithHazard() {
           ref(database, `/${buoyCode}/BME280/ATMOSPHERIC_PRESSURE`),
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-
-            chart.setOption({
-              series: [{ data: [{ value }] }],
-            });
-          }
-        )
+            chart.setOption({ series: [{ data: [{ value }] }] });
+          },
+        ),
       );
     }
 
-    // Initialize Water Level
+    // 4. Water Level
     if (waterLevel.current) {
       const chart = echarts.init(waterLevel.current);
       chart.setOption({
         series: [
           {
             type: "gauge",
-            center: ["50%", "55%"],
-            radius: "110%",
-            min: 1,
-            max: 13.5,
+            center: ["50%", "85%"], 
+            startAngle: 180,
+            endAngle: 0,
+            min: 0,
+            max: 3,
+            splitNumber: 6,
+            radius: "100%", 
             axisLine: {
               lineStyle: {
-                width: 10,
+                width: 6,
                 color: [
-                  [0.31, "#D3D3D3"],
-                  [0.655, "#0076E8"],
-                  [1, "#E32F20"],
+                  [0.33, "#7BFFB3"], // Green (0-1m)
+                  [0.66, "#FFD747"], // Yellow (1-2m)
+                  [1, "#FF5252"],    // Red (2-3m)
                 ],
               },
             },
-            axisLabel: { distance: 25, fontSize: 12 },
-            detail: {
-              formatter: "{value} m",
-              fontSize: 12,
-              offsetCenter: [0, "50%"],
+            pointer: {
+              icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z", // Triangle arrow
+              length: "15%",
+              width: 13,
+              offsetCenter: [0, "-55%"], 
+              itemStyle: { color: "#FF5252" },
             },
-            data: [{ value: 0 }],
+            axisTick: {
+              distance: 10,
+              length: 10,
+              lineStyle: { color: "auto", width: 1 },
+            },
+            splitLine: {
+              distance: 10,
+              length: 15,
+              lineStyle: { color: "auto", width: 2 },
+            },
+            axisLabel: {
+              distance: -50, 
+              color: "#666",
+              fontSize: 10,
+              formatter: "{value}m",
+            },
+            detail: {
+              valueAnimation: true,
+              fontSize: 22,
+              fontWeight: "bold",
+              offsetCenter: [0, "-40%"], // Sa gitna ng arch
+              formatter: "{value} m",
+              color: "#FF5252",
+            },
+            title: {
+              offsetCenter: [0, "-10%"],
+              fontSize: 14,
+              color: "#666",
+            },
+            data: [{ value: 0, name: "Water Level" }],
           },
         ],
       });
@@ -360,15 +511,24 @@ export default function MapsWithHazard() {
       unsubscribers.push(
         onValue(ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_FEET`), (s) => {
           const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+          let currentColor = "#7BFFB3";
+          if (value > 1) currentColor = "#FFD747";
+          if (value > 2) currentColor = "#FF5252";
 
           chart.setOption({
-            series: [{ data: [{ value }] }],
+            series: [
+              {
+                data: [{ value, name: "Water Level" }],
+                detail: { color: currentColor },
+                pointer: { itemStyle: { color: currentColor } },
+              },
+            ],
           });
-        })
+        }),
       );
     }
 
-    // Initialize Water Temperature
+    // 5. Water Temperature
     if (waterTemperature.current) {
       const chart = echarts.init(waterTemperature.current);
       chart.setOption({
@@ -403,15 +563,12 @@ export default function MapsWithHazard() {
       unsubscribers.push(
         onValue(ref(database, `/${buoyCode}/MS5837/WATER_TEMPERATURE`), (s) => {
           const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-
-          chart.setOption({
-            series: [{ data: [{ value }] }],
-          });
-        })
+          chart.setOption({ series: [{ data: [{ value }] }] });
+        }),
       );
     }
 
-    // Initialize Water Pressure
+    // 6. Water Pressure
     if (waterPressure.current) {
       const chart = echarts.init(waterPressure.current);
       chart.setOption({
@@ -446,15 +603,12 @@ export default function MapsWithHazard() {
       unsubscribers.push(
         onValue(ref(database, `/${buoyCode}/MS5837/WATER_PRESSURE`), (s) => {
           const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-
-          chart.setOption({
-            series: [{ data: [{ value }] }],
-          });
-        })
+          chart.setOption({ series: [{ data: [{ value }] }] });
+        }),
       );
     }
 
-    // Initialize Rain Gauge
+    // 7. Rain Gauge
     if (rainGauge.current) {
       const chart = echarts.init(rainGauge.current);
       chart.setOption({
@@ -491,12 +645,9 @@ export default function MapsWithHazard() {
           ref(database, `/${buoyCode}/RAIN_GAUGE/FALL_COUNT_MILIMETERS`),
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-
-            chart.setOption({
-              series: [{ data: [{ value }] }],
-            });
-          }
-        )
+            chart.setOption({ series: [{ data: [{ value }] }] });
+          },
+        ),
       );
     }
 
@@ -532,7 +683,10 @@ export default function MapsWithHazard() {
       <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1 text-center">
         {title}
       </h3>
-      <div ref={valueRef} className="w-full h-48 sm:h-56 lg:h-64 flex-grow flex items-center justify-center" />
+      <div
+        ref={valueRef}
+        className="w-full h-48 sm:h-56 lg:h-64 flex-grow flex items-center justify-center"
+      />
       <div className="w-full text-center mt-1 pt-1 border-t border-gray-200 dark:border-gray-700">
         <p className="text-sm text-gray-600 dark:text-gray-400 italic leading-snug">
           {footerText}

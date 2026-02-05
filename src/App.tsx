@@ -65,13 +65,8 @@ import BarangaySignIn from "./pages/AuthPages/Barangay/BarangaySignIn";
 import BarangayForgotPassword from "./pages/AuthPages/Barangay/BarangayForgotPassword";
 
 // HIstorical Table
-import SurroundingTable from "./pages/Administrator/Historical Tables/SurroundingTable";
-import HumidityTable from "./pages/Administrator/Historical Tables/HumidityTable";
-import WaterMonitoring from "./pages/Administrator/Historical Tables/WaterMonitoring";
 import RainMonitoring from "./pages/Administrator/Historical Tables/RainMonitoring";
-import AtmosphericPressure from "./pages/Administrator/Historical Tables/AtmosphericPressure";
 import WindSpeed from "./pages/Administrator/Historical Tables/WindSpeed";
-import WaterDepth from "./pages/Administrator/Historical Tables/WaterDepth";
 import RainGauge from "./pages/Administrator/Historical Tables/RainGauge";
 import FeedbackArchivedTable from "./pages/Administrator/Archive/Feedbacks/FeedbackArchivedTable";
 import BarangayManageUsers from "./pages/Barangay/ManageUsers/BarangayManageUsers";
@@ -79,6 +74,9 @@ import BarangayArchivedUsers from "./pages/Barangay/Archive/Users/BarangayArchiv
 import BarangayProtectedRoutes from "./middleware/BarangayProtectedRoutes";
 import HotlinesArchivedTable from "./pages/Administrator/Archive/Hotlines/HotlinesTable";
 import BuoyLocation from "./pages/Administrator/Historical Tables/BuoyLocation";
+import BatteryHealth from "./pages/Administrator/Historical Tables/BatteryHealth";
+import BME280Data from "./pages/Administrator/Historical Tables/BME280Data";
+import MS5837Data from "./pages/Administrator/Historical Tables/MS5837Data";
 
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -368,29 +366,22 @@ export default function App({ alertsRef }: AppProps) {
             }
           />
           <Route
-            path="/barangay/historical-data/surrounding-temperature"
+            path="/barangay/historical-data/battery-health"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <SurroundingTable />
+                <BatteryHealth />
               </BarangayProtectedRoutes>
             }
           />
           <Route
-            path="/barangay/historical-data/humidity"
+            path="/barangay/historical-data/bme280-data"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <HumidityTable />
+                <BME280Data />
               </BarangayProtectedRoutes>
             }
           />
-          <Route
-            path="/barangay/historical-data/water-temperature"
-            element={
-              <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <WaterMonitoring />
-              </BarangayProtectedRoutes>
-            }
-          />
+
           <Route
             path="/barangay/historical-data/rain-monitoring"
             element={
@@ -399,14 +390,16 @@ export default function App({ alertsRef }: AppProps) {
               </BarangayProtectedRoutes>
             }
           />
+
           <Route
-            path="/barangay/historical-data/atmospheric-pressure"
+            path="/barangay/historical-data/ms5837-data"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <AtmosphericPressure />
+                <MS5837Data />
               </BarangayProtectedRoutes>
             }
           />
+
           <Route
             path="/barangay/historical-data/windspeed-monitoring"
             element={
@@ -415,14 +408,7 @@ export default function App({ alertsRef }: AppProps) {
               </BarangayProtectedRoutes>
             }
           />
-          <Route
-            path="/barangay/historical-data/water-level"
-            element={
-              <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <WaterDepth />
-              </BarangayProtectedRoutes>
-            }
-          />
+
           <Route
             path="/barangay/historical-data/rain-gauge"
             element={

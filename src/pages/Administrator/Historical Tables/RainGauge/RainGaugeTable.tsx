@@ -8,119 +8,55 @@ import {
 
 import { useState } from "react";
 
-import Badge from "../../../../components/ui/badge/Badge";
-
-interface BuoyLocation {
-  id: number;
-  buoy_code: string;
-  latitude: number;
-  longitude: number;
-  status: "Active" | "Offline";
-  last_reported: string;
+interface RainGauge {
+  id: number; // internal key
+  buoy_id: number;
+  rainfall_mm: number;
+  tip_count: number;
+  created_at: string;
 }
 
-const buoyLocations: BuoyLocation[] = [
+const rainGaugeData: RainGauge[] = [
   {
     id: 1,
-    buoy_code: "BUOY-001",
-    latitude: 14.5995,
-    longitude: 120.9842,
-    status: "Active",
-    last_reported: "2026-01-20 14:32",
+    buoy_id: 1,
+    rainfall_mm: 12.5,
+    tip_count: 50,
+    created_at: "2026-02-03 10:12:00",
   },
   {
     id: 2,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
+    buoy_id: 1,
+    rainfall_mm: 3.2,
+    tip_count: 13,
+    created_at: "2026-02-03 10:22:00",
   },
   {
     id: 3,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
+    buoy_id: 2,
+    rainfall_mm: 18.7,
+    tip_count: 75,
+    created_at: "2026-02-03 10:35:00",
   },
   {
     id: 4,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 5,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 6,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 7,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 8,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 9,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 10,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 11,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
+    buoy_id: 3,
+    rainfall_mm: 0.8,
+    tip_count: 3,
+    created_at: "2026-02-03 10:40:00",
   },
 ];
 
 const ROWS_PER_PAGE = 10;
 
-const BuoyLocationTable = () => {
+const RainGaugeTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(buoyLocations.length / ROWS_PER_PAGE);
-
+  const totalPages = Math.ceil(rainGaugeData.length / ROWS_PER_PAGE);
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
 
-  const currentRows = buoyLocations.slice(startIndex, endIndex);
+  const currentRows = rainGaugeData.slice(startIndex, endIndex);
 
   return (
     <div className="mt-5 rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -135,71 +71,64 @@ const BuoyLocationTable = () => {
               >
                 No.
               </TableCell>
+
               <TableCell
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Buoy Code
+                Buoy ID
               </TableCell>
+
               <TableCell
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Latitude
+                Rainfall (mm)
               </TableCell>
+
               <TableCell
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Longitude
+                Tip Count
               </TableCell>
+
               <TableCell
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Status
-              </TableCell>
-              <TableCell
-                isHeader
-                className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
-              >
-                Last Reported
+                Created At
               </TableCell>
             </TableRow>
           </TableHeader>
 
           {/* Table Body */}
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-center">
-            {currentRows.map((buoy, index) => (
-              <TableRow key={`${buoy.buoy_code}-${startIndex + index}`}>
-                {/* No. column */}
+            {currentRows.map((row, index) => (
+              <TableRow key={row.id}>
+                {/* No. */}
                 <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
                   {startIndex + index + 1}
                 </TableCell>
 
+                {/* Buoy ID */}
                 <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
-                  {buoy.buoy_code}
+                  {row.buoy_id}
                 </TableCell>
 
+                {/* Rainfall */}
                 <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {buoy.latitude.toFixed(5)}
+                  {row.rainfall_mm.toFixed(2)} mm
                 </TableCell>
 
+                {/* Tip Count */}
                 <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {buoy.longitude.toFixed(5)}
+                  {row.tip_count}
                 </TableCell>
 
-                <TableCell className="px-4 py-3 text-theme-sm">
-                  <Badge
-                    size="sm"
-                    color={buoy.status === "Active" ? "success" : "error"}
-                  >
-                    {buoy.status}
-                  </Badge>
-                </TableCell>
-
+                {/* Created At */}
                 <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {buoy.last_reported}
+                  {row.created_at}
                 </TableCell>
               </TableRow>
             ))}
@@ -220,9 +149,7 @@ const BuoyLocationTable = () => {
               onClick={() => setCurrentPage((p) => p - 1)}
               className="px-4 py-2 text-sm rounded-lg border border-gray-300
                          disabled:opacity-50 disabled:cursor-not-allowed
-                         hover:bg-gray-100 dark:hover:bg-white/[0.05]
-                             dark:text-white
-"
+                         hover:bg-gray-100 dark:hover:bg-white/[0.05]"
             >
               Previous
             </button>
@@ -243,4 +170,4 @@ const BuoyLocationTable = () => {
   );
 };
 
-export default BuoyLocationTable;
+export default RainGaugeTable;

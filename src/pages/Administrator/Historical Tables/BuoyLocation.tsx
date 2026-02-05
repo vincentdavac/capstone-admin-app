@@ -11,6 +11,7 @@ const BuoyLocation = () => {
     <>
       <PageBreadcrumb pageTitle="Buoy Location" />
       <div className="space-y-6">
+      
         <BuoyLocationComponentCard />
       </div>
     </>

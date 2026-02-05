@@ -1,20 +1,20 @@
 import { useEffect } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-import RainGaugeComponentCard from "./RainGauge/RainGaugeComponentCard";
+import BatteryHealthComponentCard from "./BatteryHeath/BatteryHealthComponentCard";
 
-const RainGauge = () => {
+const BatteryHealth = () => {
   useEffect(() => {
     document.title = "Battery Health | X-Stream";
   }, []);
 
   return (
     <>
-      <PageBreadcrumb pageTitle="Rain Gauge" />
+      <PageBreadcrumb pageTitle="Battery Health" />
       <div className="space-y-6">
-        <RainGaugeComponentCard />
+        <BatteryHealthComponentCard />
       </div>
     </>
   );
 };
 
-export default RainGauge;
+export default BatteryHealth;

@@ -28,18 +28,18 @@ import {
 import { useSidebar } from "../context/SidebarContext";
 import {
   CloudRain,
-  Droplet,
   Droplets,
-  Gauge,
   LayoutDashboard,
   MapPinHouse,
   Megaphone,
   MessagesSquare,
   Phone,
-  Thermometer,
   Waves,
   Wind,
-  MapPin
+  MapPin,
+  BatteryCharging,
+  HardDrive,
+  WavesLadder,
 } from "lucide-react";
 
 type NavItem = {
@@ -128,28 +128,22 @@ const navItems: NavItem[] = [
     name: "Historical Data",
     icon: <Management />,
     subItems: [
-       {
+      {
         name: "Buoy Location",
         path: "/barangay/historical-data/buoy-location",
         icon: <MapPin className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
-        name: "Surroundings Temperature",
-        path: "/barangay/historical-data/surrounding-temperature",
-        icon: <Thermometer className="w-5 h-5 stroke-[1.5]" />,
+        name: "Battery Health",
+        path: "/barangay/historical-data/battery-health",
+        icon: <BatteryCharging className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
-        name: "Humidity",
-        path: "/barangay/historical-data/humidity",
-        icon: <Droplet className="w-5 h-5 stroke-[1.5]" />,
-        pro: false,
-      },
-      {
-        name: "Water Temperature ",
-        path: "/barangay/historical-data/water-temperature",
-        icon: <Thermometer className="w-5 h-5 stroke-[1.5]" />,
+        name: "BME280 Data",
+        path: "/barangay/historical-data/bme280-data",
+        icon: <HardDrive className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
@@ -159,21 +153,15 @@ const navItems: NavItem[] = [
         pro: false,
       },
       {
-        name: "Atmospheric Pressure ",
-        path: "/barangay/historical-data/atmospheric-pressure",
-        icon: <Gauge className="w-5 h-5 stroke-[1.5]" />,
+        name: "MS5837 Data",
+        path: "/barangay/historical-data/ms5837-data",
+        icon: <WavesLadder className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
         name: "Wind Speed",
         path: "/barangay/historical-data/windspeed-monitoring",
         icon: <Wind className="w-5 h-5 stroke-[1.5]" />,
-        pro: false,
-      },
-      {
-        name: "Water Level",
-        path: "/barangay/historical-data/water-level",
-        icon: <Waves className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
       {
@@ -318,7 +306,7 @@ const filterNavItemsByUserType = (items: NavItem[], userType?: string) => {
     .map((item) => {
       if (item.subItems) {
         const filteredSubItems = item.subItems.filter((sub) =>
-          sub.path?.startsWith(`/${userType}`)
+          sub.path?.startsWith(`/${userType}`),
         );
         if (filteredSubItems.length === 0) return null;
         return { ...item, subItems: filteredSubItems };
@@ -347,7 +335,7 @@ const AppSidebar = ({ alertsRef, unreadChatCount }: Props) => {
 
       alertsRef.current?.addAlert(
         "warning",
-        `You are already logged in, no need to ${name}.`
+        `You are already logged in, no need to ${name}.`,
       );
     }
   };
@@ -356,14 +344,14 @@ const AppSidebar = ({ alertsRef, unreadChatCount }: Props) => {
     index: number;
   } | null>(null);
   const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
-    {}
+    {},
   );
   const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // const isActive = (path: string) => location.pathname === path;
   const isActive = useCallback(
     (path: string) => location.pathname === path,
-    [location.pathname]
+    [location.pathname],
   );
 
   useEffect(() => {
@@ -564,8 +552,8 @@ const AppSidebar = ({ alertsRef, unreadChatCount }: Props) => {
           isExpanded || isMobileOpen
             ? "w-[290px]"
             : isHovered
-            ? "w-[290px]"
-            : "w-[90px]"
+              ? "w-[290px]"
+              : "w-[90px]"
         }
         ${isMobileOpen ? "translate-x-0" : "-translate-x-full"}
         lg:translate-x-0`}
@@ -582,8 +570,8 @@ const AppSidebar = ({ alertsRef, unreadChatCount }: Props) => {
             user?.userType === "admin"
               ? "/admin/dashboard"
               : user?.userType === "barangay"
-              ? "/barangay/dashboard"
-              : "/"
+                ? "/barangay/dashboard"
+                : "/"
           }
         >
           {isExpanded || isHovered || isMobileOpen ? (

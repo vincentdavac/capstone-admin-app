@@ -1,13 +1,13 @@
 import React from "react";
-import BuoyLocationTable from "./BuoyLocationTable";
 import { Printer } from "lucide-react";
-import BuoyLocationMap from "./BuoyLocationMap";
+import BME280DataChart from "./BME280DataChart";
+import BME280Table from "./BME280DataTable";
 
-interface BuoyLocationComponentCardProps {
+interface BME280DataComponentCardProps {
   className?: string;
 }
 
-const BuoyLocationComponentCard: React.FC<BuoyLocationComponentCardProps> = ({
+const BME280DataComponentCard: React.FC<BME280DataComponentCardProps> = ({
   className = "",
 }) => {
   return (
@@ -65,11 +65,11 @@ const BuoyLocationComponentCard: React.FC<BuoyLocationComponentCardProps> = ({
 
       {/* Card Body */}
       <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
-        <BuoyLocationMap />
-        <BuoyLocationTable />
+        <BME280DataChart />
+        <BME280Table />
       </div>
     </div>
   );
 };
 
-export default BuoyLocationComponentCard;
+export default BME280DataComponentCard;

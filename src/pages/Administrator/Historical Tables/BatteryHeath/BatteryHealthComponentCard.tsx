@@ -1,13 +1,12 @@
 import React from "react";
-import BuoyLocationTable from "./BuoyLocationTable";
 import { Printer } from "lucide-react";
-import BuoyLocationMap from "./BuoyLocationMap";
-
-interface BuoyLocationComponentCardProps {
+import BatteryHealthTable from "../BatteryHeath/BatteryHealthTable";
+import BatteryHeathChart from "./BatteryHeathChart";
+interface BatteryHealthComponentCardProps {
   className?: string;
 }
 
-const BuoyLocationComponentCard: React.FC<BuoyLocationComponentCardProps> = ({
+const BatteryHealthComponentCard: React.FC<BatteryHealthComponentCardProps> = ({
   className = "",
 }) => {
   return (
@@ -65,11 +64,11 @@ const BuoyLocationComponentCard: React.FC<BuoyLocationComponentCardProps> = ({
 
       {/* Card Body */}
       <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
-        <BuoyLocationMap />
-        <BuoyLocationTable />
+        <BatteryHeathChart />
+        <BatteryHealthTable />
       </div>
     </div>
   );
 };
 
-export default BuoyLocationComponentCard;
+export default BatteryHealthComponentCard;

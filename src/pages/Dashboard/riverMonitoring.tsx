@@ -12,21 +12,21 @@ const riverMonitoring = () => {
   useEffect(() => {
     document.title = "River Monitoring | X-Stream";
   }, []);
-  const { data, loading, currentLng, currentLat, hectare,WaterLevel } = buoyDataHooks();
-  if (loading) {
-    return (
-      <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 h-[80vh] flex items-center justify-center">
-        <div className="flex justify-center items-center gap-2 text-gray-500">
-          <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
-          Please wait
-        </div>
-      </div>
-    );
-  }
+  // const { data, loading, currentLng, currentLat, hectare,WaterLevel } = buoyDataHooks();
+  // if (loading) {
+  //   return (
+  //     <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 h-[80vh] flex items-center justify-center">
+  //       <div className="flex justify-center items-center gap-2 text-gray-500">
+  //         <span className="animate-spin rounded-full h-5 w-5 border-b-2 border-[#453EFE]" />
+  //         Please wait
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="">
-      <Maps
+      {/* <Maps
         buoy={data?.data.attributes}
         loading={loading}
         onDistanceChange={setDistanceKm}
@@ -34,9 +34,9 @@ const riverMonitoring = () => {
         currentLng={currentLng}
         hectare={hectare}
         WaterLevel={WaterLevel}
-      />
+      /> */}
       <SearchBuoy />
-      <MapsWithHazard />
+      <MapsWithHazard/>
     </div>
   );
 };

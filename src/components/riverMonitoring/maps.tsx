@@ -65,17 +65,17 @@ export default function Maps({
       var red = "#dc2626";
       var grey = "#e5e7eb";
       var finalColor = "";
-      var maxWaterLevel = 13;
-      var percentage = (WaterLevel / maxWaterLevel) * 100;
-      if (percentage < 40) {
+      var whiteAlert = 10;
+      var blueAlert = 13;
+      var redAlert = 14;
+      if (WaterLevel < whiteAlert) {
         finalColor = grey;
-      } else if (percentage >= 41 && percentage <= 60) {
+      } else if (WaterLevel <= blueAlert) {
         finalColor = blue;
-      } else if (percentage >= 61 && percentage <= 99) {
-        finalColor = blue;
-      } else if (percentage == 100) {
-        finalColor = red;
+      } else if(WaterLevel >= blueAlert) {
+         finalColor = red;
       }
+
       const distanceMeters = map.distance(initialLocation, currentLocation);
       distanceKm = (distanceMeters / 1000).toFixed(2);
 
@@ -138,13 +138,13 @@ export default function Maps({
       resizeObserver.disconnect();
       map.remove();
     };
-  }, [buoy, currentLat, currentLng, onDistanceChange]);
+  }, [buoy, currentLat, currentLng, onDistanceChange,WaterLevel]);
 
   return (
     <div className="grid grid-cols-1 gap-4 w-full">
       <div className="flex items-center justify-between w-full">
         <span className="text-gray-600 text-xl sm:text-2xl font-medium text-center flex-1 ml-60">
-         Current water level status
+          Current water level status
         </span>
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2">
@@ -162,7 +162,7 @@ export default function Maps({
           <div className="flex items-center gap-2">
             <div className="w-6 h-6 bg-red-500 rounded border border-gray-300"></div>
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-             Red Alert
+              Red Alert
             </span>
           </div>
         </div>

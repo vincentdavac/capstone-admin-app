@@ -201,11 +201,11 @@ const BarangayManageUsers = ({ alertsRef }: Props) => {
         alertsRef={alertsRef}
         userData={selectedUser ?? undefined}
       />
-       <AlertModal
+       {/* <AlertModal
         isOpen={showAlert}
         alert={currentAlert}
         onClose={handleClose}
-      />
+      /> */}
     </div>
   );
 };

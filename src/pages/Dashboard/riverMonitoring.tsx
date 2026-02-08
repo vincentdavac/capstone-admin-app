@@ -4,7 +4,7 @@
 import MapsWithHazard from "../../components/riverMonitoring/maps_w_hazard";
 import { useEffect, } from "react";
 import { insertingAlerts } from "../../api_hooks/dashboardHooks";
-import { buoyDataHooks } from "../../api_hooks/buoyHooks";
+// import { buoyDataHooks } from "../../api_hooks/buoyHooks";
 import PageBreadcrumb from "../../components/common/PageBreadCrumb";
 const riverMonitoring = () => {
   insertingAlerts();

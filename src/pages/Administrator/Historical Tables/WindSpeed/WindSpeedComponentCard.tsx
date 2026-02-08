@@ -1,13 +1,13 @@
 import React from "react";
-import BuoyLocationTable from "./BuoyLocationTable";
 import { Printer } from "lucide-react";
-import BuoyLocationMap from "./BuoyLocationMap";
+import WindSpeedChart from "./WindSpeedChart";
+import WindSpeedTable from "./WindSpeedTable";
 
-interface BuoyLocationComponentCardProps {
+interface WindSpeedComponentCardProps {
   className?: string;
 }
 
-const BuoyLocationComponentCard: React.FC<BuoyLocationComponentCardProps> = ({
+const WindSpeedComponentCard: React.FC<WindSpeedComponentCardProps> = ({
   className = "",
 }) => {
   return (
@@ -65,11 +65,11 @@ const BuoyLocationComponentCard: React.FC<BuoyLocationComponentCardProps> = ({
 
       {/* Card Body */}
       <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
-        <BuoyLocationMap />
-        <BuoyLocationTable />
+        <WindSpeedChart />
+        <WindSpeedTable />
       </div>
     </div>
   );
 };
 
-export default BuoyLocationComponentCard;
+export default WindSpeedComponentCard;

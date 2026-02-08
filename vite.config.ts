@@ -4,6 +4,8 @@ import svgr from "vite-plugin-svgr";
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: process.env.VITE_BASE_URL || "/", // important for hosting
+
   plugins: [
     react(),
     svgr({
@@ -15,4 +17,7 @@ export default defineConfig({
       },
     }),
   ],
+  build: {
+    sourcemap: true, //  THIS enables real debugging on hosting
+  },
 });

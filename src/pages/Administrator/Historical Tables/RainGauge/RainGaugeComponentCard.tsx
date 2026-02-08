@@ -1,13 +1,13 @@
 import React from "react";
-import BuoyLocationTable from "./BuoyLocationTable";
+import RainGaugeTable from "./RainGaugeTable";
 import { Printer } from "lucide-react";
-import BuoyLocationMap from "./BuoyLocationMap";
+import RainGaugeChart from "./RainGaugeChart";
 
 interface BuoyLocationComponentCardProps {
   className?: string;
 }
 
-const BuoyLocationComponentCard: React.FC<BuoyLocationComponentCardProps> = ({
+const RainGaugeComponentCard: React.FC<BuoyLocationComponentCardProps> = ({
   className = "",
 }) => {
   return (
@@ -65,11 +65,11 @@ const BuoyLocationComponentCard: React.FC<BuoyLocationComponentCardProps> = ({
 
       {/* Card Body */}
       <div className="p-4 border-t border-gray-100 dark:border-gray-800 sm:p-6">
-        <BuoyLocationMap />
-        <BuoyLocationTable />
+        <RainGaugeChart />
+        <RainGaugeTable />
       </div>
     </div>
   );
 };
 
-export default BuoyLocationComponentCard;
+export default RainGaugeComponentCard;

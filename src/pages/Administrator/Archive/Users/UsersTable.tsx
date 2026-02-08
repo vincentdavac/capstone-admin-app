@@ -125,7 +125,7 @@ const UsersTable: React.FC<UsersTableProps> = ({
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white whitespace-nowrap">
                     <img
-                      src={a.image ?? ""}
+                      src={a.image || "/no_profile.png"}
                       alt="User"
                       className="w-10 h-10 rounded-md object-cover"
                     />

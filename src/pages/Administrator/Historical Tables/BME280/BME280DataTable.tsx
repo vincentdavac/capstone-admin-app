@@ -5,122 +5,55 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../components/ui/table";
-
 import { useState } from "react";
 
-import Badge from "../../../../components/ui/badge/Badge";
-
-interface BuoyLocation {
+interface BME280Data {
   id: number;
-  buoy_code: string;
-  latitude: number;
-  longitude: number;
-  status: "Active" | "Offline";
-  last_reported: string;
+  buoy_id: number;
+  temperature_celsius: number;
+  temperature_fahrenheit: number;
+  humidity: number;
+  pressure_mbar: number;
+  pressure_hpa: number;
+  altitude: number;
+  recorded_at: string;
 }
 
-const buoyLocations: BuoyLocation[] = [
+const bme280Data: BME280Data[] = [
   {
     id: 1,
-    buoy_code: "BUOY-001",
-    latitude: 14.5995,
-    longitude: 120.9842,
-    status: "Active",
-    last_reported: "2026-01-20 14:32",
+    buoy_id: 1,
+    temperature_celsius: 29.4,
+    temperature_fahrenheit: 84.9,
+    humidity: 72.5,
+    pressure_mbar: 1012.6,
+    pressure_hpa: 1012.6,
+    altitude: 15.2,
+    recorded_at: "2026-02-03 10:12:00",
   },
   {
     id: 2,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 3,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 4,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 5,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 6,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 7,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 8,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 9,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 10,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
-  },
-  {
-    id: 11,
-    buoy_code: "BUOY-002",
-    latitude: 14.676,
-    longitude: 121.0437,
-    status: "Offline",
-    last_reported: "2026-01-19 09:10",
+    buoy_id: 1,
+    temperature_celsius: 29.8,
+    temperature_fahrenheit: 85.6,
+    humidity: 70.1,
+    pressure_mbar: 1011.9,
+    pressure_hpa: 1011.9,
+    altitude: 15.6,
+    recorded_at: "2026-02-03 10:22:00",
   },
 ];
 
 const ROWS_PER_PAGE = 10;
 
-const BuoyLocationTable = () => {
+const BME280DataTable = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(buoyLocations.length / ROWS_PER_PAGE);
-
+  const totalPages = Math.ceil(bme280Data.length / ROWS_PER_PAGE);
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
 
-  const currentRows = buoyLocations.slice(startIndex, endIndex);
+  const currentRows = bme280Data.slice(startIndex, endIndex);
 
   return (
     <div className="mt-5 rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -135,71 +68,103 @@ const BuoyLocationTable = () => {
               >
                 No.
               </TableCell>
+
               <TableCell
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Buoy Code
+                Buoy ID
               </TableCell>
+
               <TableCell
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Latitude
+                Temp (°C)
               </TableCell>
+
               <TableCell
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Longitude
+                Temp (°F)
               </TableCell>
+
               <TableCell
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Status
+                Humidity (%)
               </TableCell>
+
               <TableCell
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Last Reported
+                Pressure (mbar)
+              </TableCell>
+
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+              >
+                Pressure (hPa)
+              </TableCell>
+
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+              >
+                Altitude (m)
+              </TableCell>
+
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+              >
+                Recorded At
               </TableCell>
             </TableRow>
           </TableHeader>
 
           {/* Table Body */}
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-center">
-            {currentRows.map((buoy, index) => (
-              <TableRow key={`${buoy.buoy_code}-${startIndex + index}`}>
-                {/* No. column */}
+            {currentRows.map((row, index) => (
+              <TableRow key={row.id}>
                 <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
                   {startIndex + index + 1}
                 </TableCell>
 
                 <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
-                  {buoy.buoy_code}
+                  {row.buoy_id}
                 </TableCell>
 
                 <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {buoy.latitude.toFixed(5)}
+                  {row.temperature_celsius.toFixed(1)}°C
                 </TableCell>
 
                 <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {buoy.longitude.toFixed(5)}
-                </TableCell>
-
-                <TableCell className="px-4 py-3 text-theme-sm">
-                  <Badge
-                    size="sm"
-                    color={buoy.status === "Active" ? "success" : "error"}
-                  >
-                    {buoy.status}
-                  </Badge>
+                  {row.temperature_fahrenheit.toFixed(1)}°F
                 </TableCell>
 
                 <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {buoy.last_reported}
+                  {row.humidity.toFixed(1)}%
+                </TableCell>
+
+                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                  {row.pressure_mbar.toFixed(1)}
+                </TableCell>
+
+                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                  {row.pressure_hpa.toFixed(1)}
+                </TableCell>
+
+                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                  {row.altitude.toFixed(1)} m
+                </TableCell>
+
+                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                  {row.recorded_at}
                 </TableCell>
               </TableRow>
             ))}
@@ -220,9 +185,7 @@ const BuoyLocationTable = () => {
               onClick={() => setCurrentPage((p) => p - 1)}
               className="px-4 py-2 text-sm rounded-lg border border-gray-300
                          disabled:opacity-50 disabled:cursor-not-allowed
-                         hover:bg-gray-100 dark:hover:bg-white/[0.05]
-                             dark:text-white
-"
+                         hover:bg-gray-100 dark:hover:bg-white/[0.05]"
             >
               Previous
             </button>
@@ -243,4 +206,4 @@ const BuoyLocationTable = () => {
   );
 };
 
-export default BuoyLocationTable;
+export default BME280DataTable;

@@ -113,7 +113,7 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
   const totalPages = Math.ceil(filteredBuoys.length / itemsPerPage);
   const currentBuoys = filteredBuoys.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   return (
@@ -212,10 +212,10 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
                             a.status === "active"
                               ? "bg-green-100 text-green-700"
                               : a.status === "inactive"
-                              ? "bg-red-100 text-red-700"
-                              : a.status === "maintenance"
-                              ? "bg-gray-200 text-gray-700"
-                              : "bg-gray-100 text-gray-600"
+                                ? "bg-red-100 text-red-700"
+                                : a.status === "maintenance"
+                                  ? "bg-gray-200 text-gray-700"
+                                  : "bg-gray-100 text-gray-600"
                           }`}
                         >
                           {a.status}

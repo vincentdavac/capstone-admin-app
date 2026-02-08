@@ -495,7 +495,7 @@ export default function MapsWithHazard() {
               fontSize: 22,
               fontWeight: "bold",
               offsetCenter: [0, "-40%"], // Sa gitna ng arch
-              formatter: "{value} m",
+              formatter: "{value} ft",
               color: "#FF5252",
             },
             title: {
@@ -696,7 +696,7 @@ export default function MapsWithHazard() {
   );
 
   return (
-    <div className="p-4 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors duration-300">
+    <div className="p-4 bg-gray-50 dark:bg-gray-900  transition-colors duration-300">
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-4">
         <SensorCard
           title="Surroundings Temperature (°C)"

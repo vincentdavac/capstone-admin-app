@@ -52,7 +52,7 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
           sensor_stype: String(sensor),
         }),
       });
-      console.log("testing ng mga may bitaw", sensor);
+      console.log("testing", sensor);
 
       if (!response.ok) {
         throw new Error(`Failed to send alert: ${response.status}`);

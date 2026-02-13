@@ -44,7 +44,7 @@ export default function BuoyCondition({
   batteryPercentage,
 }: MapsWithHazardProps) {
   const { token, user } = useContext(AppContext)!;
-  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
+  const buoyId = user?.barangay?.buoys?.[0]?.id;
 
   const [alarmEnabled, setAlarmEnabled] = useState(false);
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
@@ -149,7 +149,7 @@ export default function BuoyCondition({
   const battery = getBatteryStatus(batteryPercentage);
 
   const handleAlarmToggle = async () => {
-    if (!buoyCode) return;
+    if (!buoyId) return;
 
     const nextState = !alarmEnabled;
     const relayState = nextState ? "on" : "off";
@@ -166,7 +166,7 @@ export default function BuoyCondition({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          buoy_code: buoyCode,
+          buoy_id: buoyId,
           relay_state: relayState,
         }),
       });

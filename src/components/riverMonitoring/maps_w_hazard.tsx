@@ -210,8 +210,8 @@ export default function MapsWithHazard() {
             startAngle: 200,
             endAngle: -20,
             min: 0,
-            max: 60,
-            splitNumber: 12,
+            max: 100,
+            splitNumber: 10,
             itemStyle: { color: "#FFAB91" },
             progress: {
               show: true,
@@ -258,7 +258,7 @@ export default function MapsWithHazard() {
             startAngle: 200,
             endAngle: -20,
             min: 0,
-            max: 60,
+            max: 100,
             itemStyle: { color: "#FD7347" },
             progress: { show: true, width: 4 },
             pointer: { show: false },
@@ -285,7 +285,7 @@ export default function MapsWithHazard() {
       );
     }
 
-// 2. Wind Speed (Updated UI to match image_552a74.png)
+// 2. Wind Speed
     if (windSpeed.current) {
       const chart = echarts.init(windSpeed.current);
       chart.setOption({
@@ -297,23 +297,23 @@ export default function MapsWithHazard() {
             min: 0,
             max: 150,
             splitNumber: 10,
-            radius: "100%", // Adjust based on container size
+            radius: "100%", 
             center: ["50%", "50%"],
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#EBEFF4"]], // Light gray background track
+                color: [[1, "#EBEFF4"]],
               },
             },
             progress: {
               show: true,
               width: 10,
               itemStyle: {
-                color: "#4B70E2", // The blue color from your image
+                color: "#4B70E2",
               },
             },
             pointer: {
-              icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z", // Needle shape
+              icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
               length: "60%",
               width: 6,
               offsetCenter: [0, "5%"],
@@ -376,18 +376,17 @@ export default function MapsWithHazard() {
       );
     }
 
-    // 3. Atmospheric Pressure (LAYOUT FIXED TO MATCH IMAGE)
+    // 3. Atmospheric Pressure
     if (atmosphericPressure.current) {
       const chart = echarts.init(atmosphericPressure.current);
       chart.setOption({
         series: [
-          // Outer Scale (Red)
           {
             type: "gauge",
             min: 900,
             max: 1100,
-            radius: "90%", // Mas malaki para dikit sa black
-            center: ["50%", "65%"], // Binaba para hindi putol ang 1000
+            radius: "90%",
+            center: ["50%", "65%"],
             startAngle: 210,
             endAngle: -30,
             splitNumber: 10,
@@ -404,7 +403,7 @@ export default function MapsWithHazard() {
             anchor: { show: true, showAbove: true, size: 8, itemStyle: { color: "#000" } },
             detail: { 
                 valueAnimation: true, 
-                formatter: "{value} mbar", 
+                formatter: "{value} hPa", 
                 color: "#333", 
                 fontSize: 18, 
                 fontWeight: "bold", 
@@ -412,12 +411,11 @@ export default function MapsWithHazard() {
             },
             data: [{ value: 1013 }]
           },
-          // Inner Scale (Black)
           {
             type: "gauge",
             min: 900,
             max: 1100,
-            radius: "82%", // Halos dikit na sa red scale
+            radius: "82%",
             center: ["50%", "65%"], 
             startAngle: 210,
             endAngle: -30,
@@ -437,13 +435,13 @@ export default function MapsWithHazard() {
           ref(database, `/${buoyCode}/BME280/ATMOSPHERIC_PRESSURE`),
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-            chart.setOption({ series: [{ data: [{ value }] }] });
+            chart.setOption({ series: [{ data: [{ value }] }, { data: [{ value }] }] });
           },
         ),
       );
     }
 
-    // 4. Water Level
+// 4. Water Level (Updated to 15ft Max)
     if (waterLevel.current) {
       const chart = echarts.init(waterLevel.current);
       chart.setOption({
@@ -454,25 +452,25 @@ export default function MapsWithHazard() {
             startAngle: 180,
             endAngle: 0,
             min: 0,
-            max: 3,
-            splitNumber: 6,
+            max: 15, 
+            splitNumber: 5, 
             radius: "100%", 
             axisLine: {
               lineStyle: {
                 width: 6,
                 color: [
-                  [0.33, "#7BFFB3"], // Green (0-1m)
-                  [0.66, "#FFD747"], // Yellow (1-2m)
-                  [1, "#FF5252"],    // Red (2-3m)
+                  [0.33, "#7BFFB3"], // 0-5 ft (Safe/Green)
+                  [0.66, "#FFD747"], // 5-10 ft (Warning/Yellow)
+                  [1, "#FF5252"],    // 10-15 ft (Danger/Red)
                 ],
               },
             },
             pointer: {
-              icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z", // Triangle arrow
+              icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
               length: "15%",
               width: 13,
               offsetCenter: [0, "-55%"], 
-              itemStyle: { color: "#FF5252" },
+              itemStyle: { color: "#7BFFB3" },
             },
             axisTick: {
               distance: 10,
@@ -488,15 +486,15 @@ export default function MapsWithHazard() {
               distance: -50, 
               color: "#666",
               fontSize: 10,
-              formatter: "{value}m",
+              formatter: "{value} ft", 
             },
             detail: {
               valueAnimation: true,
               fontSize: 22,
               fontWeight: "bold",
-              offsetCenter: [0, "-40%"], // Sa gitna ng arch
+              offsetCenter: [0, "-40%"],
               formatter: "{value} ft",
-              color: "#FF5252",
+              color: "#7BFFB3",
             },
             title: {
               offsetCenter: [0, "-10%"],
@@ -511,9 +509,10 @@ export default function MapsWithHazard() {
       unsubscribers.push(
         onValue(ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_FEET`), (s) => {
           const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-          let currentColor = "#7BFFB3";
-          if (value > 1) currentColor = "#FFD747";
-          if (value > 2) currentColor = "#FF5252";
+          
+          let currentColor = "#7BFFB3"; 
+          if (value > 5) currentColor = "#FFD747"; 
+          if (value > 10) currentColor = "#FF5252"; 
 
           chart.setOption({
             series: [
@@ -535,26 +534,67 @@ export default function MapsWithHazard() {
         series: [
           {
             type: "gauge",
-            center: ["50%", "55%"],
-            radius: "110%",
+            center: ["50%", "65%"],
+            startAngle: 200,
+            endAngle: -20,
             min: 0,
-            max: 50,
-            axisLine: {
-              lineStyle: {
-                width: 10,
-                color: [
-                  [0.31, "#D3D3D3"],
-                  [0.655, "#0076E8"],
-                  [1, "#E32F20"],
-                ],
+            max: 100,
+            splitNumber: 10,
+            itemStyle: { color: "#FFAB91" },
+            progress: {
+              show: true,
+              width: 15,
+              itemStyle: { color: "#FFAB91" },
+            },
+            pointer: { show: false },
+            axisLine: { lineStyle: { width: 15, color: [[1, "#EBEFF4"]] } },
+            axisTick: {
+              distance: -40,
+              splitNumber: 5,
+              lineStyle: { width: 1, color: "#999" },
+            },
+            splitLine: {
+              distance: -42,
+              length: 10,
+              lineStyle: { width: 2, color: "#999" },
+            },
+            axisLabel: { distance: -15, color: "#999", fontSize: 12 },
+            detail: {
+              valueAnimation: true,
+              offsetCenter: [0, "-5%"],
+              fontSize: 17,
+              fontWeight: "bold",
+              color: "#FFAB91",
+              formatter: (value: number) => {
+                const fahrenheit = (value * 9) / 5 + 32;
+                return `${value.toFixed(2)} °C\n{f|${fahrenheit.toFixed(1)} °F}`;
+              },
+              rich: {
+                f: {
+                  fontSize: 17,
+                  color: "#FFAB91",
+                  padding: [10, 0],
+                  fontWeight: "bold",
+                },
               },
             },
-            axisLabel: { distance: 20, fontSize: 10 },
-            detail: {
-              formatter: "{value}°C",
-              fontSize: 15,
-              offsetCenter: [0, "60%"],
-            },
+            data: [{ value: 0 }],
+          },
+          {
+            type: "gauge",
+            center: ["50%", "65%"],
+            startAngle: 200,
+            endAngle: -20,
+            min: 0,
+            max: 100,
+            itemStyle: { color: "#FD7347" },
+            progress: { show: true, width: 4 },
+            pointer: { show: false },
+            axisLine: { show: false },
+            axisTick: { show: false },
+            splitLine: { show: false },
+            axisLabel: { show: false },
+            detail: { show: false },
             data: [{ value: 0 }],
           },
         ],
@@ -563,47 +603,73 @@ export default function MapsWithHazard() {
       unsubscribers.push(
         onValue(ref(database, `/${buoyCode}/MS5837/WATER_TEMPERATURE`), (s) => {
           const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-          chart.setOption({ series: [{ data: [{ value }] }] });
+          chart.setOption({ 
+            series: [{ data: [{ value }] }, { data: [{ value }] }] 
+          });
         }),
       );
     }
 
-    // 6. Water Pressure
+    // 6. Water Pressure 
     if (waterPressure.current) {
       const chart = echarts.init(waterPressure.current);
       chart.setOption({
         series: [
           {
             type: "gauge",
-            center: ["50%", "55%"],
-            radius: "110%",
-            min: 10,
-            max: 300,
-            axisLine: {
-              lineStyle: {
-                width: 10,
-                color: [
-                  [0.31, "#D3D3D3"],
-                  [0.655, "#0076E8"],
-                  [1, "#E32F20"],
-                ],
-              },
+            min: 900,
+            max: 1100,
+            radius: "90%", 
+            center: ["50%", "65%"], 
+            startAngle: 210,
+            endAngle: -30,
+            splitNumber: 10,
+            axisLine: { lineStyle: { color: [[1, "#0076E8"]], width: 2 } }, 
+            splitLine: { distance: -10, length: 12, lineStyle: { color: "#0076E8", width: 2 } },
+            axisTick: { distance: -6, length: 6, lineStyle: { color: "#0076E8" } },
+            axisLabel: { distance: -35, color: "#0076E8", fontSize: 11, fontWeight: "bold" },
+            pointer: { 
+                icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z", 
+                length: "75%", 
+                width: 4, 
+                itemStyle: { color: "#000" } 
             },
-            axisLabel: { distance: 20, fontSize: 10 },
-            detail: {
-              formatter: "{value} hPa",
-              fontSize: 15,
-              offsetCenter: [0, "60%"],
+            anchor: { show: true, showAbove: true, size: 8, itemStyle: { color: "#000" } },
+            detail: { 
+                valueAnimation: true, 
+                formatter: "{value} hPa", 
+                color: "#333", 
+                fontSize: 18, 
+                fontWeight: "bold", 
+                offsetCenter: [0, "40%"] 
             },
-            data: [{ value: 0 }],
+            data: [{ value: 1013 }]
           },
+          {
+            type: "gauge",
+            min: 900,
+            max: 1100,
+            radius: "82%", 
+            center: ["50%", "65%"], 
+            startAngle: 210,
+            endAngle: -30,
+            splitNumber: 10,
+            axisLine: { lineStyle: { color: [[1, "#000"]], width: 2 } },
+            splitLine: { distance: -2, length: 10, lineStyle: { color: "#000", width: 2 } },
+            axisTick: { distance: 2, length: 5, lineStyle: { color: "#000" } },
+            axisLabel: { distance: 6, color: "#000", fontSize: 9, fontWeight: "bold" },
+            pointer: { show: false },
+            detail: { show: false }
+          }
         ],
       });
       charts.push(chart);
       unsubscribers.push(
         onValue(ref(database, `/${buoyCode}/MS5837/WATER_PRESSURE`), (s) => {
           const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-          chart.setOption({ series: [{ data: [{ value }] }] });
+          chart.setOption({ 
+            series: [{ data: [{ value }] }, { data: [{ value }] }] 
+          });
         }),
       );
     }

@@ -158,11 +158,11 @@ const AlertManagement: React.FC = () => {
               handleBroadcast={handleBroadcast}
               sensorTypes={sensorTypes}
             />
-            {/* <AlertModal
+            <AlertModal
               isOpen={showAlert}
               alert={currentAlert}
               onClose={handleClose}
-            /> */}
+            />
           </div>
         </div>
       </div>

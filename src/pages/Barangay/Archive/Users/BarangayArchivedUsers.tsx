@@ -9,7 +9,9 @@ import UsersTableHeader from "../../../../components/Manage User/UsersTableHeade
 import UsersTable from "./UsersTable";
 import UsersPagination from "../../../../components/Manage User/UsersPagination";
 import RestoreUserModal from "./RestoreUserModal";
-
+import { insertingAlerts } from "../../../../api_hooks/dashboardHooks";
+import { useAlertMonitor } from "../../../../api_hooks/alertMonitoringHooks";
+import AlertModal from "../../../Barangay/AlertManagement/alertModal";
 interface BuoyData {
   id: number;
   buoyCode: string;
@@ -134,21 +136,24 @@ const BarangayArchivedUsers = ({ alertsRef }: Props) => {
     startIndex,
     startIndex + itemsPerPage
   );
-  // --- END Logic ---
+  insertingAlerts();
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
+  const buoyId = user?.barangay?.buoys?.[0]?.id;
+  const { showAlert, currentAlert, handleClose } = useAlertMonitor(
+    buoyCode?.toString() ?? "",
+    5000,
+    buoyId?.toString() ?? "",
+  );
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
       <PageBreadcrumb pageTitle="Archived Users" />
-
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-        {/* 1. Header (Title and Search Bar) */}
         <UsersTableHeader
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           inputRef={inputRef}
         />
-
-        {/* 2. Users Table */}
         <UsersTable
           currentUsers={currentUsers}
           loading={loading}
@@ -156,8 +161,6 @@ const BarangayArchivedUsers = ({ alertsRef }: Props) => {
           handleUpdateClick={handleUpdateClick}
           handleArchiveClick={handleArchiveClick}
         />
-
-        {/* 3. Pagination */}
         <UsersPagination
           currentPage={currentPage}
           totalPages={totalPages}
@@ -167,7 +170,6 @@ const BarangayArchivedUsers = ({ alertsRef }: Props) => {
           setCurrentPage={setCurrentPage}
         />
       </div>
-
       <RestoreUserModal
         show={showArchive}
         onClose={() => setShowArchive(false)}
@@ -177,6 +179,11 @@ const BarangayArchivedUsers = ({ alertsRef }: Props) => {
         alertsRef={alertsRef}
         userData={selectedUser ?? undefined}
       />
+       <AlertModal
+          isOpen={showAlert}
+          alert={currentAlert}
+          onClose={handleClose}
+        />
     </div>
   );
 };

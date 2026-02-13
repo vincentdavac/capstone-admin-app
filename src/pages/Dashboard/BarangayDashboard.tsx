@@ -7,11 +7,11 @@ import AlertModal from "../Barangay/AlertManagement/alertModal";
 import DashboardCards from "../../components/dashboard_content/BarangayCards/cards";
 import DangerLevel from "../../components/dashboard_content/BarangayDangerLevel/danger_level";
 import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
-
+import { insertingAlerts } from "../../api_hooks/dashboardHooks";
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
-
+ insertingAlerts();
 const BarangayDashboardContent = ({ alertsRef }: Props) => {
   const { user } = useContext(AppContext)!;
 

@@ -7,8 +7,9 @@ import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer
 import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
 
 import RestoreHotlineModal from "./HotlinesRestore";
-
-/*  Hotline Interface */
+import { insertingAlerts } from "../../../../api_hooks/dashboardHooks";
+import { useAlertMonitor } from "../../../../api_hooks/alertMonitoringHooks";
+import AlertModal from "../../../Barangay/AlertManagement/alertModal";
 export interface HotlineData {
   id: number;
   attributes: {
@@ -28,7 +29,7 @@ interface Props {
 }
 
 const HotlinesArchivedTable: React.FC<Props> = ({ alertsRef, onRefresh }) => {
-  const { token } = useContext(AppContext)!;
+  const { token,user } = useContext(AppContext)!;
 
   /* 🔹 State */
   const [hotlines, setHotlines] = useState<HotlineData[]>([]);
@@ -93,7 +94,14 @@ const HotlinesArchivedTable: React.FC<Props> = ({ alertsRef, onRefresh }) => {
     startIndex,
     startIndex + itemsPerPage
   );
-
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
+  const buoyId = user?.barangay?.buoys?.[0]?.id;
+  const { showAlert, currentAlert, handleClose } = useAlertMonitor(
+    buoyCode?.toString() ?? "",
+    5000,
+    buoyId?.toString() ?? "",
+  );
+  insertingAlerts();
   return (
     <div className="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
       <PageBreadcrumb pageTitle="Archived Hotlines" />
@@ -247,6 +255,11 @@ const HotlinesArchivedTable: React.FC<Props> = ({ alertsRef, onRefresh }) => {
           }}
         />
       )}
+      <AlertModal
+          isOpen={showAlert}
+          alert={currentAlert}
+          onClose={handleClose}
+        />
     </div>
   );
 };

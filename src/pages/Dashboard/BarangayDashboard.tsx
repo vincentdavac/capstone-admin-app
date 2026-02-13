@@ -11,14 +11,13 @@ import { insertingAlerts } from "../../api_hooks/dashboardHooks";
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
- insertingAlerts();
+
 const BarangayDashboardContent = ({ alertsRef }: Props) => {
-  const { user } = useContext(AppContext)!;
 
   useEffect(() => {
     document.title = "Dashboard | X-Stream";
   }, []);
-
+  const { user } = useContext(AppContext)!;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   const buoyId = user?.barangay?.buoys?.[0]?.id;
   const { showAlert, currentAlert, handleClose } = useAlertMonitor(
@@ -26,23 +25,19 @@ const BarangayDashboardContent = ({ alertsRef }: Props) => {
     50000,
     buoyId?.toString() ?? ""
   );
-
+ insertingAlerts();
   return (
     <div>
       <DashboardCards />
 
       <div className="w-full flex flex-col lg:flex-row items-start justify-start pl-1 mt-5 gap-3">
-        {/* Left: Water Depth Chart */}
         <div className="w-full lg:w-2/3">
           <WaterDepthChart />
         </div>
-
-        {/* Right: Danger Level */}
         <div className="w-full lg:w-1/3">
           <DangerLevel alertsRef={alertsRef} />
         </div>
       </div>
-
       <AlertModal
         isOpen={showAlert}
         alert={currentAlert}

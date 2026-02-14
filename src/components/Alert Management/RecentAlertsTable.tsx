@@ -41,19 +41,10 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
     return (
       <div className="space-y-4 lg:pl-8">
         <div className="flex justify-between items-center">
-          {/* Recent Alerts Title */}
           <h3 className="text-xl font-normal text-gray-500 dark:text-white">
             Recent Alerts
           </h3>
-          <div className="flex items-center gap-3">
-            <select className="px-3 py-1 text-sm border border-gray-300 dark:border-gray-600 rounded-lg dark:bg-gray-700 dark:text-white">
-              <option>Last 24 hours</option>
-              <option>Last 7 days</option>
-            </select>
-          </div>
         </div>
-        
-        {/* Table Container */}
         <div className="border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm overflow-x-auto">
           <div className="min-w-full">
             <div
@@ -67,7 +58,6 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
               <div className="p-3 text-center">Action</div>
             </div>
 
-            {/* Table Body (Alerts/Loading/No Alerts) */}
             <div>
               {loading ? (
                 <div className="p-4 text-center text-gray-500 dark:text-gray-400">

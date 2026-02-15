@@ -47,6 +47,16 @@ const PrototypeTable = ({ alertsRef, onRefresh }: Props) => {
   const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
 
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   // Fetch prototypes
   const fetchPrototypes = async () => {
     setLoading(true);
@@ -118,7 +128,7 @@ const PrototypeTable = ({ alertsRef, onRefresh }: Props) => {
               <tr>
                 {[
                   "No.",
-                  "Image", // <-- Added
+                  "Image",
                   "Title",
                   "Description",
                   "Position",
@@ -181,15 +191,17 @@ const PrototypeTable = ({ alertsRef, onRefresh }: Props) => {
                         className="px-6 py-4 text-sm max-w-xs truncate"
                         title={a.title}
                       >
-                        {a.title}
+                        {a.title.toUpperCase()}
                       </td>
                       <td
                         className="px-6 py-4 text-sm max-w-sm truncate"
                         title={a.description}
                       >
-                        {a.description}
+                        {toPascalCase(a.description)}
                       </td>
-                      <td className="px-6 py-4 text-sm">{a.position}</td>
+                      <td className="px-6 py-4 text-sm">
+                        {toPascalCase(a.position)}
+                      </td>
                       <td className="px-6 py-4 text-sm">
                         <span
                           className={`px-3 py-0.5 inline-flex text-xs font-medium rounded-full ${

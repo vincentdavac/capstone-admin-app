@@ -59,6 +59,16 @@ const UsersTable: React.FC<UsersTableProps> = ({
   startIndex,
   handleArchiveClick,
 }) => {
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full border border-gray-200 dark:border-gray-700 rounded-lg">
@@ -130,8 +140,9 @@ const UsersTable: React.FC<UsersTableProps> = ({
                       className="w-10 h-10 rounded-md object-cover"
                     />
                   </td>
+                  {/* Normalized Name */}
                   <td className="px-6 py-4 text-sm text-gray-900 dark:text-white whitespace-nowrap">
-                    {a.firstName} {a.lastName}
+                    {toPascalCase(a.firstName)} {toPascalCase(a.lastName)}
                   </td>
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                     {a.contactNumber ?? "—"}
@@ -139,8 +150,9 @@ const UsersTable: React.FC<UsersTableProps> = ({
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
                     {a.email}
                   </td>
+                  {/* Normalized Barangay Name */}
                   <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400 whitespace-nowrap">
-                    {a.barangay?.name ?? "—"}
+                    {a.barangay?.name ? toPascalCase(a.barangay.name) : "—"}
                   </td>
                   <td className="px-4 py-2 whitespace-nowrap">
                     <span

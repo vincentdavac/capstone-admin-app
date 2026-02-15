@@ -38,6 +38,16 @@ const AboutTable = ({ alertsRef, onRefresh }: Props) => {
   const [showAdd, setShowAdd] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
 
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   const fetchAbout = async () => {
     setLoading(true);
     try {
@@ -119,11 +129,11 @@ const AboutTable = ({ alertsRef, onRefresh }: Props) => {
                   />
                 )}
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
-                    {about.attributes.title}
+                  <h3 className="text-xl font-semibold text-gray-800 dark:text-white uppercase">
+                    {about.attributes.title} 
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-300">
-                    {about.attributes.caption}
+                    {toPascalCase(about.attributes.caption)}
                   </p>
                 </div>
               </div>
@@ -133,7 +143,7 @@ const AboutTable = ({ alertsRef, onRefresh }: Props) => {
                   Side Title
                 </h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {about.attributes.sideTitle}
+                  {toPascalCase(about.attributes.sideTitle)}
                 </p>
               </div>
 
@@ -142,7 +152,7 @@ const AboutTable = ({ alertsRef, onRefresh }: Props) => {
                   Side Description
                 </h4>
                 <p className="text-sm text-gray-600 dark:text-gray-300">
-                  {about.attributes.sideDescription}
+                  {toPascalCase(about.attributes.sideDescription)}
                 </p>
               </div>
 

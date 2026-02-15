@@ -8,7 +8,7 @@ import PageBreadcrumb from "../../../../components/common/PageBreadCrumb";
 
 import RestoreHotlineModal from "./HotlinesRestore";
 
-/*  Hotline Interface */
+/* Hotline Interface */
 export interface HotlineData {
   id: number;
   attributes: {
@@ -44,6 +44,16 @@ const HotlinesArchivedTable: React.FC<Props> = ({ alertsRef, onRefresh }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
+
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
 
   useEffect(() => {
     document.title = "Archived Hotlines | X-Stream";
@@ -173,7 +183,10 @@ const HotlinesArchivedTable: React.FC<Props> = ({ alertsRef, onRefresh }) => {
                         {a.number}
                       </td>
 
-                      <td className="px-6 py-4 text-sm">{a.description}</td>
+                      {/* Normalized Description */}
+                      <td className="px-6 py-4 text-sm">
+                        {toPascalCase(a.description)}
+                      </td>
 
                       <td className="px-6 py-4 text-sm">
                         <span className="px-3 py-1 text-xs rounded-full bg-red-100 text-red-700">

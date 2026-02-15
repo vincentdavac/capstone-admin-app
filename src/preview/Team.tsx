@@ -141,7 +141,7 @@ export default function Team({ refresh }: Props) {
                   <img
                     src={member.attributes.image}
                     alt={member.attributes.userName}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover object-top"
                   />
                 </div>
 

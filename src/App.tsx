@@ -361,7 +361,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/barangay/historical-data/buoy-location"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <BuoyLocation />
+                <BuoyLocation alertsRef={alertsRef} />
               </BarangayProtectedRoutes>
             }
           />

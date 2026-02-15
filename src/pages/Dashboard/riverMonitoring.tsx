@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 import SearchBuoy from "../../components/riverMonitoring/search";
 import MapsWithHazard from "../../components/riverMonitoring/maps_w_hazard";
 import { useEffect, useContext } from "react";

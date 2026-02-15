@@ -5,7 +5,13 @@ import { insertingAlerts } from "../../../api_hooks/dashboardHooks";
 import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
 import { AppContext } from "../../../context/AppContext";
 import AlertModal from "../../Barangay/AlertManagement/alertModal";
-const BuoyLocation = () => {
+import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
+
+interface BuoyLocationComponentCardProps {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
+
+const BuoyLocation = ({ alertsRef }: BuoyLocationComponentCardProps) => {
   useEffect(() => {
     document.title = "Buoy Location | X-Stream";
   }, []);
@@ -23,7 +29,7 @@ const BuoyLocation = () => {
     <>
       <PageBreadcrumb pageTitle="Buoy Location" />
       <div className="space-y-6">
-        <BuoyLocationComponentCard />
+        <BuoyLocationComponentCard alertsRef={alertsRef} />
         <AlertModal
           isOpen={showAlert}
           alert={currentAlert}

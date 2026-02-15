@@ -103,7 +103,7 @@ const TeamAdd = ({ show, onClose, token, alertsRef, onAdded }: Props) => {
           {/* User Name */}
           <div>
             <label className="block text-sm font-semibold mb-2">
-              User Name *
+              Full Name *
             </label>
             <input
               type="text"

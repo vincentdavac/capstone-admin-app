@@ -9,6 +9,7 @@ import { AppContext } from "../../../context/AppContext";
 import { useContext } from "react";
 import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
 import AlertModal from "../../Barangay/AlertManagement/alertModal";
+import DisasterFlowChart from "../../../components/DisasterFlowChart";
 
 const AlertManagement: React.FC = () => {
   const { user } = useContext(AppContext)!;
@@ -100,7 +101,7 @@ const AlertManagement: React.FC = () => {
         <div className="p-4 sm:p-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             {/* Left Column - New Layout (Create Alert and Flowchart) */}
-            <div className="space-y-6 lg:pr-8 lg:border-r border-gray-200 dark:border-gray-700">
+            <div className="space-y-6 lg:pr-12 lg:border-r border-gray-200 dark:border-gray-700">
               <div className="space-y-6">
                 {/* ================= DISASTER ALERT ================= */}
                 <div className="w-full lg:w-[648px] bg-white dark:bg-gray-800 shadow rounded-2xl border border-[#D9D9D9] dark:border-gray-700 flex flex-col">
@@ -129,13 +130,9 @@ const AlertManagement: React.FC = () => {
                   </p>
                 </div>
 
-                {/* Flowchart Image Box */}
-                <div className="w-full min-h-[495px] bg-white shadow rounded-2xl border border-[#D9D9D9] dark:border-gray-700 flex items-center justify-center p-4 dark:bg-gray-900">
-                  <img
-                    className="h-auto w-full object-contain"
-                    src="/logo/chart.png"
-                    alt="Alert Flowchart"
-                  />
+              {/* Disaster Response Flowchart */}
+                <div className="w-full min-h-[495px]">
+                    <DisasterFlowChart />
                 </div>
               </div>
 

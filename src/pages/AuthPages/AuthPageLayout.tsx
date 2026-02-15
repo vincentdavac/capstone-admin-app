@@ -32,19 +32,20 @@ export default function AuthLayout({
           />
 
           <div className="relative flex items-center justify-center z-10">
-            <div className="flex flex-col items-center max-w-md">
-              <Link to="/" className="block mb-6">
+            <div className="flex flex-col items-center max-w-4xl"> {/* Increased container max width */}
+              <Link to="/" className="block mb-8">
                 <img
-                  width={300}
-                  height={62}
+                  width={500}
+                  height={100}
                   src="/light-with-name.svg"
                   alt="Logo"
                   loading="lazy"
-                  className="drop-shadow-lg"
+                  className="drop-shadow-lg w-full h-auto"
+                  style={{ maxWidth: '500px' }} /* Ensure it can expand */
                 />
               </Link>
-              <p className="text-center text-[#FFFFFF] dark:text-white/60 text-lg font-light">
-                A River Monitoring and Alert System.
+              <p className="text-center text-[#FFFFFF] dark:text-white/100 text-3xl font-light">
+                Monitoring today to protect lives tomorrow.
               </p>
             </div>
           </div>

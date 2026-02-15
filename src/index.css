@@ -14,6 +14,10 @@ layer(base);
   @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
 }
 
+.dark input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
 @theme {
   --font-*: initial;
   --font-outfit: Outfit, sans-serif;

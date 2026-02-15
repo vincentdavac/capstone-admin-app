@@ -1,16 +1,71 @@
 import { useEffect } from "react";
 import L from "leaflet";
+import "leaflet/dist/leaflet.css";
 
-const BuoyLocationMap = () => {
+// GPS Reading Interfaces
+export interface BuoyAttributes {
+  buoyCode: string;
+  riverName: string;
+  wallHeight: number;
+  riverHectare: number;
+  latitude: number;
+  longitude: number;
+  attachment: string;
+  status: string;
+  maintenanceAt: string | null;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+}
+
+export interface GpsReadingAttributes {
+  buoyId: number;
+  latitude: number;
+  longitude: number;
+  recordedAt: string;
+  recordedDate: string;
+  recordedTime: string;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+  buoy: {
+    id: number;
+    attributes: BuoyAttributes;
+  };
+}
+
+export interface GpsReading {
+  id: number;
+  attributes: GpsReadingAttributes;
+}
+
+interface Props {
+  gpsReadings: GpsReading[];
+}
+
+const BuoyLocationMap = ({ gpsReadings }: Props) => {
   useEffect(() => {
     const mapElement = document.getElementById("map");
     if (!mapElement) return;
 
-    // Static coordinates
-    const initialLocation: L.LatLngTuple = [14.651348, 120.9724002];
-    const currentLocation: L.LatLngTuple = [14.7123898, 121.0190647];
+    if (gpsReadings.length === 0) return;
 
-    // Create map (static)
+    // Initial location from the buoy attributes
+    const initialLocation: L.LatLngTuple = [
+      gpsReadings[0].attributes.buoy.attributes.latitude,
+      gpsReadings[0].attributes.buoy.attributes.longitude,
+    ];
+
+    // Current location from the latest GPS reading
+    const lastReading = gpsReadings[gpsReadings.length - 1];
+    const currentLocation: L.LatLngTuple = [
+      lastReading.attributes.latitude,
+      lastReading.attributes.longitude,
+    ];
+
+    // Create map
     const map = L.map("map", {
       zoomControl: false,
       dragging: false,
@@ -47,8 +102,8 @@ const BuoyLocationMap = () => {
         offset: [0, -10],
       }).bindPopup(`
         <b>Initial Location</b><br/>
-        Lat: 14.651348<br/>
-        Lng: 120.9724002
+        Lat: ${initialLocation[0]}<br/>
+        Lng: ${initialLocation[1]}
       `);
 
     // Current marker
@@ -60,8 +115,8 @@ const BuoyLocationMap = () => {
         offset: [0, -10],
       }).bindPopup(`
         <b>Current Location</b><br/>
-        Lat: 14.7123898<br/>
-        Lng: 121.0190647<br/>
+        Lat: ${currentLocation[0]}<br/>
+        Lng: ${currentLocation[1]}<br/>
         <b>Distance:</b> ${distanceKm} km
       `);
 
@@ -73,7 +128,16 @@ const BuoyLocationMap = () => {
     return () => {
       map.remove();
     };
-  }, []);
+  }, [gpsReadings]);
+
+  // Render fallback if no GPS data
+  if (!gpsReadings || gpsReadings.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64 sm:h-80 lg:h-[605px] border-2 border-gray-300 rounded-xl bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400">
+        No GPS records found for selected date range.
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

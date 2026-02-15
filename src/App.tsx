@@ -77,6 +77,7 @@ import BuoyLocation from "./pages/Administrator/Historical Tables/BuoyLocation";
 import BatteryHealth from "./pages/Administrator/Historical Tables/BatteryHealth";
 import BME280Data from "./pages/Administrator/Historical Tables/BME280Data";
 import MS5837Data from "./pages/Administrator/Historical Tables/MS5837Data";
+import AlertData from "./pages/Administrator/Historical Tables/AlertData";
 
 interface AppProps {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
@@ -414,6 +415,14 @@ export default function App({ alertsRef }: AppProps) {
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
                 <RainGauge />
+              </BarangayProtectedRoutes>
+            }
+          />
+           <Route
+            path="/barangay/historical-data/alert-data"
+            element={
+              <BarangayProtectedRoutes alertsRef={alertsRef}>
+                <AlertData />
               </BarangayProtectedRoutes>
             }
           />

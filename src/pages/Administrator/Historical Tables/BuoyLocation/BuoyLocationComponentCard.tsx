@@ -1,15 +1,32 @@
-import React from "react";
+import React, { useContext } from "react";
 import BuoyLocationTable from "./BuoyLocationTable";
 import { Printer } from "lucide-react";
 import BuoyLocationMap from "./BuoyLocationMap";
+import { useState } from "react";
+import API_BASE_URL from "../../../../config/coreApi";
+import { AppContext } from "../../../../context/AppContext";
+import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer";
 
 interface BuoyLocationComponentCardProps {
   className?: string;
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
 
 const BuoyLocationComponentCard: React.FC<BuoyLocationComponentCardProps> = ({
   className = "",
+  alertsRef,
 }) => {
+  const { token, user } = useContext(AppContext)!;
+
+  const [fromDate, setFromDate] = useState("");
+
+  const handleChange = (e: {
+    target: { value: React.SetStateAction<string> };
+  }) => {
+    setFromDate(e.target.value);
+    console.log("Selected Date:", e.target.value);
+  };
+
   return (
     <div
       className={`rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03] ${className}`}
@@ -30,6 +47,8 @@ const BuoyLocationComponentCard: React.FC<BuoyLocationComponentCardProps> = ({
             </label>
             <input
               type="datetime-local"
+              value={fromDate}
+              onChange={handleChange}
               className="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-blue-500  dark:border-gray-700
       dark:bg-gray-900
       dark:text-white

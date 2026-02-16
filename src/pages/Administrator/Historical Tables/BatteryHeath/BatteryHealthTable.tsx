@@ -6,70 +6,64 @@ import {
   TableRow,
 } from "../../../../components/ui/table";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-interface BatteryHealth {
-  id: number; // still used internally (key)
-  buoy_id: number;
+/* ================= TYPES ================= */
+
+export interface BatteryHealthAttributes {
+  buoyId: number;
   percentage: number;
   voltage: number;
-  created_at: string;
+  recordedAt: string;
+  recordedDate: string;
+  recordedTime: string;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
+  buoy: {
+    id: number;
+    attributes: {
+      buoyCode: string;
+      riverName: string;
+    };
+  };
 }
 
-const batteryHealthData: BatteryHealth[] = [
-  {
-    id: 1,
-    buoy_id: 1,
-    percentage: 88,
-    voltage: 11.9,
-    created_at: "2026-02-03 10:12:00",
-  },
-  {
-    id: 2,
-    buoy_id: 1,
-    percentage: 86,
-    voltage: 11.7,
-    created_at: "2026-02-03 10:13:00",
-  },
-  {
-    id: 3,
-    buoy_id: 2,
-    percentage: 91,
-    voltage: 12.1,
-    created_at: "2026-02-03 10:14:00",
-  },
-  {
-    id: 4,
-    buoy_id: 3,
-    percentage: 85,
-    voltage: 11.5,
-    created_at: "2026-02-03 10:15:00",
-  },
-  {
-    id: 5,
-    buoy_id: 2,
-    percentage: 91,
-    voltage: 12.1,
-    created_at: "2026-02-03 10:14:00",
-  },
-];
+export interface BatteryHealth {
+  id: number;
+  attributes: BatteryHealthAttributes;
+}
+
+interface BatteryHealthTableProps {
+  batteryHealth: BatteryHealth[];
+}
 
 const ROWS_PER_PAGE = 10;
 
-const BatteryHealthTable = () => {
+/* ================= COMPONENT ================= */
+
+const BatteryHealthTable: React.FC<BatteryHealthTableProps> = ({
+  batteryHealth,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(batteryHealthData.length / ROWS_PER_PAGE);
+  // Reset to page 1 when data changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [batteryHealth]);
+
+  const totalPages = Math.ceil(batteryHealth.length / ROWS_PER_PAGE);
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
 
-  const currentRows = batteryHealthData.slice(startIndex, endIndex);
+  const currentRows = batteryHealth.slice(startIndex, endIndex);
 
   return (
     <div className="mt-5 rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
         <Table>
-          {/* Table Header */}
+          {/* ================= HEADER ================= */}
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-center">
             <TableRow>
               <TableCell
@@ -83,14 +77,21 @@ const BatteryHealthTable = () => {
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Buoy ID
+                Buoy Code
               </TableCell>
 
               <TableCell
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Battery Percentage
+                River
+              </TableCell>
+
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+              >
+                Battery %
               </TableCell>
 
               <TableCell
@@ -104,46 +105,74 @@ const BatteryHealthTable = () => {
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Created At
+                Recorded At
               </TableCell>
             </TableRow>
           </TableHeader>
 
-          {/* Table Body */}
+          {/* ================= BODY ================= */}
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-center">
-            {currentRows.map((row, index) => (
-              <TableRow key={row.id}>
-                {/* No. */}
-                <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {startIndex + index + 1}
-                </TableCell>
-
-                {/* Buoy ID */}
-                <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
-                  {row.buoy_id}
-                </TableCell>
-
-                {/* Battery % */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.percentage}%
-                </TableCell>
-
-                {/* Voltage */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.voltage.toFixed(2)} V
-                </TableCell>
-
-                {/* Created At */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.created_at}
-                </TableCell>
+            {currentRows.length === 0 ? (
+              <TableRow>
+                <td
+                  colSpan={6}
+                  className="px-5 py-6 text-gray-500 dark:text-gray-400"
+                >
+                  No battery health data available
+                </td>
               </TableRow>
-            ))}
+            ) : (
+              currentRows.map((row, index) => {
+                const { attributes } = row;
+
+                const isLowBattery = attributes.percentage <= 20;
+
+                return (
+                  <TableRow key={row.id}>
+                    {/* No. */}
+                    <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {startIndex + index + 1}
+                    </TableCell>
+
+                    {/* Buoy Code */}
+                    <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
+                      {attributes.buoy.attributes.buoyCode}
+                    </TableCell>
+
+                    {/* River */}
+                    <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {attributes.buoy.attributes.riverName}
+                    </TableCell>
+
+                    {/* Battery % */}
+                    <TableCell
+                      className={`px-4 py-3 text-theme-sm font-medium ${
+                        isLowBattery
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-gray-500 dark:text-gray-400"
+                      }`}
+                    >
+                      {attributes.percentage}%
+                    </TableCell>
+
+                    {/* Voltage */}
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {attributes.voltage.toFixed(2)} V
+                    </TableCell>
+
+                    {/* Recorded At */}
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {attributes.recordedDate} {attributes.recordedTime}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
       </div>
 
-      {/* Pagination (unchanged) */}
+      {/* ================= PAGINATION ================= */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100 dark:border-white/[0.05]">
           <span className="text-sm text-gray-500 dark:text-gray-400">

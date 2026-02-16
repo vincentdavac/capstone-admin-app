@@ -45,6 +45,16 @@ const FAQsTable = ({ alertsRef, onRefresh }: Props) => {
   const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
 
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   // Fetch FAQs
   const fetchFAQs = async () => {
     setLoading(true);
@@ -156,14 +166,14 @@ const FAQsTable = ({ alertsRef, onRefresh }: Props) => {
                         {startIndex + i + 1}
                       </td>
 
-                      {/* Question */}
+                      {/* Question - Pascal Case */}
                       <td className="px-6 py-4 text-sm max-w-xs">
                         {a.question}
                       </td>
 
-                      {/* Answer */}
-                      <td className="px-6 py-4 text-sm  max-w-xs text-gray-500 dark:text-gray-400">
-                        {a.answer}
+                      {/* Answer - Pascal Case */}
+                      <td className="px-6 py-4 text-sm max-w-xs text-gray-500 dark:text-gray-400">
+                        {toPascalCase(a.answer)}
                       </td>
 
                       <td className="px-6 py-4 text-sm">

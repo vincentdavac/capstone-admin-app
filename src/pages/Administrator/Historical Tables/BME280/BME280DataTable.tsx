@@ -6,54 +6,31 @@ import {
   TableRow,
 } from "../../../../components/ui/table";
 import { useState } from "react";
+import { BME280Reading } from "./BME280DataChart"; // import the same interface
 
-interface BME280Data {
-  id: number;
-  buoy_id: number;
-  temperature_celsius: number;
-  temperature_fahrenheit: number;
-  humidity: number;
-  pressure_mbar: number;
-  pressure_hpa: number;
-  altitude: number;
-  recorded_at: string;
+/* ===== Props ===== */
+interface BME280TableProps {
+  bmeData: BME280Reading[];
 }
-
-const bme280Data: BME280Data[] = [
-  {
-    id: 1,
-    buoy_id: 1,
-    temperature_celsius: 29.4,
-    temperature_fahrenheit: 84.9,
-    humidity: 72.5,
-    pressure_mbar: 1012.6,
-    pressure_hpa: 1012.6,
-    altitude: 15.2,
-    recorded_at: "2026-02-03 10:12:00",
-  },
-  {
-    id: 2,
-    buoy_id: 1,
-    temperature_celsius: 29.8,
-    temperature_fahrenheit: 85.6,
-    humidity: 70.1,
-    pressure_mbar: 1011.9,
-    pressure_hpa: 1011.9,
-    altitude: 15.6,
-    recorded_at: "2026-02-03 10:22:00",
-  },
-];
 
 const ROWS_PER_PAGE = 10;
 
-const BME280DataTable = () => {
+const BME280Table: React.FC<BME280TableProps> = ({ bmeData }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(bme280Data.length / ROWS_PER_PAGE);
+  const totalPages = Math.ceil(bmeData.length / ROWS_PER_PAGE);
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
 
-  const currentRows = bme280Data.slice(startIndex, endIndex);
+  const currentRows = bmeData.slice(startIndex, endIndex);
+
+  if (!bmeData || bmeData.length === 0) {
+    return (
+      <div className="h-[200px] flex items-center justify-center text-gray-400">
+        No BME280 data available
+      </div>
+    );
+  }
 
   return (
     <div className="mt-5 rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -63,64 +40,56 @@ const BME280DataTable = () => {
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-center">
             <TableRow>
               <TableCell
-                isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+                isHeader
               >
                 No.
               </TableCell>
-
               <TableCell
-                isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+                isHeader
               >
-                Buoy ID
+                Buoy Code
               </TableCell>
-
               <TableCell
-                isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+                isHeader
               >
                 Temp (°C)
               </TableCell>
-
               <TableCell
-                isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+                isHeader
               >
                 Temp (°F)
               </TableCell>
-
               <TableCell
-                isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+                isHeader
               >
                 Humidity (%)
               </TableCell>
-
               <TableCell
-                isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+                isHeader
               >
                 Pressure (mbar)
               </TableCell>
-
               <TableCell
-                isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+                isHeader
               >
                 Pressure (hPa)
               </TableCell>
-
               <TableCell
-                isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+                isHeader
               >
                 Altitude (m)
               </TableCell>
-
               <TableCell
-                isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+                isHeader
               >
                 Recorded At
               </TableCell>
@@ -129,45 +98,48 @@ const BME280DataTable = () => {
 
           {/* Table Body */}
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-center">
-            {currentRows.map((row, index) => (
-              <TableRow key={row.id}>
-                <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {startIndex + index + 1}
-                </TableCell>
+            {currentRows.map((row, index) => {
+              const { attributes } = row;
+              return (
+                <TableRow key={row.id}>
+                  <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
+                    {startIndex + index + 1}
+                  </TableCell>
 
-                <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
-                  {row.buoy_id}
-                </TableCell>
+                  <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
+                    {attributes.buoy.attributes.buoyCode}
+                  </TableCell>
 
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.temperature_celsius.toFixed(1)}°C
-                </TableCell>
+                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    {attributes.temperature.celsius.toFixed(1)}°C
+                  </TableCell>
 
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.temperature_fahrenheit.toFixed(1)}°F
-                </TableCell>
+                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    {attributes.temperature.fahrenheit.toFixed(1)}°F
+                  </TableCell>
 
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.humidity.toFixed(1)}%
-                </TableCell>
+                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    {attributes.humidity.toFixed(1)}%
+                  </TableCell>
 
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.pressure_mbar.toFixed(1)}
-                </TableCell>
+                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    {attributes.pressure.mbar.toFixed(1)}
+                  </TableCell>
 
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.pressure_hpa.toFixed(1)}
-                </TableCell>
+                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    {attributes.pressure.hpa.toFixed(1)}
+                  </TableCell>
 
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.altitude.toFixed(1)} m
-                </TableCell>
+                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    {attributes.altitude.toFixed(1)} m
+                  </TableCell>
 
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.recorded_at}
-                </TableCell>
-              </TableRow>
-            ))}
+                  <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                    {attributes.recordedDate} {attributes.recordedTime}
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </div>
@@ -206,4 +178,4 @@ const BME280DataTable = () => {
   );
 };
 
-export default BME280DataTable;
+export default BME280Table;

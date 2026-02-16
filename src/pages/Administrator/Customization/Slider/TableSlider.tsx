@@ -46,6 +46,16 @@ const TableSlider = ({ alertsRef }: Props) => {
   const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
 
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   const fetchSlider = async () => {
     setLoading(true);
     try {
@@ -173,14 +183,14 @@ const TableSlider = ({ alertsRef }: Props) => {
                         className="px-6 py-4 text-sm max-w-xs truncate"
                         title={a.title}
                       >
-                        {a.title}
+                        {toPascalCase(a.title)}
                       </td>
 
                       <td
                         className="px-6 py-4 text-sm max-w-sm truncate"
                         title={a.description}
                       >
-                        {a.description}
+                        {toPascalCase(a.description)}
                       </td>
 
                       <td className="px-6 py-4 text-sm">

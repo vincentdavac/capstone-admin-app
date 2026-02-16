@@ -43,6 +43,16 @@ const FeedbackTable = ({ alertsRef, onRefresh }: Props) => {
   const itemsPerPage = 10;
   const startIndex = (currentPage - 1) * itemsPerPage;
 
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   // Fetch Feedbacks
   const fetchFeedbacks = async () => {
     setLoading(true);
@@ -164,9 +174,13 @@ const FeedbackTable = ({ alertsRef, onRefresh }: Props) => {
                         />
                       </td>
 
-                      <td className="px-6 py-4 text-sm">{a.userName}</td>
+                      <td className="px-6 py-4 text-sm">
+                        {toPascalCase(a.userName)}
+                      </td>
 
-                      <td className="px-6 py-4 text-sm">{a.feedback}</td>
+                      <td className="px-6 py-4 text-sm">
+                        {a.feedback}
+                      </td>
 
                       <td className="px-6 py-4 text-sm">{a.rate}</td>
 

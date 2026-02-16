@@ -20,6 +20,16 @@ const FeedbackRestore: React.FC<Props> = ({
   onRestored,
   alertsRef,
 }) => {
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   if (!show || !FeedbackId) return null;
 
   const handleRestore = async () => {
@@ -92,12 +102,13 @@ const FeedbackRestore: React.FC<Props> = ({
           <RefreshCw className="text-green-500 mb-3" size={40} />
 
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            Restore Feedback?
+            {toPascalCase("Restore Feedback?")}
           </h3>
 
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-            This action will mark the feedback as active. You can archive it
-            later if needed.
+            {toPascalCase(
+              "This action will mark the feedback as active. You can archive it later if needed."
+            )}
           </p>
 
           {/* Buttons */}

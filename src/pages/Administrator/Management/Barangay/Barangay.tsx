@@ -61,6 +61,16 @@ const Barangay = ({ alertsRef }: Props) => {
     document.title = "Barangay | X-Stream";
   }, []);
 
+  // Helper function to convert string to Pascal Case (Title Case)
+  const toPascalCase = (str: string | null | undefined) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   // ✅ Fetch Barangays
   const fetchBarangays = async () => {
     setLoading(true);
@@ -73,7 +83,15 @@ const Barangay = ({ alertsRef }: Props) => {
       });
       const data = await res.json();
       if (res.ok && data.data) {
-        setBarangays(data.data);
+        // Normalize data to Pascal Case before setting state
+        const normalizedData = data.data.map((b: Barangay) => ({
+          ...b,
+          attributes: {
+            ...b.attributes,
+            name: toPascalCase(b.attributes.name),
+          },
+        }));
+        setBarangays(normalizedData);
       } else {
         console.error("Failed to fetch barangays:", data);
       }

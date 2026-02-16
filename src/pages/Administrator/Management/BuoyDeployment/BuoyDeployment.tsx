@@ -73,6 +73,16 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
     document.title = "Buoy Deployment | X-Stream";
   }, []);
 
+  // Helper function to convert string to Pascal Case
+  const toPascalCase = (str: string | null | undefined) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   const fetchBuoys = async () => {
     setLoading(true);
     try {
@@ -84,7 +94,19 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
       });
       const data = await res.json();
       if (res.ok && data.data) {
-        setBuoys(data.data);
+        // Normalize data to Pascal Case
+        const normalizedData = data.data.map((b: BuoyData) => ({
+          ...b,
+          attributes: {
+            ...b.attributes,
+            riverName: toPascalCase(b.attributes.riverName),
+            status: toPascalCase(b.attributes.status),
+          },
+          barangay: b.barangay
+            ? { ...b.barangay, name: toPascalCase(b.barangay.name) }
+            : b.barangay,
+        }));
+        setBuoys(normalizedData);
       } else {
         console.error("Failed to fetch buoys:", data);
       }
@@ -113,7 +135,7 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
   const totalPages = Math.ceil(filteredBuoys.length / itemsPerPage);
   const currentBuoys = filteredBuoys.slice(
     startIndex,
-    startIndex + itemsPerPage,
+    startIndex + itemsPerPage
   );
 
   return (
@@ -199,7 +221,7 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
                         <img
                           src={a.attachment ?? "N/A"}
                           alt="Feedback"
-                          className="w-10 h-10 rounded-md object-cover" // smaller and neat image
+                          className="w-10 h-10 rounded-md object-cover"
                         />
                       </td>
                       <td className="px-6 py-4 text-sm">{a.riverName}</td>
@@ -209,11 +231,11 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
                       <td className="px-6 py-4 text-sm">
                         <span
                           className={`px-3 py-0.5 inline-flex text-xs font-medium rounded-full ${
-                            a.status === "active"
+                            a.status.toLowerCase() === "active"
                               ? "bg-green-100 text-green-700"
-                              : a.status === "inactive"
+                              : a.status.toLowerCase() === "inactive"
                                 ? "bg-red-100 text-red-700"
-                                : a.status === "maintenance"
+                                : a.status.toLowerCase() === "maintenance"
                                   ? "bg-gray-200 text-gray-700"
                                   : "bg-gray-100 text-gray-600"
                           }`}

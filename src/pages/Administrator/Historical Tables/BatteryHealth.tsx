@@ -5,7 +5,13 @@ import { insertingAlerts } from "../../../api_hooks/dashboardHooks";
 import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
 import { AppContext } from "../../../context/AppContext";
 import AlertModal from "../../Barangay/AlertManagement/alertModal";
-const BatteryHealth = () => {
+import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
+
+interface BatteryHealthComponentCardProps {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
+
+const BatteryHealth = ({ alertsRef }: BatteryHealthComponentCardProps) => {
   useEffect(() => {
     document.title = "Battery Health | X-Stream";
   }, []);
@@ -22,7 +28,7 @@ const BatteryHealth = () => {
     <>
       <PageBreadcrumb pageTitle="Battery Health" />
       <div className="space-y-6">
-        <BatteryHealthComponentCard />
+        <BatteryHealthComponentCard alertsRef={alertsRef} />
         <AlertModal
           isOpen={showAlert}
           alert={currentAlert}

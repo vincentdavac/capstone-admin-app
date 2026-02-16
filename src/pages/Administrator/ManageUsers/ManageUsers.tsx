@@ -80,6 +80,16 @@ const ManageUsers = ({ alertsRef }: Props) => {
     document.title = "Manage Users | X-Stream";
   }, []);
 
+  // Helper function to convert string to Pascal Case 
+  const toPascalCase = (str: string | null | undefined) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   // handlers:
   const handleUpdateClick = (u: UserData) => {
     setSelectedUser(u);
@@ -104,7 +114,21 @@ const ManageUsers = ({ alertsRef }: Props) => {
       const res = await response.json();
 
       if (response.ok && res.data) {
-        setUsers(res.data);
+        // Normalize data to Pascal Case before setting state
+        const normalizedData = res.data.map((u: UserData) => ({
+          ...u,
+          firstName: toPascalCase(u.firstName),
+          lastName: toPascalCase(u.lastName),
+          street: toPascalCase(u.street),
+          municipality: toPascalCase(u.municipality),
+          barangay: u.barangay
+            ? { ...u.barangay, name: toPascalCase(u.barangay.name) }
+            : null,
+          verifier: u.verifier
+            ? { ...u.verifier, name: toPascalCase(u.verifier.name) }
+            : null,
+        }));
+        setUsers(normalizedData);
       } else {
         console.error("Failed to fetch users:", res);
       }

@@ -40,6 +40,16 @@ const FooterTable = ({ alertsRef, onRefresh }: Props) => {
   const [showAdd, setShowAdd] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
 
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   const fetchFooter = async () => {
     setLoading(true);
     try {
@@ -121,10 +131,10 @@ const FooterTable = ({ alertsRef, onRefresh }: Props) => {
                 )}
                 <div>
                   <h3 className="text-xl font-semibold text-gray-800 dark:text-white">
-                    {footer.attributes.caption}
+                    {toPascalCase(footer.attributes.caption)}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-300">
-                    {footer.attributes.footerSubtitle}
+                     {footer.attributes.footerSubtitle}
                   </p>
                 </div>
               </div>

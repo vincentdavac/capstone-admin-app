@@ -1,19 +1,13 @@
-import { useEffect, useContext } from "react";
+import { useEffect,useContext } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-import BME280DataComponentCard from "./BME280/BME280DataComponentCard";
 import { insertingAlerts } from "../../../api_hooks/dashboardHooks";
 import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
 import { AppContext } from "../../../context/AppContext";
 import AlertModal from "../../Barangay/AlertManagement/alertModal";
-import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
-
-interface BME280DataComponentCardProps {
-  alertsRef: React.RefObject<AlertsContainerRef | null>;
-}
-
-const BME280Data = ({ alertsRef }: BME280DataComponentCardProps) => {
+import AlertDataComponentCard from "./AlertData/AlertDataComponentCard";
+const AlertData = () => {
   useEffect(() => {
-    document.title = "BME280 Data | X-Stream";
+    document.title = "Alert Data | X-Stream";
   }, []);
   insertingAlerts();
   const { user } = useContext(AppContext)!;
@@ -26,9 +20,9 @@ const BME280Data = ({ alertsRef }: BME280DataComponentCardProps) => {
   );
   return (
     <>
-      <PageBreadcrumb pageTitle="BME280 Data" />
+      <PageBreadcrumb pageTitle="Alert Data" />
       <div className="space-y-6">
-        <BME280DataComponentCard alertsRef={alertsRef} />
+        <AlertDataComponentCard />
         <AlertModal
           isOpen={showAlert}
           alert={currentAlert}
@@ -39,4 +33,4 @@ const BME280Data = ({ alertsRef }: BME280DataComponentCardProps) => {
   );
 };
 
-export default BME280Data;
+export default AlertData;

@@ -52,6 +52,16 @@ const RainMonitoringTable: React.FC<RainMonitoringTableProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   const totalPages = Math.ceil(rainData.length / ROWS_PER_PAGE);
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
@@ -104,9 +114,11 @@ const RainMonitoringTable: React.FC<RainMonitoringTableProps> = ({
                   {startIndex + index + 1}
                 </TableCell>
 
-                {/* Buoy Code */}
+                {/* Buoy Code - Normalized with Pascal Case */}
                 <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
-                  {row.buoy?.attributes?.buoyCode || "N/A"}
+                  {row.buoy?.attributes?.buoyCode 
+                    ? toPascalCase(row.buoy.attributes.buoyCode) 
+                    : "N/A"}
                 </TableCell>
 
                 {/* Rain Level */}

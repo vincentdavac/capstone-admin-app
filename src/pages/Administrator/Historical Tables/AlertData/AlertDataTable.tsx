@@ -39,6 +39,16 @@ const ROWS_PER_PAGE = 10;
 const AlertDataTable: React.FC<AlertDataTableProps> = ({ relayStatuses }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   // Reset to first page when data changes
   useEffect(() => {
     setCurrentPage(1);
@@ -121,9 +131,10 @@ const AlertDataTable: React.FC<AlertDataTableProps> = ({ relayStatuses }) => {
                     {row.buoy.attributes.buoyCode}
                   </TableCell>
 
+                {/* Normalized River Name */}
                   {/* River Name */}
                   <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
-                    {row.buoy.attributes.riverName}
+                    {toPascalCase(row.buoy.attributes.riverName)}
                   </TableCell>
 
                   {/* Relay State */}
@@ -137,10 +148,9 @@ const AlertDataTable: React.FC<AlertDataTableProps> = ({ relayStatuses }) => {
                     {row.attributes.relayState.toUpperCase()}
                   </TableCell>
 
-                  {/* Triggered By */}
-                  <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
-                    {row.triggeredBy.firstName} {row.triggeredBy.lastName}
-                  </TableCell>
+                <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
+                  {row.triggeredBy.firstName} {row.triggeredBy.lastName}
+                </TableCell>
 
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
                     {row.attributes.recordedDate} {row.attributes.recordedTime}

@@ -1,13 +1,18 @@
-import { useEffect,useContext } from "react";
+import { useEffect, useContext } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import MS5837DataComponentCard from "./MS5837/MS5837DataComponentCard";
 import { insertingAlerts } from "../../../api_hooks/dashboardHooks";
 import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
 import { AppContext } from "../../../context/AppContext";
 import AlertModal from "../../Barangay/AlertManagement/alertModal";
-const MS5837Data = () => {
+import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
+interface MS5837ComponentCardProps {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
+
+const MS5837Data = ({ alertsRef }: MS5837ComponentCardProps) => {
   useEffect(() => {
-    document.title = "Battery Health | X-Stream";
+    document.title = "MS5837 Data | X-Stream";
   }, []);
   insertingAlerts();
   const { user } = useContext(AppContext)!;
@@ -22,7 +27,7 @@ const MS5837Data = () => {
     <>
       <PageBreadcrumb pageTitle="MS5837 Data" />
       <div className="space-y-6">
-        <MS5837DataComponentCard />
+        <MS5837DataComponentCard alertsRef={alertsRef} />
         <AlertModal
           isOpen={showAlert}
           alert={currentAlert}

@@ -1,115 +1,102 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 
-export default function LineChartMS5837Data() {
+interface LineChartMS5837DataProps {
+  labels: string[];
+  temperatureC: number[];
+  temperatureF: number[];
+  depthMeters: number[];
+  depthFeet: number[];
+  waterPressure: number[];
+}
+
+export default function LineChartMS5837Data({
+  labels,
+  temperatureC,
+  // temperatureF,
+  // depthMeters,
+  depthFeet,
+  waterPressure,
+}: LineChartMS5837DataProps) {
   const options: ApexOptions = {
+    chart: {
+      type: "line",
+      height: 310,
+      fontFamily: "Outfit, sans-serif",
+      toolbar: { show: false },
+      zoom: { enabled: true },
+    },
     legend: {
-      show: false,
+      show: true,
       position: "top",
       horizontalAlign: "left",
     },
     colors: [
-      "#3B82F6", // Water Depth (Blue)
-      "#F97316", // Temperature (Orange)
+      "#3B82F6", // Depth Meters
+      "#F97316", // Temperature °C
+      "#22C55E", // Water Pressure
     ],
-    chart: {
-      fontFamily: "Outfit, sans-serif",
-      height: 310,
-      type: "area",
-      toolbar: { show: false },
-    },
     stroke: {
-      curve: "straight",
-      width: [2, 2],
-    },
-    fill: {
-      type: "gradient",
-      gradient: {
-        opacityFrom: 0.55,
-        opacityTo: 0,
-      },
+      curve: "smooth",
+      width: [2, 2, 2],
     },
     markers: {
-      size: 0,
-      strokeColors: "#fff",
+      size: 3,
       strokeWidth: 2,
       hover: { size: 6 },
     },
-    grid: {
-      xaxis: { lines: { show: false } },
-      yaxis: { lines: { show: true } },
-    },
     dataLabels: { enabled: false },
+    grid: {
+      borderColor: "#e5e7eb",
+      strokeDashArray: 4,
+    },
     tooltip: {
-      enabled: true,
-      x: { format: "dd MMM yyyy" },
+      shared: true,
+      intersect: false,
+      y: [
+        { formatter: (val) => `${val} m` }, // Depth
+        { formatter: (val) => `${val} °C` }, // Temp C
+        { formatter: (val) => `${val} kPa` }, // Water Pressure (example unit)
+      ],
     },
     xaxis: {
+      categories: labels,
       type: "category",
-      categories: [
-        "10:00",
-        "10:05",
-        "10:10",
-        "10:15",
-        "10:20",
-        "10:25",
-        "10:30",
-        "10:35",
-        "10:40",
-        "10:45",
-        "10:50",
-        "10:55",
-      ],
+      labels: {
+        rotate: -45,
+        style: { fontSize: "11px" },
+      },
       axisBorder: { show: false },
       axisTicks: { show: false },
-      tooltip: { enabled: false },
     },
     yaxis: [
       {
-        title: {
-          text: "Water Depth (m)",
-          style: { color: "#3B82F6" },
-        },
-        labels: {
-          style: {
-            fontSize: "12px",
-            colors: "#3B82F6",
-          },
-        },
+        title: { text: "Depth (ft)" },
+        labels: { formatter: (val) => `${val} ft` },
       },
       {
         opposite: true,
-        title: {
-          text: "Temperature (°C)",
-          style: { color: "#F97316" },
-        },
-        labels: {
-          style: {
-            fontSize: "12px",
-            colors: "#F97316",
-          },
-        },
+        title: { text: "Temperature (°C)" },
+        labels: { formatter: (val) => `${val} °C` },
+      },
+      {
+        opposite: true,
+        title: { text: "Water Pressure" },
+        labels: { formatter: (val) => `${val}` },
       },
     ],
   };
 
   const series = [
-    {
-      name: "Water Depth (m)",
-      data: [3.1, 3.3, 3.4, 3.6, 3.5, 3.7, 3.8, 4.0, 4.1, 4.0, 4.2, 4.3],
-    },
-    {
-      name: "Temperature (°C)",
-      data: [
-        26.1, 26.2, 26.4, 26.3, 26.5, 26.6, 26.7, 26.8, 26.7, 26.9, 27.0, 27.1,
-      ],
-    },
+    { name: "Depth (ft)", data: depthFeet },
+    { name: "Temperature (°C)", data: temperatureC },
+    { name: "Water Pressure", data: waterPressure },
   ];
 
   return (
     <div className="max-w-full overflow-x-auto custom-scrollbar">
-      <div id="chartEight" className="min-w-[1000px]">
-        <Chart options={options} series={series} type="area" height={310} />
+      <div className="min-w-[1000px]">
+        <Chart options={options} series={series} type="line" height={310} />
       </div>
     </div>
   );

@@ -1,22 +1,19 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 
-export default function LineChartAlertStatus() {
+interface LineChartAlertStatusProps {
+  labels: string[]; // e.g., ["Feb 16, 2026 08:00", ...]
+  relayStates: number[]; // 0 = OFF, 1 = ON
+}
 
-  // 🔹 Static relay status sample data
-  const staticData = [
-    { recorded_at: "2026-02-16 08:00:00", relay_state: 0 },
-    { recorded_at: "2026-02-16 09:00:00", relay_state: 1 },
-    { recorded_at: "2026-02-16 10:00:00", relay_state: 1 },
-    { recorded_at: "2026-02-16 11:00:00", relay_state: 0 },
-    { recorded_at: "2026-02-16 12:00:00", relay_state: 1 },
-    { recorded_at: "2026-02-16 13:00:00", relay_state: 0 },
-  ];
-
-  // Convert to ApexCharts format
-  const formattedData = staticData.map((item) => ({
-    x: new Date(item.recorded_at).getTime(),
-    y: item.relay_state,
+export default function LineChartAlertStatus({
+  labels,
+  relayStates,
+}: LineChartAlertStatusProps) {
+  // Convert labels + relayStates to ApexCharts series format
+  const formattedData = labels.map((label, idx) => ({
+    x: new Date(label).getTime(),
+    y: relayStates[idx],
   }));
 
   const options: ApexOptions = {
@@ -25,7 +22,7 @@ export default function LineChartAlertStatus() {
       position: "top",
       horizontalAlign: "left",
     },
-    colors: ["#FF4560"],
+    colors: ["#FF4560"], // Red line for alerts
     chart: {
       fontFamily: "Outfit, sans-serif",
       height: 310,
@@ -36,6 +33,7 @@ export default function LineChartAlertStatus() {
     },
     stroke: {
       width: 2,
+      curve: "smooth",
     },
     fill: {
       type: "gradient",
@@ -90,7 +88,7 @@ export default function LineChartAlertStatus() {
 
   const series = [
     {
-      name: "Alert Status",
+      name: "Relay Status",
       data: formattedData,
     },
   ];

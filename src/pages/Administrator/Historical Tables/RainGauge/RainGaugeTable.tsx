@@ -6,63 +6,58 @@ import {
   TableRow,
 } from "../../../../components/ui/table";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-interface RainGauge {
-  id: number; // internal key
-  buoy_id: number;
-  rainfall_mm: number;
-  tip_count: number;
-  created_at: string;
+/* ================= TYPES ================= */
+
+export interface RainGaugeAttributes {
+  buoyId: number;
+  rainfallMm: string;
+  tipCount: number;
+  recordedAt: string;
+  recordedDate: string;
+  recordedTime: string;
+  buoy: {
+    id: number;
+    attributes: {
+      buoyCode: string;
+      riverName: string;
+    };
+  };
 }
 
-const rainGaugeData: RainGauge[] = [
-  {
-    id: 1,
-    buoy_id: 1,
-    rainfall_mm: 12.5,
-    tip_count: 50,
-    created_at: "2026-02-03 10:12:00",
-  },
-  {
-    id: 2,
-    buoy_id: 1,
-    rainfall_mm: 3.2,
-    tip_count: 13,
-    created_at: "2026-02-03 10:22:00",
-  },
-  {
-    id: 3,
-    buoy_id: 2,
-    rainfall_mm: 18.7,
-    tip_count: 75,
-    created_at: "2026-02-03 10:35:00",
-  },
-  {
-    id: 4,
-    buoy_id: 3,
-    rainfall_mm: 0.8,
-    tip_count: 3,
-    created_at: "2026-02-03 10:40:00",
-  },
-];
+export interface RainGauge {
+  id: number;
+  attributes: RainGaugeAttributes;
+}
+
+interface RainGaugeTableProps {
+  rainGauge: RainGauge[];
+}
 
 const ROWS_PER_PAGE = 10;
 
-const RainGaugeTable = () => {
+/* ================= COMPONENT ================= */
+
+const RainGaugeTable: React.FC<RainGaugeTableProps> = ({ rainGauge }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(rainGaugeData.length / ROWS_PER_PAGE);
+  // Reset page when data changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [rainGauge]);
+
+  const totalPages = Math.ceil(rainGauge.length / ROWS_PER_PAGE);
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
 
-  const currentRows = rainGaugeData.slice(startIndex, endIndex);
+  const currentRows = rainGauge.slice(startIndex, endIndex);
 
   return (
     <div className="mt-5 rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
         <Table>
-          {/* Table Header */}
+          {/* ================= HEADER ================= */}
           <TableHeader className="border-b border-gray-100 dark:border-white/[0.05] text-center">
             <TableRow>
               <TableCell
@@ -76,7 +71,14 @@ const RainGaugeTable = () => {
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Buoy ID
+                Buoy Code
+              </TableCell>
+
+              <TableCell
+                isHeader
+                className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
+              >
+                River
               </TableCell>
 
               <TableCell
@@ -97,46 +99,77 @@ const RainGaugeTable = () => {
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Created At
+                Recorded At
               </TableCell>
             </TableRow>
           </TableHeader>
 
-          {/* Table Body */}
+          {/* ================= BODY ================= */}
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-center">
-            {currentRows.map((row, index) => (
-              <TableRow key={row.id}>
-                {/* No. */}
-                <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {startIndex + index + 1}
-                </TableCell>
-
-                {/* Buoy ID */}
-                <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
-                  {row.buoy_id}
-                </TableCell>
-
-                {/* Rainfall */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.rainfall_mm.toFixed(2)} mm
-                </TableCell>
-
-                {/* Tip Count */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.tip_count}
-                </TableCell>
-
-                {/* Created At */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.created_at}
-                </TableCell>
+            {currentRows.length === 0 ? (
+              <TableRow>
+                <td
+                  colSpan={6}
+                  className="px-5 py-6 text-gray-500 dark:text-gray-400"
+                >
+                  No rain gauge data available
+                </td>
               </TableRow>
-            ))}
+            ) : (
+              currentRows.map((row, index) => {
+                const { attributes } = row;
+
+                const rainfall = parseFloat(attributes.rainfallMm);
+
+                // Optional intensity highlighting
+                const isHeavyRain = rainfall >= 7.5;
+
+                return (
+                  <TableRow key={row.id}>
+                    {/* No. */}
+                    <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {startIndex + index + 1}
+                    </TableCell>
+
+                    {/* Buoy Code */}
+                    <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
+                      {attributes.buoy.attributes.buoyCode}
+                    </TableCell>
+
+                    {/* River */}
+                    <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {attributes.buoy.attributes.riverName}
+                    </TableCell>
+
+                    {/* Rainfall */}
+                    <TableCell
+                      className={`px-4 py-3 text-theme-sm font-medium ${
+                        isHeavyRain
+                          ? "text-red-600 dark:text-red-400"
+                          : "text-gray-500 dark:text-gray-400"
+                      }`}
+                    >
+                      {rainfall.toFixed(2)} mm
+                    </TableCell>
+
+                    {/* Tip Count */}
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {attributes.tipCount}
+                    </TableCell>
+
+                    {/* Recorded At */}
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {attributes.recordedDate} {attributes.recordedTime}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
       </div>
 
-      {/* Pagination */}
+      {/* ================= PAGINATION ================= */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-5 py-4 border-t border-gray-100 dark:border-white/[0.05]">
           <span className="text-sm text-gray-500 dark:text-gray-400">

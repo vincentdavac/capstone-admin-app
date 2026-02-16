@@ -5,43 +5,41 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../components/ui/table";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-interface MS5837Data {
-  id: number; // internal key
-  temperature_celsius: number;
-  temperature_fahrenheit: number;
-  depth_ft: number;
-  depth_m: number;
-  water_altitude: number;
-  recorded_at: string;
+/* ================= TYPES ================= */
+
+interface MS5837Attributes {
+  temperatureCelsius: string;
+  temperatureFahrenheit: string;
+  depthMeters: string;
+  depthFeet: string;
+  waterAltitude: string;
+  recordedAt: string;
+  recordedDate: string;
+  recordedTime: string;
 }
 
-const ms5837Data: MS5837Data[] = [
-  {
-    id: 1,
-    temperature_celsius: 26.4,
-    temperature_fahrenheit: 79.5,
-    depth_ft: 12.3,
-    depth_m: 3.75,
-    water_altitude: 1.2,
-    recorded_at: "2026-02-03 10:12:00",
-  },
-  {
-    id: 2,
-    temperature_celsius: 26.8,
-    temperature_fahrenheit: 80.2,
-    depth_ft: 14.1,
-    depth_m: 4.3,
-    water_altitude: 1.4,
-    recorded_at: "2026-02-03 10:22:00",
-  },
-];
+interface MS5837Data {
+  id: number;
+  attributes: MS5837Attributes;
+}
+
+interface Props {
+  ms5837Data: MS5837Data[];
+}
 
 const ROWS_PER_PAGE = 10;
 
-const MS5837DataTable = () => {
+/* ================= COMPONENT ================= */
+
+const MS5837DataTable: React.FC<Props> = ({ ms5837Data }) => {
   const [currentPage, setCurrentPage] = useState(1);
+
+  /* Reset page when data changes */
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [ms5837Data]);
 
   const totalPages = Math.ceil(ms5837Data.length / ROWS_PER_PAGE);
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
@@ -81,14 +79,14 @@ const MS5837DataTable = () => {
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Depth (ft)
+                Depth (m)
               </TableCell>
 
               <TableCell
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Depth (m)
+                Depth (ft)
               </TableCell>
 
               <TableCell
@@ -109,44 +107,56 @@ const MS5837DataTable = () => {
 
           {/* Table Body */}
           <TableBody className="divide-y divide-gray-100 dark:divide-white/[0.05] text-center">
-            {currentRows.map((row, index) => (
-              <TableRow key={row.id}>
-                {/* No. */}
-                <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {startIndex + index + 1}
-                </TableCell>
-
-                {/* Temp °C */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.temperature_celsius.toFixed(1)}°C
-                </TableCell>
-
-                {/* Temp °F */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.temperature_fahrenheit.toFixed(1)}°F
-                </TableCell>
-
-                {/* Depth ft */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.depth_ft.toFixed(2)} ft
-                </TableCell>
-
-                {/* Depth m */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.depth_m.toFixed(2)} m
-                </TableCell>
-
-                {/* Water Altitude */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.water_altitude.toFixed(2)}
-                </TableCell>
-
-                {/* Recorded At */}
-                <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.recorded_at}
-                </TableCell>
+            {currentRows.length === 0 ? (
+              <TableRow>
+                <td colSpan={7} className="py-6 text-gray-400">
+                  No MS5837 data found.
+                </td>
               </TableRow>
-            ))}
+            ) : (
+              currentRows.map((row, index) => {
+                const attr = row.attributes;
+
+                return (
+                  <TableRow key={row.id}>
+                    {/* No */}
+                    <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {startIndex + index + 1}
+                    </TableCell>
+
+                    {/* Temp °C */}
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {Number(attr.temperatureCelsius).toFixed(2)}°C
+                    </TableCell>
+
+                    {/* Temp °F */}
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {Number(attr.temperatureFahrenheit).toFixed(2)}°F
+                    </TableCell>
+
+                    {/* Depth m */}
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {Number(attr.depthMeters).toFixed(2)} m
+                    </TableCell>
+
+                    {/* Depth ft */}
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {Number(attr.depthFeet).toFixed(2)} ft
+                    </TableCell>
+
+                    {/* Water Altitude */}
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {Number(attr.waterAltitude).toFixed(2)}
+                    </TableCell>
+
+                    {/* Recorded At */}
+                    <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
+                      {`${row.attributes.recordedDate} ${row.attributes.recordedTime}`}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
           </TableBody>
         </Table>
       </div>

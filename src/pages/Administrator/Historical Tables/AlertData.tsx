@@ -1,11 +1,17 @@
-import { useEffect,useContext } from "react";
+import { useEffect, useContext } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
 import { insertingAlerts } from "../../../api_hooks/dashboardHooks";
 import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
 import { AppContext } from "../../../context/AppContext";
 import AlertModal from "../../Barangay/AlertManagement/alertModal";
 import AlertDataComponentCard from "./AlertData/AlertDataComponentCard";
-const AlertData = () => {
+import { AlertsContainerRef } from "../../../components/Alert/AlertsContainer";
+
+interface AlertDataComponentCardProps {
+  alertsRef: React.RefObject<AlertsContainerRef | null>;
+}
+
+const AlertData = ({ alertsRef }: AlertDataComponentCardProps) => {
   useEffect(() => {
     document.title = "Alert Data | X-Stream";
   }, []);
@@ -22,7 +28,7 @@ const AlertData = () => {
     <>
       <PageBreadcrumb pageTitle="Alert Data" />
       <div className="space-y-6">
-        <AlertDataComponentCard />
+        <AlertDataComponentCard alertsRef={alertsRef} />
         <AlertModal
           isOpen={showAlert}
           alert={currentAlert}

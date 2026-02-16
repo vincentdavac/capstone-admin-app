@@ -396,7 +396,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/barangay/historical-data/ms5837-data"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <MS5837Data />
+                <MS5837Data alertsRef={alertsRef} />
               </BarangayProtectedRoutes>
             }
           />
@@ -405,7 +405,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/barangay/historical-data/windspeed-monitoring"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <WindSpeed />
+                <WindSpeed alertsRef={alertsRef} />
               </BarangayProtectedRoutes>
             }
           />
@@ -414,7 +414,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/barangay/historical-data/rain-gauge"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <RainGauge />
+                <RainGauge alertsRef={alertsRef} />
               </BarangayProtectedRoutes>
             }
           />
@@ -422,7 +422,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/barangay/historical-data/alert-data"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <AlertData />
+                <AlertData alertsRef={alertsRef} />
               </BarangayProtectedRoutes>
             }
           />

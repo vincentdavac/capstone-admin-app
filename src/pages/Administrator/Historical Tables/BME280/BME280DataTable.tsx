@@ -18,6 +18,16 @@ const ROWS_PER_PAGE = 10;
 const BME280Table: React.FC<BME280TableProps> = ({ bmeData }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   const totalPages = Math.ceil(bmeData.length / ROWS_PER_PAGE);
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
@@ -106,8 +116,9 @@ const BME280Table: React.FC<BME280TableProps> = ({ bmeData }) => {
                     {startIndex + index + 1}
                   </TableCell>
 
+                  {/* Normalized Buoy Code */}
                   <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
-                    {attributes.buoy.attributes.buoyCode}
+                    {toPascalCase(attributes.buoy.attributes.buoyCode)}
                   </TableCell>
 
                   <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">

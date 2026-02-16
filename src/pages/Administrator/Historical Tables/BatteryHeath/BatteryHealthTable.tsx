@@ -48,6 +48,16 @@ const BatteryHealthTable: React.FC<BatteryHealthTableProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
+
   // Reset to page 1 when data changes
   useEffect(() => {
     setCurrentPage(1);
@@ -139,9 +149,9 @@ const BatteryHealthTable: React.FC<BatteryHealthTableProps> = ({
                       {attributes.buoy.attributes.buoyCode}
                     </TableCell>
 
-                    {/* River */}
+                    {/* River (Normalized) */}
                     <TableCell className="px-5 py-4 text-theme-sm text-gray-500 dark:text-gray-400">
-                      {attributes.buoy.attributes.riverName}
+                      {toPascalCase(attributes.buoy.attributes.riverName)}
                     </TableCell>
 
                     {/* Battery % */}

@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 import Badge from "../../../../components/ui/badge/Badge";
 
 /* ============================
-   Interfaces
+    Interfaces
 ============================ */
 
 export interface BuoyAttributes {
@@ -59,6 +59,16 @@ const ROWS_PER_PAGE = 10;
 
 const BuoyLocationTable = ({ gpsReadings }: Props) => {
   const [currentPage, setCurrentPage] = useState(1);
+
+  // 🛠 Helper function for Pascal Casing (Normalization)
+  const toPascalCase = (str: string) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  };
 
   /* Reset page when new data is fetched */
   useEffect(() => {
@@ -167,8 +177,9 @@ const BuoyLocationTable = ({ gpsReadings }: Props) => {
                       {buoy.buoyCode}
                     </TableCell>
 
+                    {/* Normalized River Name */}
                     <TableCell className="px-5 py-4 text-gray-600 dark:text-gray-300">
-                      {buoy.riverName}
+                      {toPascalCase(buoy.riverName)}
                     </TableCell>
 
                     <TableCell className="px-4 py-3 text-gray-500 dark:text-gray-400">
@@ -196,7 +207,8 @@ const BuoyLocationTable = ({ gpsReadings }: Props) => {
                             : "error"
                         }
                       >
-                        {buoy.status.toUpperCase()}
+                        {/* Normalized Status */}
+                        {toPascalCase(buoy.status)}
                       </Badge>
                     </TableCell>
 

@@ -370,7 +370,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/barangay/historical-data/battery-health"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <BatteryHealth />
+                <BatteryHealth alertsRef={alertsRef} />
               </BarangayProtectedRoutes>
             }
           />
@@ -378,7 +378,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/barangay/historical-data/bme280-data"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <BME280Data />
+                <BME280Data alertsRef={alertsRef} />
               </BarangayProtectedRoutes>
             }
           />
@@ -387,7 +387,7 @@ export default function App({ alertsRef }: AppProps) {
             path="/barangay/historical-data/rain-monitoring"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>
-                <RainMonitoring />
+                <RainMonitoring alertsRef={alertsRef} />
               </BarangayProtectedRoutes>
             }
           />
@@ -418,7 +418,7 @@ export default function App({ alertsRef }: AppProps) {
               </BarangayProtectedRoutes>
             }
           />
-           <Route
+          <Route
             path="/barangay/historical-data/alert-data"
             element={
               <BarangayProtectedRoutes alertsRef={alertsRef}>

@@ -5,53 +5,58 @@ import {
   TableHeader,
   TableRow,
 } from "../../../../components/ui/table";
-
 import { useState } from "react";
 
-interface RainSensorReading {
-  id: number; // internal key
-  buoy_id: number;
+export interface RainSensorAttributes {
+  buoyId: number;
   percentage: number;
-  created_at: string;
+  recordedAt: string;
+  recordedDate: string;
+  recordedTime: string;
+  createdDate: string;
+  createdTime: string;
+  updatedDate: string;
+  updatedTime: string;
 }
 
-const rainSensorData: RainSensorReading[] = [
-  {
-    id: 1,
-    buoy_id: 1,
-    percentage: 82,
-    created_at: "2026-02-03 10:12:00",
-  },
-  {
-    id: 2,
-    buoy_id: 1,
-    percentage: 45,
-    created_at: "2026-02-03 10:22:00",
-  },
-  {
-    id: 3,
-    buoy_id: 2,
-    percentage: 96,
-    created_at: "2026-02-03 10:35:00",
-  },
-  {
-    id: 4,
-    buoy_id: 3,
-    percentage: 10,
-    created_at: "2026-02-03 10:40:00",
-  },
-];
+export interface RainSensorReading {
+  id: number;
+  attributes: RainSensorAttributes;
+  buoy?: {
+    id: number;
+    attributes: {
+      buoyCode: string;
+      riverName: string;
+      wallHeight: number;
+      riverHectare: number;
+      latitude: number;
+      longitude: number;
+      attachment: string;
+      status: string;
+      maintenanceAt: string | null;
+      createdDate: string;
+      createdTime: string;
+      updatedDate: string;
+      updatedTime: string;
+    };
+  };
+}
+interface RainMonitoringTableProps {
+  rainData: RainSensorReading[];
+}
 
 const ROWS_PER_PAGE = 10;
 
-const RainMonitoringTable = () => {
+const RainMonitoringTable: React.FC<RainMonitoringTableProps> = ({
+  rainData,
+}) => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(rainSensorData.length / ROWS_PER_PAGE);
+  const totalPages = Math.ceil(rainData.length / ROWS_PER_PAGE);
   const startIndex = (currentPage - 1) * ROWS_PER_PAGE;
   const endIndex = startIndex + ROWS_PER_PAGE;
 
-  const currentRows = rainSensorData.slice(startIndex, endIndex);
+  const currentRows = rainData.slice(startIndex, endIndex);
 
   return (
     <div className="mt-5 rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
@@ -71,7 +76,7 @@ const RainMonitoringTable = () => {
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Buoy ID
+                Buoy Code
               </TableCell>
 
               <TableCell
@@ -85,7 +90,7 @@ const RainMonitoringTable = () => {
                 isHeader
                 className="px-5 py-3 text-theme-xs font-medium text-gray-500 dark:text-gray-400"
               >
-                Created At
+                Recorded At
               </TableCell>
             </TableRow>
           </TableHeader>
@@ -99,19 +104,19 @@ const RainMonitoringTable = () => {
                   {startIndex + index + 1}
                 </TableCell>
 
-                {/* Buoy ID */}
+                {/* Buoy Code */}
                 <TableCell className="px-5 py-4 text-theme-sm text-gray-800 dark:text-white/90">
-                  {row.buoy_id}
+                  {row.buoy?.attributes?.buoyCode || "N/A"}
                 </TableCell>
 
-                {/* Percentage */}
+                {/* Rain Level */}
                 <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.percentage}%
+                  {row.attributes.percentage}%
                 </TableCell>
 
-                {/* Created At */}
+                {/* Recorded At */}
                 <TableCell className="px-4 py-3 text-theme-sm text-gray-500 dark:text-gray-400">
-                  {row.created_at}
+                  {`${row.attributes.recordedDate} ${row.attributes.recordedTime}`}
                 </TableCell>
               </TableRow>
             ))}

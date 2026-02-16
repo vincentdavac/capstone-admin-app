@@ -1,119 +1,120 @@
 import Chart from "react-apexcharts";
 import { ApexOptions } from "apexcharts";
 
-export default function LineChartBatteryHealth() {
+interface LineChartBatteryHealthProps {
+  labels: string[];
+  percentages: number[];
+  voltages: number[];
+}
+
+export default function LineChartBatteryHealth({
+  labels,
+  percentages,
+  voltages,
+}: LineChartBatteryHealthProps) {
   const options: ApexOptions = {
+    chart: {
+      type: "line",
+      height: 310,
+      fontFamily: "Outfit, sans-serif",
+      toolbar: { show: false },
+      zoom: { enabled: true },
+    },
+
     legend: {
-      show: false, // Hide legend
+      show: true,
       position: "top",
       horizontalAlign: "left",
     },
-    colors: ["#465FFF", "#9CB9FF"], // Define line colors
-    chart: {
-      fontFamily: "Outfit, sans-serif",
-      height: 310,
-      type: "line", // Set the chart type to 'line'
-      toolbar: {
-        show: false, // Hide chart toolbar
-      },
-    },
+
+    colors: ["#22c55e", "#3b82f6"],
+
     stroke: {
-      curve: "straight", // Define the line style (straight, smooth, or step)
-      width: [2, 2], // Line width for each dataset
+      curve: "smooth",
+      width: [3, 3],
     },
 
-    fill: {
-      type: "gradient",
-      gradient: {
-        opacityFrom: 0.55,
-        opacityTo: 0,
-      },
-    },
     markers: {
-      size: 0, // Size of the marker points
-      strokeColors: "#fff", // Marker border color
+      size: 4,
       strokeWidth: 2,
       hover: {
-        size: 6, // Marker size on hover
+        size: 7,
       },
     },
-    grid: {
-      xaxis: {
-        lines: {
-          show: false, // Hide grid lines on x-axis
-        },
-      },
-      yaxis: {
-        lines: {
-          show: true, // Show grid lines on y-axis
-        },
-      },
-    },
+
     dataLabels: {
-      enabled: false, // Disable data labels
+      enabled: false,
     },
+
+    grid: {
+      borderColor: "#e5e7eb",
+      strokeDashArray: 4,
+    },
+
     tooltip: {
-      enabled: true, // Enable tooltip
-      x: {
-        format: "dd MMM yyyy", // Format for x-axis tooltip
-      },
-    },
-    xaxis: {
-      type: "category", // Category-based x-axis
-      categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
+      shared: true,
+      intersect: false,
+      y: [
+        {
+          formatter: (val) => `${val}%`,
+        },
+        {
+          formatter: (val) => `${val} V`,
+        },
       ],
-      axisBorder: {
-        show: false, // Hide x-axis border
-      },
-      axisTicks: {
-        show: false, // Hide x-axis ticks
-      },
-      tooltip: {
-        enabled: false, // Disable tooltip for x-axis points
-      },
     },
-    yaxis: {
+
+    xaxis: {
+      categories: labels,
+      type: "category",
       labels: {
+        rotate: -45,
         style: {
-          fontSize: "12px", // Adjust font size for y-axis labels
-          colors: ["#6B7280"], // Color of the labels
+          fontSize: "11px",
         },
       },
-      title: {
-        text: "", // Remove y-axis title
-        style: {
-          fontSize: "0px",
-        },
-      },
+      axisBorder: { show: false },
+      axisTicks: { show: false },
     },
+
+    yaxis: [
+      {
+        title: {
+          text: "Battery (%)",
+        },
+        min: 0,
+        max: 100,
+        labels: {
+          formatter: (val) => `${val}%`,
+        },
+      },
+      {
+        opposite: true,
+        title: {
+          text: "Voltage (V)",
+        },
+        labels: {
+          formatter: (val) => `${val}V`,
+        },
+      },
+    ],
   };
 
   const series = [
     {
-      name: "Sales",
-      data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
+      name: "Battery Percentage",
+      data: percentages,
     },
     {
-      name: "Revenue",
-      data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
+      name: "Voltage",
+      data: voltages,
     },
   ];
+
   return (
     <div className="max-w-full overflow-x-auto custom-scrollbar">
-      <div id="chartEight" className="min-w-[1000px]">
-        <Chart options={options} series={series} type="area" height={310} />
+      <div className="min-w-[800px]">
+        <Chart options={options} series={series} type="line" height={310} />
       </div>
     </div>
   );

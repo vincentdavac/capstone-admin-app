@@ -1,13 +1,13 @@
 import { useEffect,useContext } from "react";
 import PageBreadcrumb from "../../../components/common/PageBreadCrumb";
-import RainGaugeComponentCard from "./RainGauge/RainGaugeComponentCard";
 import { insertingAlerts } from "../../../api_hooks/dashboardHooks";
 import { useAlertMonitor } from "../../../api_hooks/alertMonitoringHooks";
 import { AppContext } from "../../../context/AppContext";
 import AlertModal from "../../Barangay/AlertManagement/alertModal";
-const RainGauge = () => {
+import AlertDataComponentCard from "./AlertData/AlertDataComponentCard";
+const AlertData = () => {
   useEffect(() => {
-    document.title = "Battery Health | X-Stream";
+    document.title = "Alert Data | X-Stream";
   }, []);
   insertingAlerts();
   const { user } = useContext(AppContext)!;
@@ -20,9 +20,9 @@ const RainGauge = () => {
   );
   return (
     <>
-      <PageBreadcrumb pageTitle="Rain Gauge" />
+      <PageBreadcrumb pageTitle="Alert Data" />
       <div className="space-y-6">
-        <RainGaugeComponentCard />
+        <AlertDataComponentCard />
         <AlertModal
           isOpen={showAlert}
           alert={currentAlert}
@@ -33,4 +33,4 @@ const RainGauge = () => {
   );
 };
 
-export default RainGauge;
+export default AlertData;

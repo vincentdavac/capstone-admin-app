@@ -10,7 +10,6 @@ export const fetchAlertsAlerts = () => {
   const fetchAlerts = async () => {
     if (!user?.barangay?.id) return;
     try {
-      setLoading(true);
       setError(null);
       const data = await getAllAlerts.get(user?.barangay?.id);
       console.log("Fetched alerts:", data);
@@ -21,8 +20,11 @@ export const fetchAlertsAlerts = () => {
       setLoading(false);
     }
   };
+  const setPolling = 10000;
   useEffect(() => {
     fetchAlerts();
+    const interval= setInterval(fetchAlerts, setPolling)
+    return()=> clearInterval(interval)
   }, [user]);
   return { alertsGet, loading, error, fetchAlertsAlerts };
 };

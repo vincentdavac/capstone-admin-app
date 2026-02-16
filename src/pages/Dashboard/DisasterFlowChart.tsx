@@ -11,7 +11,7 @@ const DisasterFlowChart = () => {
         justify-center
         text-center
         text-            /* larger, readable text */
-        font-semibold
+        font-gray-700
         rounded-xl          /* more elegant rounding */
         border-2
         border-[#D9D9D9]
@@ -31,9 +31,15 @@ const DisasterFlowChart = () => {
     </div>
   );
 
-  const Arrow = () => (
-    <span className="text-gray-500 dark:text-gray-400 text-2xl select-none drop-shadow-md">
-      ➜
+  const ArrowRight = () => (
+    <span className="text-gray-500 dark:text-gray-400 text-3xl select-none drop-shadow-md">
+      ➡
+    </span>
+  );
+
+  const ArrowLeft = () => (
+    <span className="text-gray-500 dark:text-gray-400 text-3xl select-none drop-shadow-md">
+      ⬅
     </span>
   );
 
@@ -88,7 +94,7 @@ const DisasterFlowChart = () => {
     >
       {/* Header */}
       <div className="w-full text-center mb-4">
-        <h3 className="text-lg  text-gray-900 dark:text-white">
+        <h3 className="text-lg  font-medium text-gray-900 dark:text-white">
           Disaster Response Flowchart
         </h3>
       </div>
@@ -97,11 +103,11 @@ const DisasterFlowChart = () => {
       {/* Row 1 */}
       <div className="flex items-center justify-between gap-4 mb-4">
         <StepBox text="Report to Operations Center" />
-        <Arrow />
+        <ArrowRight />
         <StepBox text="Check-in to site & follow protocol" />
-        <Arrow />
+        <ArrowRight />
         <StepBox text="Secure area & ensure safety of responders" />
-        <Arrow />
+        <ArrowRight />
         <StepBox text="Brief team on current situation" />
       </div>
 
@@ -110,11 +116,11 @@ const DisasterFlowChart = () => {
       {/* Row 2 */}
       <div className="flex items-center justify-between gap-4 my-4">
         <StepBox text="Conduct triage" />
-        <Arrow />
+        <ArrowLeft />
         <StepBox text="Coordinate medical treatment" />
-        <Arrow />
+        <ArrowLeft />
         <StepBox text="Deploy SAR teams" />
-        <Arrow />
+        <ArrowLeft />
         <StepBox text="Utilize response equipment" />
       </div>
 
@@ -123,11 +129,11 @@ const DisasterFlowChart = () => {
       {/* Row 3 */}
       <div className="flex items-center justify-between gap-4 my-4">
         <StepBox text="Transfer victims for treatment" />
-        <Arrow />
+        <ArrowRight />
         <StepBox text="Coordinate cadaver identification" />
-        <Arrow />
+        <ArrowRight />
         <StepBox text="Report status to command center" />
-        <Arrow />
+        <ArrowRight />
         <StepBox text="Assess need for backup responders" />
       </div>
 

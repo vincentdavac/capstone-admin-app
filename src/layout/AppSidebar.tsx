@@ -40,6 +40,7 @@ import {
   BatteryCharging,
   HardDrive,
   WavesLadder,
+  Siren,
 } from "lucide-react";
 
 type NavItem = {
@@ -168,6 +169,12 @@ const navItems: NavItem[] = [
         name: "Rain Gauge",
         path: "/barangay/historical-data/rain-gauge",
         icon: <Droplets className="w-5 h-5 stroke-[1.5]" />,
+        pro: false,
+      },
+      {
+        name: "Alert Status",
+        path: "/barangay/historical-data/alert-data",
+        icon: <Siren className="w-5 h-5 stroke-[1.5]" />,
         pro: false,
       },
     ],

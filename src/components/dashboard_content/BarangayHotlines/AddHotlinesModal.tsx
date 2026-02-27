@@ -19,8 +19,9 @@ const AddHotlinesModal = ({
   alertsRef,
   onAdded,
 }: Props) => {
+  // Logic remains: Still sending 'description' and 'number'
   const [form, setForm] = useState({
-    description: "",
+    description: "", // Updated label/placeholder to imply specific format
     number: "",
   });
 
@@ -35,6 +36,7 @@ const AddHotlinesModal = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validation
     if (!form.description || !form.number) {
       alertsRef.current?.addAlert(
         "error",
@@ -54,7 +56,7 @@ const AddHotlinesModal = ({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          description: form.description,
+          description: form.description, // Sent as description
           number: form.number,
         }),
       });
@@ -65,6 +67,8 @@ const AddHotlinesModal = ({
         alertsRef.current?.addAlert("success", "Hotline added successfully!");
         onAdded();
         onClose();
+        // Reset form
+        setForm({ description: "", number: "" });
       } else {
         if (result.errors) {
           Object.values(result.errors).forEach((err: any) => {
@@ -99,7 +103,7 @@ const AddHotlinesModal = ({
         </button>
 
         {/* Title */}
-        <h2 className="text-xl font-semibold mb-5 text-gray-900 dark:text-white text-center">
+        <h2 className="text-xl font-semibold mb-5 text-gray-900 dark:white text-center">
           Add Emergency Hotline
         </h2>
 
@@ -108,14 +112,15 @@ const AddHotlinesModal = ({
           {/* Description */}
           <div>
             <label className="block text-sm font-medium mb-1 text-gray-700 dark:text-gray-300">
-              Description
+              Department / Identity
             </label>
             <input
               type="text"
               name="description"
               value={form.description}
               onChange={handleChange}
-              placeholder="e.g. Fire Department"
+              // Updated placeholder to guide the user
+              placeholder="e.g. Barangay 162 - Disaster Response Team"
               className="w-full h-11 px-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#453EFE]"
             />
           </div>
@@ -130,7 +135,7 @@ const AddHotlinesModal = ({
               name="number"
               value={form.number}
               onChange={handleChange}
-              placeholder="e.g. 911"
+              placeholder="e.g. 0906-2111-968"
               className="w-full h-11 px-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#453EFE]"
             />
           </div>

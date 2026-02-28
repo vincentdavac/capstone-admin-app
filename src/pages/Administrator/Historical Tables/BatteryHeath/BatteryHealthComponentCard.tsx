@@ -64,6 +64,7 @@ const BatteryHealthComponentCard: React.FC<BatteryHealthComponentCardProps> = ({
   const { token, user } = useContext(AppContext)!;
 
   const buoyId = user?.barangay?.buoys?.[0]?.id;
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
 
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -103,6 +104,52 @@ const BatteryHealthComponentCard: React.FC<BatteryHealthComponentCardProps> = ({
     } catch (error) {
       setBatteryHealth([]);
       console.error("Error fetching battery health:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [buoyId, fromDate, toDate, token]);
+
+  // ================= REPORT GENERATOR =================
+  const generateReport = useCallback(async () => {
+    if (!buoyId) return;
+
+    setLoading(true);
+
+    try {
+      const params = new URLSearchParams();
+      params.append("buoy_id", String(buoyId));
+      if (fromDate) params.append("from", fromDate);
+      if (toDate) params.append("to", toDate);
+
+      const res = await fetch(
+        `${API_BASE_URL}/battery-report?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/pdf", // tell server we expect a PDF
+          },
+        },
+      );
+
+      if (!res.ok) {
+        console.error("Failed to fetch report, status:", res.status);
+        return;
+      }
+
+      // Get the response as a Blob (binary)
+      const blob = await res.blob();
+
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `battery_health_report_${buoyCode}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error generating report:", error);
     } finally {
       setLoading(false);
     }
@@ -166,11 +213,11 @@ const BatteryHealthComponentCard: React.FC<BatteryHealthComponentCardProps> = ({
           {/* Print */}
           <button
             type="button"
-            onClick={() => window.print()}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            onClick={generateReport}
+            className="flex items-center gap-2 rounded-lg bg-[#453EFE] px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
           >
             <Printer size={16} />
-            Print
+            Generate Report
           </button>
         </div>
       </div>

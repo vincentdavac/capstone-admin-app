@@ -70,6 +70,7 @@ const AlertDataComponentCard: React.FC<AlertDataComponentCardProps> = ({
   const { token, user } = useContext(AppContext)!;
 
   const buoyId = user?.barangay?.buoys?.[0]?.id;
+  const buoycode = user?.barangay?.buoys?.[0]?.buoyCode;
 
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
@@ -109,6 +110,54 @@ const AlertDataComponentCard: React.FC<AlertDataComponentCardProps> = ({
     } catch (error) {
       setRelayStatuses([]);
       console.error("Error fetching relay statuses:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [buoyId, fromDate, toDate, token]);
+
+  // ================= REPORT GENERATOR =================
+  const generateReport = useCallback(async () => {
+    if (!buoyId) return;
+
+    setLoading(true);
+
+    try {
+      const params = new URLSearchParams();
+      params.append("buoy_id", String(buoyId));
+      if (fromDate) params.append("from", fromDate);
+      console.log("From Date:", fromDate);
+      if (toDate) params.append("to", toDate);
+
+      const res = await fetch(
+        `${API_BASE_URL}/relay-status-report?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/pdf", // tell server we expect a PDF
+          },
+        },
+      );
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error("Failed:", res.status, text);
+        return;
+      }
+
+      // Get the response as a Blob (binary)
+      const blob = await res.blob();
+
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `alert_data_report_${buoycode}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error generating report:", error);
     } finally {
       setLoading(false);
     }
@@ -172,11 +221,11 @@ const AlertDataComponentCard: React.FC<AlertDataComponentCardProps> = ({
           {/* Print */}
           <button
             type="button"
-            onClick={() => window.print()}
-            className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            onClick={generateReport}
+            className="flex items-center gap-2 rounded-lg bg-[#453EFE] px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
           >
             <Printer size={16} />
-            Print
+            Generate Report
           </button>
         </div>
       </div>

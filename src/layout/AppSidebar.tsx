@@ -115,11 +115,11 @@ const navItems: NavItem[] = [
     path: "/barangay/river-monitoring",
   },
 
-  {
-    icon: <Megaphone />,
-    name: "Alert Management",
-    path: "/barangay/alert-management",
-  },
+  // {
+  //   icon: <Megaphone />,
+  //   name: "Alert Management",
+  //   path: "/barangay/alert-management",
+  // },
   {
     icon: <Buoy />,
     name: "Buoy Monitoring",

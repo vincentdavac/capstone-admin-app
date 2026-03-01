@@ -10,6 +10,9 @@ import {
 } from "lucide-react";
 import { AppContext } from "../../context/AppContext";
 import API_BASE_URL from "../../config/coreApi";
+import { database, auth } from "../../firebaseCredentials/firebase";
+import { ref, onValue } from "firebase/database";
+import { signInAnonymously } from "firebase/auth";
 
 interface BuoyAttributes {
   buoyCode: string;
@@ -45,6 +48,7 @@ export default function BuoyCondition({
 }: MapsWithHazardProps) {
   const { token, user } = useContext(AppContext)!;
   const buoyId = user?.barangay?.buoys?.[0]?.id;
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
 
   const [alarmEnabled, setAlarmEnabled] = useState(false);
   const [batteryLevel, setBatteryLevel] = useState<number | null>(null);
@@ -52,6 +56,9 @@ export default function BuoyCondition({
 
   const initialLocation = { lat: buoy?.latitude, lng: buoy?.longitude };
   const currentLocation = { lat: currentLat, lng: currentLng };
+
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingState, setPendingState] = useState<boolean | null>(null);
 
   //  Recalculate distance when GPS changes
   useEffect(() => {
@@ -148,13 +155,34 @@ export default function BuoyCondition({
 
   const battery = getBatteryStatus(batteryPercentage);
 
-  const handleAlarmToggle = async () => {
+  const handleAlarmToggle = () => {
+    const nextState = !alarmEnabled;
+
+    // If turning ON → require confirmation
+    if (nextState) {
+      setPendingState(true);
+      setShowConfirmModal(true);
+    } else {
+      // Turning OFF → no confirmation
+      switchRelay(false);
+    }
+  };
+
+  const confirmTurnOn = () => {
+    if (pendingState) {
+      switchRelay(true);
+    }
+
+    setShowConfirmModal(false);
+    setPendingState(null);
+  };
+
+  const switchRelay = async (nextState: boolean) => {
     if (!buoyId) return;
 
-    const nextState = !alarmEnabled;
     const relayState = nextState ? "on" : "off";
 
-    // Optimistic UI update
+    // Optimistic update
     setAlarmEnabled(nextState);
 
     try {
@@ -175,15 +203,44 @@ export default function BuoyCondition({
 
       if (!res.ok) {
         console.error("Relay switch failed:", result);
-        // rollback UI state if API fails
         setAlarmEnabled(!nextState);
       }
     } catch (error) {
       console.error("Error switching relay:", error);
-      // rollback UI state if request crashes
       setAlarmEnabled(!nextState);
     }
   };
+
+  // Relay State Listener
+  useEffect(() => {
+    if (!buoyCode) return;
+
+    const relayRef = ref(database, `/${buoyCode}/RELAY_STATE`);
+
+    const unsubscribe = onValue(relayRef, (snapshot) => {
+      if (snapshot.exists()) {
+        const state = snapshot.val();
+        setAlarmEnabled(state === true || state === "on"); // handle boolean or string
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [buoyCode]);
+
+  // Firebase Anonymous Auth
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        signInAnonymously(auth).catch((err) =>
+          console.error("Firebase Auth Error:", err),
+        );
+      }
+    });
+
+    return unsubscribe;
+  }, []);
 
   return (
     <div className="p-5">
@@ -266,10 +323,10 @@ export default function BuoyCondition({
                     battery.status === "Critical"
                       ? "text-red-600 dark:text-red-400"
                       : battery.status === "Low"
-                      ? "text-yellow-600 dark:text-yellow-400"
-                      : battery.status === "Good"
-                      ? "text-amber-600 dark:text-amber-400"
-                      : "text-emerald-600 dark:text-emerald-400"
+                        ? "text-yellow-600 dark:text-yellow-400"
+                        : battery.status === "Good"
+                          ? "text-amber-600 dark:text-amber-400"
+                          : "text-emerald-600 dark:text-emerald-400"
                   }`}
                 >
                   Battery
@@ -388,6 +445,41 @@ export default function BuoyCondition({
           </div>
         </div>
       </div>
+
+      {showConfirmModal && (
+        <div className="fixed inset-0 bg-blue-900/40 backdrop-blur-sm flex items-center justify-center z-[9999]">
+          <div className="relative bg-white/90 dark:bg-gray-900/90 border border-white/20 rounded-2xl shadow-2xl w-full max-w-lg p-8 z-[10000] overflow-y-auto max-h-[90vh]">
+            <div className="flex flex-col items-center text-center">
+              <Bell className="text-red-500 mb-3 animate-pulse" size={40} />
+
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Activate Alarm?
+              </h3>
+
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                You are about to activate the emergency sound alarm for this
+                buoy. This will trigger a real-time alert signal.
+              </p>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() => setShowConfirmModal(false)}
+                  className="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={confirmTurnOn}
+                  className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

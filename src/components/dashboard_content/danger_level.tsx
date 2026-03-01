@@ -24,14 +24,15 @@ interface HotlineData {
 }
 
 const dangerLevel = ({ alertsRef }: Props) => {
-  const { token } = useContext(AppContext)!;
+  const { token, user } = useContext(AppContext)!;
+  const userType = user?.userType;
 
   const [showAdd, setShowAdd] = useState(false);
   const [showUpdate, setShowUpdate] = useState(false);
   const [showArchive, setShowArchive] = useState(false);
 
   const [selectedHotlines, setSelectedHotlines] = useState<HotlineData | null>(
-    null
+    null,
   );
 
   /* ================= Disaster Alert ================= */
@@ -94,7 +95,9 @@ const dangerLevel = ({ alertsRef }: Props) => {
             description: item.attributes.description,
             number: item.attributes.number,
             isGlobal: item.attributes.isGlobal,
-          }))
+            barangayId: item.attributes.barangayId, //Add this
+            barangay: item.barangay, //keep the barangay object
+          })),
         );
       }
     } catch (error) {
@@ -120,6 +123,52 @@ const dangerLevel = ({ alertsRef }: Props) => {
   const handleArchiveClick = (hotline: HotlineData) => {
     setSelectedHotlines(hotline);
     setShowArchive(true);
+  };
+
+  const groupedHotlines = (filteredHotlines || []).reduce(
+    (acc: any, line: any) => {
+      if (!line) return acc;
+
+      // Handle both possible structures safely
+      const barangayId =
+        line?.attributes?.barangayId ?? line?.barangayId ?? null;
+
+      const isGlobal = line?.attributes?.isGlobal ?? line?.isGlobal ?? false;
+
+      const number = line?.attributes?.number ?? line?.number ?? "";
+
+      const description =
+        line?.attributes?.description ?? line?.description ?? "";
+
+      const barangayName =
+        line?.barangay?.name ??
+        (line?.attributes?.isGlobal ? "Global Hotlines" : "Unknown Barangay");
+
+      const key = isGlobal ? "global" : `barangay-${barangayId}`;
+
+      if (!acc[key]) {
+        acc[key] = {
+          barangayName: isGlobal ? "Global Hotlines" : barangayName,
+          hotlines: [],
+        };
+      }
+
+      acc[key].hotlines.push({
+        id: line.id,
+        number,
+        description,
+        isGlobal,
+      });
+
+      return acc;
+    },
+    {},
+  );
+
+  const canEditHotline = (line: HotlineData) => {
+    if (userType === "admin" && line.isGlobal) return true; // admin can edit only global
+    if (userType === "barangay" && !line.isGlobal) return true; // barangay can edit only local
+    return false; // otherwise, cannot edit
   };
 
   return (
@@ -189,61 +238,60 @@ const dangerLevel = ({ alertsRef }: Props) => {
             </p>
           ) : (
             <ul className="space-y-3">
-              {filteredHotlines.map((line) => (
+              {Object.entries(groupedHotlines).map(([key, group]: any) => (
                 <li
-                  key={line.id}
-                  className="p-4 rounded-xl border border-[#D9D9D9] dark:border-gray-700 shadow-md hover:shadow-lg transition bg-white dark:bg-gray-800"
+                  key={key}
+                  className="p-4 rounded-xl border border-[#D9D9D9] dark:border-gray-700 shadow-md bg-white dark:bg-gray-800"
                 >
-                  <div className="flex justify-between items-center">
-                    <div className="flex gap-4">
-                      <div className="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-xl">
-                        <Phone className="w-6 h-6 text-gray-800 dark:text-white/90" />
-                      </div>
+                  {/* Barangay Title (Only Once) */}
+                  <h4 className="text-md font-semibold text-[#453EFE] mb-3">
+                    {group.barangayName}
+                  </h4>
 
-                      <div>
-                        <p className="text-sm font-semibold text-gray-800 dark:text-white">
-                          {line.description}
-                        </p>
-                        <p className="text-2xl font-bold text-gray-800 dark:text-white">
-                          {line.number}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => {
-                          if (!line.isGlobal) return;
-                          setSelectedHotlines(line);
-                          setShowUpdate(true);
-                        }}
-                        disabled={!line.isGlobal}
-                        className={`w-9 h-9 flex items-center justify-center rounded-lg transition
-                        ${
-                          line.isGlobal
-                            ? "bg-[#453EFE] hover:bg-indigo-700 text-white"
-                            : "bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed opacity-60"
-                        }`}
+                  {/* Hotline Numbers Only */}
+                  <div className="space-y-3">
+                    {group.hotlines.map((line: any) => (
+                      <div
+                        key={line.id}
+                        className="flex justify-between items-center border-t pt-3"
                       >
-                        <Upload className="w-5 h-5" />
-                      </button>
+                        <div className="flex gap-4">
+                          <div className="w-12 h-12 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded-xl">
+                            <Phone className="w-6 h-6 text-gray-800 dark:text-white/90" />
+                          </div>
 
-                      <button
-                        onClick={() => {
-                          if (!line.isGlobal) return;
-                          handleArchiveClick(line);
-                        }}
-                        disabled={!line.isGlobal}
-                        className={`w-9 h-9 flex items-center justify-center rounded-lg transition
-                        ${
-                          line.isGlobal
-                            ? "bg-[#453EFE] hover:bg-indigo-700 text-white"
-                            : "bg-gray-300 dark:bg-gray-600 text-gray-500 cursor-not-allowed opacity-60"
-                        }`}
-                      >
-                        <Archive className="w-5 h-5" />
-                      </button>
-                    </div>
+                          <div>
+                            <p className="text-sm font-semibold text-gray-800 dark:text-white">
+                              {line.description}
+                            </p>
+                            <p className="text-2xl font-bold text-gray-800 dark:text-white">
+                              {line.number}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex gap-2">
+                          {canEditHotline(line) && (
+                            <button
+                              onClick={() => {
+                                setSelectedHotlines(line);
+                                setShowUpdate(true);
+                              }}
+                              className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg"
+                            >
+                              <Upload className="w-5 h-5" />
+                            </button>
+                          )}
+                          {canEditHotline(line) && (
+                            <button
+                              onClick={() => handleArchiveClick(line)}
+                              className="w-9 h-9 flex items-center justify-center bg-[#453EFE] hover:bg-indigo-700 text-white rounded-lg"
+                            >
+                              <Archive className="w-5 h-5" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </li>
               ))}

@@ -98,15 +98,26 @@ export default function MapsWithHazard({
         });
     }
 
+    const isActive = buoy.status?.toLowerCase() === "active";
+
+    const statusStyle = isActive
+      ? "color:#16a34a; font-weight:600;"
+      : "color:#dc2626; font-weight:600;";
+
     const popupContent = `
       <div style="font-size:14px; line-height:1.4;">
-        <h3 style="margin:0;">${buoy.buoyCode}</h3>
-        <p><b>Status:</b> ${buoy.status}</p>
+        <h1 style="margin:0;">${buoy.buoyCode}</h1>
+        <p>
+          <b>Status:</b> 
+          <span style="${statusStyle}">
+            ${buoy.status}
+          </span>
+        </p>
         <p><b>River:</b> ${buoy.riverName}</p>
         <p><b>Wall Height:</b> ${buoy.wallHeight} feet</p>
         <p><b>River Hectare:</b> ${buoy.riverHectare} ha</p>
-        <p><b>Last Update:</b> ${buoy.updatedDate} ${buoy.updatedTime}</p>
-        <p><b>Distance from Initial:</b> ${distanceKm} km</p>
+        <p><b>Deployment Date:</b> ${buoy.createdDate} ${buoy.createdTime}</p>
+        <p><b>Distance from Current Location:</b> ${distanceKm} km</p>
       </div>
     `;
 

@@ -8,6 +8,7 @@ import { AlertsContainerRef } from "../../../../components/Alert/AlertsContainer
 import ViewBuoyModal from "./ViewBuoyModal";
 import UpdateBuoyModal from "./UpdateBuoyModal";
 import AddBuoyModal from "./AddBuoyModal";
+import BuoyMap from "./BuoyMap";
 
 // 🧩 Interfaces
 interface Attributes {
@@ -135,12 +136,14 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
   const totalPages = Math.ceil(filteredBuoys.length / itemsPerPage);
   const currentBuoys = filteredBuoys.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
   return (
     <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen text-gray-900 dark:text-white">
       <PageBreadcrumb pageTitle="Buoy Deployment" />
+
+      <BuoyMap buoys={filteredBuoys} />
 
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
         {/* Search and Add Button */}
@@ -297,7 +300,6 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
           </div>
         </div>
       </div>
-
       {/* 🧩 Modals */}
       {showView && selectedBuoy && (
         <ViewBuoyModal
@@ -306,7 +308,6 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
           data={selectedBuoy}
         />
       )}
-
       {showUpdate && selectedBuoy && (
         <UpdateBuoyModal
           show={showUpdate}
@@ -317,7 +318,6 @@ const BuoyDeployment = ({ alertsRef }: Props) => {
           onUpdated={fetchBuoys}
         />
       )}
-
       {showAdd && (
         <AddBuoyModal
           show={showAdd}

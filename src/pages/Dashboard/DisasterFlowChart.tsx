@@ -10,21 +10,20 @@ const DisasterFlowChart = () => {
         items-center
         justify-center
         text-center
-        text-            /* larger, readable text */
-        font-gray-700
         rounded-xl          /* more elegant rounding */
         border-2
-        border-[#D9D9D9]
-        bg-white
-        backdrop-blur-lg
-        shadow-xl            /* stronger for elegance */
+        border-[#2C7DA0]    /* medium ocean blue */
+        bg-gradient-to-br from-white to-[#A9D6E5]  /* soft water surface */
+        shadow-xl            
         text-gray-800
-        dark:bg-gray-800
+        dark:from-gray-800 dark:to-[#01497C]/30  /* deep ocean */
         dark:text-white
-        dark:border-gray-700
+        dark:border-[#2C7DA0]/70  /* muted blue */
         transition-all
         hover:scale-105
-        hover:shadow-2xl      /* subtle glow effect on hover */
+        hover:shadow-2xl
+        hover:border-[#01497C]  /* deeper blue */
+        dark:hover:border-[#61A5C2]  /* lighter blue */
       "
     >
       {text}
@@ -32,13 +31,13 @@ const DisasterFlowChart = () => {
   );
 
   const ArrowRight = () => (
-    <span className="text-gray-500 dark:text-gray-400 text-3xl select-none drop-shadow-md">
+    <span className="text-[#2C7DA0] dark:text-[#89C2D9] text-3xl select-none drop-shadow-md">
       ➡
     </span>
   );
 
   const ArrowLeft = () => (
-    <span className="text-gray-500 dark:text-gray-400 text-3xl select-none drop-shadow-md">
+    <span className="text-[#2C7DA0] dark:text-[#89C2D9] text-3xl select-none drop-shadow-md">
       ⬅
     </span>
   );
@@ -49,7 +48,7 @@ const DisasterFlowChart = () => {
         align === "right" ? "justify-end pr-20" : "justify-start pl-20"
       }`}
     >
-      <span className="text-gray-500 dark:text-gray-400 text-3xl select-none drop-shadow-md">
+      <span className="text-[#2C7DA0] dark:text-[#89C2D9] text-3xl select-none drop-shadow-md">
         ⬇
       </span>
     </div>
@@ -76,11 +75,12 @@ const DisasterFlowChart = () => {
 
     bg-white
     dark:bg-gray-800
+
     backdrop-blur-xl
     shadow-sm
     rounded-2xl
     border
-    border-[#D9D9D9]
+    border-gray-200
     dark:border-gray-700
 
     py-4
@@ -92,9 +92,8 @@ const DisasterFlowChart = () => {
         WebkitBackdropFilter: "blur(20px)",
       }}
     >
-      {/* Header */}
       <div className="w-full text-center mb-4">
-        <h3 className="text-lg  font-medium text-gray-900 dark:text-white">
+        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
           Disaster Response Flowchart
         </h3>
       </div>

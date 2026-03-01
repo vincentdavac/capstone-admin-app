@@ -1,21 +1,17 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect, useContext, useRef } from "react";
-import { StarIcon } from "@heroicons/react/24/solid";
-import API_BASE_URL from "../config/coreApi";
-import { AppContext } from "../context/AppContext";
-import Modal from "./FeedbackModal"; // Make sure this file exists
-
-interface FeedbackAttributes {
-  userName: string;
-  userImage: string;
-  rate: number;
-  feedback: string;
-  createdDate: string;
-}
+import { useEffect, useState, useRef } from 'react';
+import { StarIcon } from 'lucide-react';
+import API_BASE_URL from '../config/coreApi';
+import Modal from './FeedbackModal.tsx';
 
 interface FeedbackData {
   id: number;
-  attributes: FeedbackAttributes;
+  attributes: {
+    userName: string;
+    userImage: string;
+    rate: number;
+    feedback: string;
+    createdDate: string;
+  };
 }
 
 interface Props {
@@ -23,11 +19,10 @@ interface Props {
 }
 
 export default function Testimonials({ refresh }: Props) {
-  const { token } = useContext(AppContext)!;
   const [loading, setLoading] = useState(true);
   const [feedbacks, setFeedbacks] = useState<FeedbackData[]>([]);
   const [selectedFeedback, setSelectedFeedback] = useState<FeedbackData | null>(
-    null
+    null,
   );
   
   // Drag to scroll refs and state
@@ -39,24 +34,23 @@ export default function Testimonials({ refresh }: Props) {
   const fetchActiveFeedbacks = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${API_BASE_URL}/active-feedbacks`, {
+      const res = await fetch(`${API_BASE_URL}/public-active-feedbacks`, {
         headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/json",
+          Accept: 'application/json',
         },
       });
       const data = await res.json();
       if (res.ok && data.data) setFeedbacks(data.data);
     } catch (err) {
-      console.error("Error fetching active feedbacks:", err);
+      console.error('Error fetching active feedbacks:', err);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    if (token) fetchActiveFeedbacks();
-  }, [refresh, token]);
+    fetchActiveFeedbacks();
+  }, [refresh]);
 
   if (loading) {
     return (
@@ -87,9 +81,9 @@ export default function Testimonials({ refresh }: Props) {
         className="absolute inset-0 z-0 opacity-100"
         style={{
           backgroundImage: `url('/wave.svg')`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
         }}
       />
 
@@ -131,7 +125,7 @@ export default function Testimonials({ refresh }: Props) {
               f.attributes;
             
             const cardGradient = "from-blue-400 to-cyan-400";
-
+            
             const truncated =
               feedback.length > 160 ? feedback.slice(0, 160) + "..." : feedback;
 

@@ -19,21 +19,21 @@ const AlertData = ({ alertsRef }: AlertDataComponentCardProps) => {
   const { user } = useContext(AppContext)!;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   const buoyId = user?.barangay?.buoys?.[0]?.id;
-  const { showAlert, currentAlert, handleClose } = useAlertMonitor(
-    buoyCode?.toString() ?? "",
-    5000,
-    buoyId?.toString() ?? "",
-  );
+  // const { showAlert, currentAlert, handleClose } = useAlertMonitor(
+  //   buoyCode?.toString() ?? "",
+  //   5000,
+  //   buoyId?.toString() ?? "",
+  // );
   return (
     <>
       <PageBreadcrumb pageTitle="Alert Data" />
       <div className="space-y-6">
         <AlertDataComponentCard alertsRef={alertsRef} />
-        <AlertModal
+        {/* <AlertModal
           isOpen={showAlert}
           alert={currentAlert}
           onClose={handleClose}
-        />
+        /> */}
       </div>
     </>
   );

@@ -15,14 +15,11 @@ const AlertManagement: React.FC = () => {
   const { user } = useContext(AppContext)!;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   const buoyId = user?.barangay?.buoys?.[0]?.id;
-  // if (!buoyId) {
-  //    return <div>Loading...</div>;
-  // }
-  const { showAlert, currentAlert, handleClose } = useAlertMonitor(
-    buoyCode?.toString() ?? "",
-    5000,
-    buoyId?.toString() ?? ""
-  );
+  // const { showAlert, currentAlert, handleClose } = useAlertMonitor(
+  //   buoyCode?.toString() ?? "",
+  //   5000,
+  //   buoyId?.toString() ?? "",
+  // );
   insertingAlerts();
   useAlert();
   const { alertsGet, loading, error } = fetchAlertsAlerts();
@@ -54,10 +51,9 @@ const AlertManagement: React.FC = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentAlerts = filteredAlerts.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
 
-  /* ================= Disaster Alert ================= */
   const [selected, setSelected] = useState<"WHITE" | "BLUE" | "RED">("WHITE");
 
   const alertStatus = {
@@ -94,77 +90,26 @@ const AlertManagement: React.FC = () => {
   };
 
   return (
-    <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
-      <PageBreadcrumb pageTitle="Alert Management" />
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-        {/* Main Content (Left: Create Alert, Right: Recent Alerts) */}
-        <div className="p-4 sm:p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Left Column - New Layout (Create Alert and Flowchart) */}
-            <div className="space-y-6 lg:pr-12 lg:border-r border-gray-200 dark:border-gray-700">
-              <div className="space-y-6">
-                {/* ================= DISASTER ALERT ================= */}
-                <div className="w-full lg:w-[648px] bg-white dark:bg-gray-800 shadow rounded-2xl border border-[#D9D9D9] dark:border-gray-700 flex flex-col">
-                  <div className="w-full px-4 pt-4 text-center">
-                    <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                      Disaster Alert Level
-                    </h3>
-                  </div>
-
-                  <hr className="my-3 border-gray-300 dark:border-gray-600" />
-
-                  <div className="grid grid-cols-3 gap-3 px-4">
-                    {(["WHITE", "BLUE", "RED"] as const).map((color) => (
-                      <button
-                        key={color}
-                        className={getButtonClass(color)}
-                        onClick={() => setSelected(color)}
-                      >
-                        {color}
-                      </button>
-                    ))}
-                  </div>
-
-                  <p className="px-4 py-4 text-sm text-center text-gray-700 dark:text-gray-400">
-                    {alertStatus[selected]}
-                  </p>
-                </div>
-
-              {/* Disaster Response Flowchart */}
-                <div className="w-full min-h-[495px]">
-                    <DisasterFlowChart />
-                </div>
-              </div>
-
-              {/* NEW LAYOUT ENDS HERE */}
-            </div>
-
-            {/* Right Column - Recent Alerts Table (Now a Component) */}
-            <RecentAlertsTable
+  <div className="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-white">
+    <PageBreadcrumb pageTitle="Alert Management" />
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm mt-6">
+      <div className="p-4 sm:p-6">
+        <div className="w-[95%] mx-auto">
+          <div className="w-full max-h-auto overflow-hidden">
+              <RecentAlertsTable
               loading={loading}
               error={error}
-              currentAlerts={currentAlerts}
-              filteredAlerts={filteredAlerts}
-              itemsPerPage={itemsPerPage}
-              currentPage={currentPage}
-              totalPages={totalPages}
+              alertsGet={alertsGet || []}
               selectedAlertId={selectedAlertId}
-              startIndex={startIndex}
-              setCurrentPage={setCurrentPage}
               handleSelectAlert={handleSelectAlert}
-              handleBroadcast={handleBroadcast}
               sensorTypes={sensorTypes}
-            />
-            <AlertModal
-              isOpen={showAlert}
-              alert={currentAlert}
-              onClose={handleClose}
             />
           </div>
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
 
 export default AlertManagement;

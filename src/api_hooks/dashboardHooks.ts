@@ -9,6 +9,7 @@ export function insertingAlerts() {
   useEffect(() => {
     let mount = true;
     const alertController = new AbortController();
+
     const allInsertAlerts = async () => {
       if (!mount) return;
       try {
@@ -18,12 +19,17 @@ export function insertingAlerts() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({alert_id: buoyId,buoy_code: String(buoyCode)}),
+          body: JSON.stringify({
+            alert_id: buoyId,
+            buoy_code: String(buoyCode),
+          }),
         });
       } catch (error) {
-        console.error(" failed to send alert: ", error);
+        if (error instanceof Error && error.name === "AbortError") return;
+        console.error("Failed to send alert:", error);
       }
     };
+
     allInsertAlerts();
     const interval = setInterval(allInsertAlerts, 5000);
 
@@ -33,5 +39,5 @@ export function insertingAlerts() {
       alertController.abort();
       clearInterval(interval);
     };
-  }, []);
+  }, [token, user]);
 }

@@ -294,7 +294,7 @@ export default function NotificationDropdown() {
                   {/* Sender Image */}
                   <span className="relative block h-10 w-10 shrink-0 rounded-full">
                     <img
-                      src={notification.sender.image || "/no_profile.png"}
+                      // src={notification.sender.image || "/no_profile.png"}
                       alt={notification.sender.name || "User Account"}
                       className="h-full w-full rounded-full object-cover"
                       onError={(e) => {

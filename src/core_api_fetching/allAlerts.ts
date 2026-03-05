@@ -16,6 +16,9 @@ const allAlert = {
       }
       return await response.json();
     } catch (error) {
+      if (error instanceof DOMException && error.name === "AbortError") {
+        throw error;
+      }
       console.error(
         "API Error:",
         error instanceof Error ? error.message : "Unknown error"

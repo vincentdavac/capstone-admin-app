@@ -12,7 +12,8 @@ export const fetchAlertsAlerts = () => {
     try {
       setError(null);
       const data = await getAllAlerts.get(user?.barangay?.id);
-      console.log("Fetched alerts:", data);
+      //uncomment mo lang pag need mo i-debug
+      // console.log("Fetched alerts:", data); 
       setAlerts(data.data);
     } catch (err) {
       setError("Failed to fetch weather data");

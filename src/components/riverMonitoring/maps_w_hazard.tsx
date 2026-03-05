@@ -46,95 +46,20 @@ export default function MapsWithHazard() {
     isDark: boolean,
     dynamicMax?: number,
   ) => {
-    const textColor = isDark ? "#ccc" : "#464646";
-    const axisLineColor = isDark ? "#9ca3af" : "#fff";
-    let newOptions: echarts.EChartsOption = { series: [] };
+    const textColor = isDark ? "#EBEFF4" : "#464646";
+    const subTextColor = isDark ? "#9ca3af" : "#999";
 
-    if (seriesOptions.type === "gauge" && seriesOptions.startAngle === 200) {
-      newOptions = {
-        series: [
-          {
-            axisTick: { lineStyle: { color: isDark ? "#666" : "#999" } },
-            splitLine: { lineStyle: { color: isDark ? "#666" : "#999" } },
-            axisLabel: { color: isDark ? "#aaa" : "#999" },
-          },
-          {},
-        ],
-      };
-    } else if (
-      seriesOptions.type === "gauge" &&
-      seriesOptions.center &&
-      seriesOptions.center[1] === "75%"
-    ) {
-      newOptions = {
-        series: [
-          {
-            ...seriesOptions,
-            max: dynamicMax,
-            axisLabel: { ...seriesOptions.axisLabel, color: textColor },
-          },
-        ],
-      };
-    } else if (
-      seriesOptions.type === "gauge" &&
-      seriesOptions.center &&
-      seriesOptions.center[1] === "60%"
-    ) {
-      newOptions = {
-        series: [
-          {
-            ...seriesOptions,
-            axisLabel: { ...seriesOptions.axisLabel, color: textColor },
-            splitLine: {
-              ...seriesOptions.splitLine,
-              lineStyle: { color: textColor, width: 1 },
-            },
-          },
-        ],
-      };
-    } else if (
-      seriesOptions.type === "gauge" &&
-      seriesOptions.center &&
-      seriesOptions.center[1] === "55%"
-    ) {
-      newOptions = {
-        series: [
-          {
-            ...seriesOptions,
-            axisTick: {
-              ...seriesOptions.axisTick,
-              lineStyle: {
-                color: axisLineColor,
-                width: seriesOptions.axisTick.lineStyle.width,
-              },
-            },
-            splitLine: {
-              ...seriesOptions.splitLine,
-              lineStyle: {
-                color: axisLineColor,
-                width: seriesOptions.splitLine.lineStyle.width,
-              },
-            },
-            axisLabel: { ...seriesOptions.axisLabel, color: textColor },
-          },
-        ],
-      };
-    } else if (
-      seriesOptions.type === "gauge" &&
-      seriesOptions.startAngle === 225
-    ) {
-      // Handles both Wind Speed and Humidity gauges
-      newOptions = {
-        series: [
-          {
-            axisTick: { lineStyle: { color: isDark ? "#666" : "#999" } },
-            splitLine: { lineStyle: { color: isDark ? "#666" : "#999" } },
-            axisLabel: { color: isDark ? "#aaa" : "#999" },
-          },
-        ],
-      };
-    }
-    chart.setOption(newOptions);
+    chart.setOption({
+      series: [
+        {
+          axisLabel: { color: subTextColor },
+          detail: { color: textColor },
+          splitLine: { lineStyle: { color: subTextColor } },
+          axisTick: { lineStyle: { color: subTextColor } },
+          max: dynamicMax !== undefined ? dynamicMax : seriesOptions.max
+        }
+      ]
+    });
   };
 
   useEffect(() => {
@@ -151,17 +76,18 @@ export default function MapsWithHazard() {
 
     const applyStyles = () => {
       const isDark = document.documentElement.classList.contains("dark");
-      charts.forEach((chart, index) => {
+      charts.forEach((chart) => {
         const option = chart.getOption() as echarts.EChartsOption;
         if (option && option.series) {
           const seriesData = Array.isArray(option.series)
             ? option.series[0]
             : option.series;
+
           updateEChartsOptions(
             chart,
             seriesData,
             isDark,
-            index === 0 ? (sstData > 0 ? sstData * 1.2 : 3) : undefined,
+            undefined
           );
         }
       });
@@ -172,8 +98,8 @@ export default function MapsWithHazard() {
       const GAUGE_MAX = 100;
 
       const getTemperatureColor = (val: number) => {
-        if (val < 27) return "#2ecc71"; // Green: Below 27
-        if (val <= 32) return "#2ecc71"; // Green: 27 - 32
+        if (val < 27) return "#EBEFF4"; // Green: Below 27
+        if (val <= 32) return "#EBEFF4"; // Green: 27 - 32
         if (val <= 41) return "#3498db"; // Blue: 33 - 41
         if (val <= 51) return "#e74c3c"; // Red: 42 - 51
         return "#e74c3c"; // Red: > 52
@@ -193,7 +119,7 @@ export default function MapsWithHazard() {
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#EBEFF4"]],
+                color: [[1, "#989898"]],
               },
             },
             progress: {
@@ -211,12 +137,12 @@ export default function MapsWithHazard() {
             axisTick: {
               distance: 10,
               length: 8,
-              lineStyle: { color: "#999", width: 1 },
+              lineStyle: { color: "#BDBDBD", width: 1 },
             },
             splitLine: {
               distance: 10,
               length: 15,
-              lineStyle: { color: "#999", width: 2 },
+              lineStyle: { color: "#BDBDBD", width: 2 },
             },
             axisLabel: {
               distance: 25,
@@ -282,9 +208,9 @@ export default function MapsWithHazard() {
 
       // Color logic based STRICTLY on provided text readings
       const getHumidityColor = (val: number) => {
-        if (val < 25) return "#e74c3c"; // Red
+        if (val < 25) return "#EBEFF4"; // white
         if (val <= 29) return "#3498db"; // Blue
-        if (val <= 59) return "#2ecc71"; // Green
+        if (val <= 59) return "#EBEFF4"; // Green
         if (val <= 69) return "#3498db"; // Blue
         return "#e74c3c"; // Red
       };
@@ -303,7 +229,7 @@ export default function MapsWithHazard() {
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#EBEFF4"]], // Neutral background
+                color: [[1, "#989898"]], // Neutral background
               },
             },
             progress: {
@@ -321,12 +247,12 @@ export default function MapsWithHazard() {
             axisTick: {
               distance: 10,
               length: 8,
-              lineStyle: { color: "#999", width: 1 },
+              lineStyle: { color: "#BDBDBD", width: 1 },
             },
             splitLine: {
               distance: 10,
               length: 15,
-              lineStyle: { color: "#999", width: 2 },
+              lineStyle: { color: "#BDBDBD", width: 2 },
             },
             axisLabel: {
               distance: 25,
@@ -382,7 +308,7 @@ export default function MapsWithHazard() {
     // 3. Wind Speed
     if (windSpeed.current) {
       const chart = echarts.init(windSpeed.current);
-      const GAUGE_MAX = 200;
+      const GAUGE_MAX = 400; 
 
       chart.setOption({
         series: [
@@ -392,13 +318,13 @@ export default function MapsWithHazard() {
             endAngle: -45,
             min: 0,
             max: GAUGE_MAX,
-            splitNumber: 10,
+            splitNumber: 8, 
             radius: "100%",
             center: ["50%", "50%"],
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#EBEFF4"]],
+                color: [[1, "#989898"]],
               },
             },
             progress: {
@@ -416,12 +342,12 @@ export default function MapsWithHazard() {
             axisTick: {
               distance: 10,
               length: 8,
-              lineStyle: { color: "#999", width: 1 },
+              lineStyle: { color: "#BDBDBD", width: 1 },
             },
             splitLine: {
               distance: 10,
               length: 15,
-              lineStyle: { color: "#999", width: 2 },
+              lineStyle: { color: "#BDBDBD", width: 2 },
             },
             axisLabel: {
               distance: 25,
@@ -458,11 +384,13 @@ export default function MapsWithHazard() {
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
             let activeColor = "#EBEFF4";
+
             if (s.exists()) {
-              if (value <= 61) activeColor = "#2ecc71";
-              else if (value <= 117) activeColor = "#3498db";
-              else activeColor = "#e74c3c";
+              if (value <= 61) activeColor = "#EBEFF4";      // Calm/Breeze
+              else if (value <= 117) activeColor = "#3498db"; // Strong Wind
+              else activeColor = "#e74c3c";                  // Gale/Storm
             }
+
             chart.setOption({
               series: [
                 {
@@ -478,117 +406,116 @@ export default function MapsWithHazard() {
       );
     }
 
-// 4. Atmospheric Pressure
-if (atmosphericPressure.current) {
-  const chart = echarts.init(atmosphericPressure.current);
-  const GAUGE_MIN = 900;
-  const GAUGE_MAX = 1100;
+    // 4. Atmospheric Pressure
+    if (atmosphericPressure.current) {
+      const chart = echarts.init(atmosphericPressure.current);
+      const GAUGE_MIN = 900;
+      const GAUGE_MAX = 1100;
 
-  // Corrected logic based on provided pressure thresholds
-  const getPressureColor = (val: number) => {
-    if (val < 1006) return "#e74c3c";
-    if (val <= 1009) return "#3498db"; 
+      const getPressureColor = (val: number) => {
+        if (val < 1006) return "#EBEFF4";
+        if (val <= 1009) return "#3498db";
 
-    return "#EBEFF4"; 
-  };
+        return "#EBEFF4";
+      };
 
-  chart.setOption({
-    series: [
-      {
-        type: "gauge",
-        startAngle: 225,
-        endAngle: -45,
-        min: GAUGE_MIN,
-        max: GAUGE_MAX,
-        splitNumber: 10,
-        radius: "100%",
-        center: ["50%", "50%"],
-        
-        axisLine: {
-          lineStyle: {
-            width: 10,
-            color: [[1, "#EBEFF4"]], 
-          },
-        },
-        progress: {
-          show: true,
-          width: 10,
-          itemStyle: { color: "#EBEFF4" },
-        },
-        pointer: {
-          icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
-          length: "60%",
-          width: 6,
-          offsetCenter: [0, "5%"],
-          itemStyle: { color: "#EBEFF4" },
-        },
-        axisTick: {
-          distance: 10,
-          length: 8,
-          lineStyle: { color: "#999", width: 1 },
-        },
-        splitLine: {
-          distance: 10,
-          length: 15,
-          lineStyle: { color: "#999", width: 2 },
-        },
-        axisLabel: {
-          distance: 25,
-          color: "#999",
-          fontSize: 11,
-          formatter: "{value}",
-        },
-        // Styled Anchor
-        anchor: {
-          show: true,
-          showAbove: true,
-          size: 18,
-          itemStyle: {
-            borderWidth: 4,
-            borderColor: "#EBEFF4",
-            color: "#fff",
-          },
-        },
-        // Styled Text Detail
-        detail: {
-          valueAnimation: true,
-          fontSize: 15,
-          fontWeight: "bold",
-          offsetCenter: [0, "85%"],
-          formatter: "{value} hPa",
-          color: "#333",
-        },
-        data: [{ value: 1013 }],
-      },
-    ],
-  });
+      chart.setOption({
+        series: [
+          {
+            type: "gauge",
+            startAngle: 225,
+            endAngle: -45,
+            min: GAUGE_MIN,
+            max: GAUGE_MAX,
+            splitNumber: 10,
+            radius: "100%",
+            center: ["50%", "50%"],
 
-  charts.push(chart);
-  unsubscribers.push(
-    onValue(
-      ref(database, `/${buoyCode}/BME280/ATMOSPHERIC_PRESSURE`),
-      (s) => {
-        const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-        let activeColor = "#EBEFF4";
-
-        if (s.exists()) {
-          activeColor = getPressureColor(value);
-        }
-
-        chart.setOption({
-          series: [
-            {
-              data: [{ value }],
-              progress: { itemStyle: { color: activeColor } },
-              pointer: { itemStyle: { color: activeColor } },
-              anchor: { itemStyle: { borderColor: activeColor } },
+            axisLine: {
+              lineStyle: {
+                width: 10,
+                color: [[1, "#989898"]], 
+              },
             },
-          ],
-        });
-      },
-    ),
-  );
-}
+            progress: {
+              show: true,
+              width: 10,
+              itemStyle: { color: "#EBEFF4" },
+            },
+            pointer: {
+              icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
+              length: "60%",
+              width: 6,
+              offsetCenter: [0, "5%"],
+              itemStyle: { color: "#EBEFF4" },
+            },
+            axisTick: {
+              distance: 10,
+              length: 8,
+              lineStyle: { color: "#BDBDBD", width: 1 },
+            },
+            splitLine: {
+              distance: 10,
+              length: 15,
+              lineStyle: { color: "#BDBDBD", width: 2 }, 
+            },
+            axisLabel: {
+              distance: 25,
+              color: "#999",
+              fontSize: 11,
+              formatter: "{value}",
+            },
+            // Styled Anchor
+            anchor: {
+              show: true,
+              showAbove: true,
+              size: 18,
+              itemStyle: {
+                borderWidth: 4,
+                borderColor: "#EBEFF4",
+                color: "#fff",
+              },
+            },
+            // Styled Text Detail
+            detail: {
+              valueAnimation: true,
+              fontSize: 15,
+              fontWeight: "bold",
+              offsetCenter: [0, "85%"],
+              formatter: "{value} hPa",
+              color: "#333",
+            },
+            data: [{ value: 1013 }],
+          },
+        ],
+      });
+
+      charts.push(chart);
+      unsubscribers.push(
+        onValue(
+          ref(database, `/${buoyCode}/BME280/ATMOSPHERIC_PRESSURE`),
+          (s) => {
+            const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+            let activeColor = "#EBEFF4";
+
+            if (s.exists()) {
+              activeColor = getPressureColor(value);
+            }
+
+            chart.setOption({
+              series: [
+                {
+                  data: [{ value }],
+                  progress: { itemStyle: { color: activeColor } },
+                  pointer: { itemStyle: { color: activeColor } },
+                  anchor: { itemStyle: { borderColor: activeColor } },
+                },
+              ],
+            });
+          },
+        ),
+      );
+    }
 
     // 5. Water Level (Dynamic based on River Wall Height)
     if (waterLevel.current) {
@@ -613,7 +540,7 @@ if (atmosphericPressure.current) {
                 splitNumber: 5,
                 radius: "100%",
                 center: ["50%", "50%"],
-                axisLine: { lineStyle: { width: 10, color: [[1, "#EBEFF4"]] } },
+                axisLine: { lineStyle: { width: 10, color: [[1, "#989898"]], } },
                 progress: {
                   show: true,
                   width: 10,
@@ -629,12 +556,12 @@ if (atmosphericPressure.current) {
                 axisTick: {
                   distance: 10,
                   length: 8,
-                  lineStyle: { color: "#999", width: 1 },
+                  lineStyle: { color: "#BDBDBD", width: 1 },
                 },
                 splitLine: {
                   distance: 10,
                   length: 15,
-                  lineStyle: { color: "#999", width: 2 },
+                  lineStyle: { color: "#BDBDBD", width: 2 },
                 },
                 axisLabel: {
                   distance: 25,
@@ -676,7 +603,7 @@ if (atmosphericPressure.current) {
               let activeColor = "#EBEFF4";
               if (waterSnapshot.exists()) {
                 if (percentage <= 40) {
-                  activeColor = "#2ecc71"; // Green
+                  activeColor = "#EBEFF4"; // white
                 } else if (percentage < 100) {
                   activeColor = "#3498db"; // Blue
                 } else {
@@ -692,7 +619,6 @@ if (atmosphericPressure.current) {
                     progress: { itemStyle: { color: activeColor } },
                     pointer: { itemStyle: { color: activeColor } },
                     anchor: { itemStyle: { borderColor: activeColor } },
-                    detail: { color: "#333" },
                   },
                 ],
               });
@@ -707,10 +633,10 @@ if (atmosphericPressure.current) {
     // 6. Water Temperature
     if (waterTemperature.current) {
       const chart = echarts.init(waterTemperature.current);
-      const GAUGE_MAX = 50;
+      const GAUGE_MAX = 100;
 
       const getWaterColor = (val: number) => {
-        if (val < 20) return "#e74c3c";
+        if (val < 20) return "#EBEFF4";
         if (val <= 25) return "#3498db";
         if (val <= 30) return "#2ecc71";
         return "#e74c3c";
@@ -727,11 +653,10 @@ if (atmosphericPressure.current) {
             splitNumber: 10,
             radius: "100%",
             center: ["50%", "50%"],
-
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#EBEFF4"]],
+                color: [[1, "#989898"]],
               },
             },
             progress: {
@@ -749,12 +674,12 @@ if (atmosphericPressure.current) {
             axisTick: {
               distance: 10,
               length: 8,
-              lineStyle: { color: "#999", width: 1 },
+               lineStyle: { color: "#BDBDBD", width: 1 },
             },
             splitLine: {
               distance: 10,
               length: 15,
-              lineStyle: { color: "#999", width: 2 },
+              lineStyle: { color: "#BDBDBD", width: 2 },
             },
             axisLabel: {
               distance: 25,
@@ -779,14 +704,6 @@ if (atmosphericPressure.current) {
               color: "#333",
               formatter: (value: number) => {
                 return `${value.toFixed(2)} °C`;
-              },
-              rich: {
-                f: {
-                  fontSize: 15,
-                  color: "#333",
-                  padding: [5, 0],
-                  fontWeight: "bold",
-                },
               },
             },
             data: [{ value: 0 }],
@@ -817,128 +734,16 @@ if (atmosphericPressure.current) {
         }),
       );
     }
-// 7. Water Pressure
-if (waterPressure.current) {
-  const chart = echarts.init(waterPressure.current);
-  const GAUGE_MIN = 0;
-  const GAUGE_MAX = 400; // Adjusted max to fit range 0-300+
 
-  // Updated logic based on provided pressure thresholds
-  const getWaterPressureColor = (val: number) => {
-    if (val < 100) return "#2ecc71"; // Green: Minor flooding (<100)
-    if (val <= 200) return "#3498db"; // Blue: Noticeable surge (100 - 200)
-    return "#e74c3c"; // Red: Severe/Extreme (>200)
-  };
+    // 7. Water Pressure
+    if (waterPressure.current) {
+      const chart = echarts.init(waterPressure.current);
+      const GAUGE_MIN = 0;
+      const GAUGE_MAX = 400;
 
-  chart.setOption({
-    series: [
-      {
-        type: "gauge",
-        // Styling from surroundings temperature
-        startAngle: 225,
-        endAngle: -45,
-        min: GAUGE_MIN,
-        max: GAUGE_MAX,
-        splitNumber: 10,
-        radius: "100%",
-        center: ["50%", "50%"],
-        
-        // Styled Line
-        axisLine: {
-          lineStyle: {
-            width: 10,
-            color: [[1, "#EBEFF4"]], // Default gray line
-          },
-        },
-        // Styled Progress
-        progress: {
-          show: true,
-          width: 10,
-          itemStyle: { color: "#EBEFF4" },
-        },
-        // Styled Pointer
-        pointer: {
-          icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
-          length: "60%",
-          width: 6,
-          offsetCenter: [0, "5%"],
-          itemStyle: { color: "#EBEFF4" },
-        },
-        axisTick: {
-          distance: 10,
-          length: 8,
-          lineStyle: { color: "#999", width: 1 },
-        },
-        splitLine: {
-          distance: 10,
-          length: 15,
-          lineStyle: { color: "#999", width: 2 },
-        },
-        axisLabel: {
-          distance: 25,
-          color: "#999",
-          fontSize: 11,
-          formatter: "{value}",
-        },
-        // Styled Anchor
-        anchor: {
-          show: true,
-          showAbove: true,
-          size: 18,
-          itemStyle: {
-            borderWidth: 4,
-            borderColor: "#EBEFF4",
-            color: "#fff",
-          },
-        },
-        // Styled Text Detail
-        detail: {
-          valueAnimation: true,
-          fontSize: 15,
-          fontWeight: "bold",
-          offsetCenter: [0, "85%"],
-          formatter: "{value} hPa",
-          color: "#333",
-        },
-        data: [{ value: 0 }],
-      },
-    ],
-  });
-
-  charts.push(chart);
-  unsubscribers.push(
-    onValue(
-      ref(database, `/${buoyCode}/MS5837/WATER_PRESSURE`),
-      (s) => {
-        const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-        let activeColor = "#EBEFF4";
-
-        if (s.exists()) {
-          activeColor = getWaterPressureColor(value);
-        }
-
-        chart.setOption({
-          series: [
-            {
-              data: [{ value }],
-              progress: { itemStyle: { color: activeColor } },
-              pointer: { itemStyle: { color: activeColor } },
-              anchor: { itemStyle: { borderColor: activeColor } },
-            },
-          ],
-        });
-      },
-    ),
-  );
-}
-    // 8. Rain Gauge
-    if (rainGauge.current) {
-      const chart = echarts.init(rainGauge.current);
-      const GAUGE_MAX = 20;
-
-      const getRainColor = (val: number) => {
-        if (val < 4) return "#2ecc71";
-        if (val <= 8) return "#3498db";
+      const getWaterPressureColor = (val: number) => {
+        if (val < 100) return "#EBEFF4";
+        if (val <= 200) return "#3498db";
         return "#e74c3c";
       };
 
@@ -948,16 +753,15 @@ if (waterPressure.current) {
             type: "gauge",
             startAngle: 225,
             endAngle: -45,
-            min: 0,
+            min: GAUGE_MIN,
             max: GAUGE_MAX,
             splitNumber: 10,
             radius: "100%",
             center: ["50%", "50%"],
-
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#EBEFF4"]],
+                color: [[1, "#989898"]],
               },
             },
             progress: {
@@ -975,12 +779,12 @@ if (waterPressure.current) {
             axisTick: {
               distance: 10,
               length: 8,
-              lineStyle: { color: "#999", width: 1 },
+              lineStyle: { color: "#BDBDBD", width: 1 },
             },
             splitLine: {
               distance: 10,
               length: 15,
-              lineStyle: { color: "#999", width: 2 },
+              lineStyle: { color: "#BDBDBD", width: 2 },
             },
             axisLabel: {
               distance: 25,
@@ -988,7 +792,6 @@ if (waterPressure.current) {
               fontSize: 11,
               formatter: "{value}",
             },
-            // Styled Anchor
             anchor: {
               show: true,
               showAbove: true,
@@ -999,7 +802,111 @@ if (waterPressure.current) {
                 color: "#fff",
               },
             },
-            // Styled Text Detail
+            detail: {
+              valueAnimation: true,
+              fontSize: 15,
+              fontWeight: "bold",
+              offsetCenter: [0, "85%"],
+              formatter: "{value} hPa",
+              color: "#333",
+            },
+            data: [{ value: 0 }],
+          },
+        ],
+      });
+
+      charts.push(chart);
+      unsubscribers.push(
+        onValue(
+          ref(database, `/${buoyCode}/MS5837/WATER_PRESSURE`),
+          (s) => {
+            const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+            let activeColor = "#EBEFF4";
+
+            if (s.exists()) {
+              activeColor = getWaterPressureColor(value);
+            }
+
+            chart.setOption({
+              series: [
+                {
+                  data: [{ value }],
+                  progress: { itemStyle: { color: activeColor } },
+                  pointer: { itemStyle: { color: activeColor } },
+                  anchor: { itemStyle: { borderColor: activeColor } },
+                },
+              ],
+            });
+          },
+        ),
+      );
+    }
+    // 8. Rain Gauge
+    if (rainGauge.current) {
+      const chart = echarts.init(rainGauge.current);
+      const GAUGE_MAX = 11;
+
+      const getRainColor = (val: number) => {
+        if (val < 3) return "#EBEFF4";
+        if (val <= 7) return "#3498db";
+        return "#e74c3c";
+      };
+
+      chart.setOption({
+        series: [
+          {
+            type: "gauge",
+            startAngle: 225,
+            endAngle: -45,
+            min: 0,
+            max: GAUGE_MAX,
+            splitNumber: 11,
+            radius: "100%",
+            center: ["50%", "50%"],
+            axisLine: {
+              lineStyle: {
+                width: 10,
+                color: [[1, "#989898"]],
+              },
+            },
+            progress: {
+              show: true,
+              width: 10,
+              itemStyle: { color: "#EBEFF4" },
+            },
+            pointer: {
+              icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
+              length: "60%",
+              width: 6,
+              offsetCenter: [0, "5%"],
+              itemStyle: { color: "#EBEFF4" },
+            },
+            axisTick: {
+              distance: 10,
+              length: 8,
+              lineStyle: { color: "#BDBDBD", width: 1 }, 
+            },
+            splitLine: {
+              distance: 10,
+              length: 15,
+              lineStyle: { color: "#BDBDBD", width: 2 }, 
+            },
+            axisLabel: {
+              distance: 25,
+              color: "#999",
+              fontSize: 11,
+              formatter: "{value}",
+            },
+            anchor: {
+              show: true,
+              showAbove: true,
+              size: 18,
+              itemStyle: {
+                borderWidth: 4,
+                borderColor: "#EBEFF4",
+                color: "#fff",
+              },
+            },
             detail: {
               valueAnimation: true,
               fontSize: 15,
@@ -1019,7 +926,7 @@ if (waterPressure.current) {
           ref(database, `/${buoyCode}/RAIN_GAUGE/FALL_COUNT_MILIMETERS`),
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-            let activeColor = "#EBEFF4";
+            let activeColor = "#EBEFF4"; // Default color
 
             if (s.exists()) {
               activeColor = getRainColor(value);
@@ -1068,8 +975,8 @@ if (waterPressure.current) {
     valueRef: RefObject<HTMLDivElement | null>;
     footerText: string;
   }) => (
-    <div className="flex flex-col p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
-      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-1 text-center">
+    <div className="flex flex-col p-4 bg-[#dfdfdf] dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+      <h3 className="text-m font-semibold text-gray-800 dark:text-gray-100 mb-1 text-center">
         {title}
       </h3>
       <div
@@ -1087,15 +994,15 @@ if (waterPressure.current) {
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-900  transition-colors duration-300">
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-4">
-        <SensorCard 
-          title="Water Level" 
-          valueRef={waterLevel} 
-          footerText="" 
+        <SensorCard
+          title="Water Level"
+          valueRef={waterLevel}
+          footerText=""
         />
-        <SensorCard 
-          title="Rainfall Count" 
-          valueRef={rainGauge} 
-          footerText="" 
+        <SensorCard
+          title="Rainfall Count"
+          valueRef={rainGauge}
+          footerText=""
         />
         <SensorCard
           title="Surroundings Temperature"
@@ -1107,14 +1014,14 @@ if (waterPressure.current) {
           valueRef={waterTemperature}
           footerText=""
         />
-        <SensorCard 
-          title="Humidity" 
-          valueRef={humidityRef} 
-          footerText="" 
+        <SensorCard
+          title="Humidity"
+          valueRef={humidityRef}
+          footerText=""
         />
-        <SensorCard 
-          title="Wind Speed" 
-          valueRef={windSpeed} 
+        <SensorCard
+          title="Wind Speed"
+          valueRef={windSpeed}
           footerText=""
         />
         <SensorCard

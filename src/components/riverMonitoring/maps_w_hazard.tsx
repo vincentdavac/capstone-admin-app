@@ -119,20 +119,20 @@ export default function MapsWithHazard() {
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#989898"]],
+                color: [[1, "#EBEFF4"]], 
               },
             },
             progress: {
               show: true,
               width: 10,
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#989898" }, 
             },
             pointer: {
               icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
               length: "60%",
               width: 6,
               offsetCenter: [0, "5%"],
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#000" }, 
             },
             axisTick: {
               distance: 10,
@@ -155,7 +155,7 @@ export default function MapsWithHazard() {
               size: 18,
               itemStyle: {
                 borderWidth: 4,
-                borderColor: "#EBEFF4",
+                borderColor: "#000",
                 color: "#fff",
               },
             },
@@ -180,19 +180,27 @@ export default function MapsWithHazard() {
           ref(database, `/${buoyCode}/BME280/SURROUNDING_TEMPERATURE`),
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-            let activeColor = "#EBEFF4";
+            let activeColor = "#989898"; // Default progress color
+            let isThreshold = false;
 
             if (s.exists()) {
-              activeColor = getTemperatureColor(value);
+              const tempColor = getTemperatureColor(value);
+              if (tempColor !== "#EBEFF4") {
+                activeColor = tempColor;
+                isThreshold = true;
+              }
             }
+
+            const isDark = document.documentElement.classList.contains("dark");
+            const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
 
             chart.setOption({
               series: [
                 {
                   data: [{ value }],
                   progress: { itemStyle: { color: activeColor } },
-                  pointer: { itemStyle: { color: activeColor } },
-                  anchor: { itemStyle: { borderColor: activeColor } },
+                  pointer: { itemStyle: { color: pointerColor } },
+                  anchor: { itemStyle: { borderColor: pointerColor } },
                 },
               ],
             });
@@ -229,20 +237,20 @@ export default function MapsWithHazard() {
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#989898"]], // Neutral background
+                color: [[1, "#EBEFF4"]], // Background is White
               },
             },
             progress: {
               show: true,
               width: 10,
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#989898" }, // Progress is Grey
             },
             pointer: {
               icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
               length: "60%",
               width: 6,
               offsetCenter: [0, "5%"],
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#000" },
             },
             axisTick: {
               distance: 10,
@@ -265,7 +273,7 @@ export default function MapsWithHazard() {
               size: 18,
               itemStyle: {
                 borderWidth: 4,
-                borderColor: "#EBEFF4",
+                borderColor: "#000",
                 color: "#fff",
               },
             },
@@ -286,19 +294,27 @@ export default function MapsWithHazard() {
       unsubscribers.push(
         onValue(ref(database, `/${buoyCode}/BME280/HUMIDITY`), (s) => {
           const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-          let activeColor = "#EBEFF4";
+          let activeColor = "#989898";
+          let isThreshold = false;
 
           if (s.exists()) {
-            activeColor = getHumidityColor(value);
+            const humColor = getHumidityColor(value);
+            if (humColor !== "#EBEFF4") {
+              activeColor = humColor;
+              isThreshold = true;
+            }
           }
+
+          const isDark = document.documentElement.classList.contains("dark");
+          const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
 
           chart.setOption({
             series: [
               {
                 data: [{ value }],
                 progress: { itemStyle: { color: activeColor } },
-                pointer: { itemStyle: { color: activeColor } },
-                anchor: { itemStyle: { borderColor: activeColor } },
+                pointer: { itemStyle: { color: pointerColor } },
+                anchor: { itemStyle: { borderColor: pointerColor } },
               },
             ],
           });
@@ -324,20 +340,20 @@ export default function MapsWithHazard() {
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#989898"]],
+                color: [[1, "#EBEFF4"]],
               },
             },
             progress: {
               show: true,
               width: 10,
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#989898" },
             },
             pointer: {
               icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
               length: "60%",
               width: 6,
               offsetCenter: [0, "5%"],
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#000" },
             },
             axisTick: {
               distance: 10,
@@ -360,7 +376,7 @@ export default function MapsWithHazard() {
               size: 18,
               itemStyle: {
                 borderWidth: 4,
-                borderColor: "#EBEFF4",
+                borderColor: "#000",
                 color: "#fff",
               },
             },
@@ -383,21 +399,24 @@ export default function MapsWithHazard() {
           ref(database, `/${buoyCode}/ANEMOMETER/WIND_SPEED_km_h`),
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-            let activeColor = "#EBEFF4";
+            let activeColor = "#989898";
+            let isThreshold = false;
 
             if (s.exists()) {
-              if (value <= 61) activeColor = "#EBEFF4";      // Calm/Breeze
-              else if (value <= 117) activeColor = "#3498db"; // Strong Wind
-              else activeColor = "#e74c3c";                  // Gale/Storm
+              if (value > 61 && value <= 117) { activeColor = "#3498db"; isThreshold = true; }
+              else if (value > 117) { activeColor = "#e74c3c"; isThreshold = true; }
             }
+
+            const isDark = document.documentElement.classList.contains("dark");
+            const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
 
             chart.setOption({
               series: [
                 {
                   data: [{ value }],
                   progress: { itemStyle: { color: activeColor } },
-                  pointer: { itemStyle: { color: activeColor } },
-                  anchor: { itemStyle: { borderColor: activeColor } },
+                  pointer: { itemStyle: { color: pointerColor } },
+                  anchor: { itemStyle: { borderColor: pointerColor } },
                 },
               ],
             });
@@ -415,7 +434,6 @@ export default function MapsWithHazard() {
       const getPressureColor = (val: number) => {
         if (val < 1006) return "#EBEFF4";
         if (val <= 1009) return "#3498db";
-
         return "#EBEFF4";
       };
 
@@ -430,24 +448,23 @@ export default function MapsWithHazard() {
             splitNumber: 10,
             radius: "100%",
             center: ["50%", "50%"],
-
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#989898"]], 
+                color: [[1, "#EBEFF4"]], 
               },
             },
             progress: {
               show: true,
               width: 10,
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#989898" },
             },
             pointer: {
               icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
               length: "60%",
               width: 6,
               offsetCenter: [0, "5%"],
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#000" },
             },
             axisTick: {
               distance: 10,
@@ -465,18 +482,16 @@ export default function MapsWithHazard() {
               fontSize: 11,
               formatter: "{value}",
             },
-            // Styled Anchor
             anchor: {
               show: true,
               showAbove: true,
               size: 18,
               itemStyle: {
                 borderWidth: 4,
-                borderColor: "#EBEFF4",
+                borderColor: "#000",
                 color: "#fff",
               },
             },
-            // Styled Text Detail
             detail: {
               valueAnimation: true,
               fontSize: 15,
@@ -496,19 +511,27 @@ export default function MapsWithHazard() {
           ref(database, `/${buoyCode}/BME280/ATMOSPHERIC_PRESSURE`),
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-            let activeColor = "#EBEFF4";
+            let activeColor = "#989898";
+            let isThreshold = false;
 
             if (s.exists()) {
-              activeColor = getPressureColor(value);
+              const pressColor = getPressureColor(value);
+              if (pressColor !== "#EBEFF4") {
+                activeColor = pressColor;
+                isThreshold = true;
+              }
             }
+
+            const isDark = document.documentElement.classList.contains("dark");
+            const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
 
             chart.setOption({
               series: [
                 {
                   data: [{ value }],
                   progress: { itemStyle: { color: activeColor } },
-                  pointer: { itemStyle: { color: activeColor } },
-                  anchor: { itemStyle: { borderColor: activeColor } },
+                  pointer: { itemStyle: { color: pointerColor } },
+                  anchor: { itemStyle: { borderColor: pointerColor } },
                 },
               ],
             });
@@ -520,7 +543,6 @@ export default function MapsWithHazard() {
     // 5. Water Level (Dynamic based on River Wall Height)
     if (waterLevel.current) {
       const chart = echarts.init(waterLevel.current);
-
       const configRef = ref(database, `/${buoyCode}/CONFIG/WALL_HEIGHT_FEET`);
       const waterRef = ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_FEET`);
 
@@ -540,18 +562,18 @@ export default function MapsWithHazard() {
                 splitNumber: 5,
                 radius: "100%",
                 center: ["50%", "50%"],
-                axisLine: { lineStyle: { width: 10, color: [[1, "#989898"]], } },
+                axisLine: { lineStyle: { width: 10, color: [[1, "#EBEFF4"]], } },
                 progress: {
                   show: true,
                   width: 10,
-                  itemStyle: { color: "#EBEFF4" },
+                  itemStyle: { color: "#989898" },
                 },
                 pointer: {
                   icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
                   length: "60%",
                   width: 6,
                   offsetCenter: [0, "5%"],
-                  itemStyle: { color: "#EBEFF4" },
+                  itemStyle: { color: "#000" },
                 },
                 axisTick: {
                   distance: 10,
@@ -575,7 +597,7 @@ export default function MapsWithHazard() {
                   size: 18,
                   itemStyle: {
                     borderWidth: 4,
-                    borderColor: "#EBEFF4",
+                    borderColor: "#000",
                     color: "#fff",
                   },
                 },
@@ -599,17 +621,16 @@ export default function MapsWithHazard() {
                 : 0;
 
               const percentage = (value / wallHeight) * 100;
+              let activeColor = "#989898";
+              let isThreshold = false;
 
-              let activeColor = "#EBEFF4";
               if (waterSnapshot.exists()) {
-                if (percentage <= 40) {
-                  activeColor = "#EBEFF4"; // white
-                } else if (percentage < 100) {
-                  activeColor = "#3498db"; // Blue
-                } else {
-                  activeColor = "#e74c3c"; // Red
-                }
+                if (percentage > 40 && percentage < 100) { activeColor = "#3498db"; isThreshold = true; }
+                else if (percentage >= 100) { activeColor = "#e74c3c"; isThreshold = true; }
               }
+
+              const isDark = document.documentElement.classList.contains("dark");
+              const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
 
               chart.setOption({
                 series: [
@@ -617,8 +638,8 @@ export default function MapsWithHazard() {
                     max: wallHeight,
                     data: [{ value }],
                     progress: { itemStyle: { color: activeColor } },
-                    pointer: { itemStyle: { color: activeColor } },
-                    anchor: { itemStyle: { borderColor: activeColor } },
+                    pointer: { itemStyle: { color: pointerColor } },
+                    anchor: { itemStyle: { borderColor: pointerColor } },
                   },
                 ],
               });
@@ -656,20 +677,20 @@ export default function MapsWithHazard() {
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#989898"]],
+                color: [[1, "#EBEFF4"]],
               },
             },
             progress: {
               show: true,
               width: 10,
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#989898" },
             },
             pointer: {
               icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
               length: "60%",
               width: 6,
               offsetCenter: [0, "5%"],
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#000" },
             },
             axisTick: {
               distance: 10,
@@ -692,7 +713,7 @@ export default function MapsWithHazard() {
               size: 18,
               itemStyle: {
                 borderWidth: 4,
-                borderColor: "#EBEFF4",
+                borderColor: "#000",
                 color: "#fff",
               },
             },
@@ -715,19 +736,27 @@ export default function MapsWithHazard() {
       unsubscribers.push(
         onValue(ref(database, `/${buoyCode}/MS5837/WATER_TEMPERATURE`), (s) => {
           const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-          let activeColor = "#EBEFF4";
+          let activeColor = "#989898";
+          let isThreshold = false;
 
           if (s.exists()) {
-            activeColor = getWaterColor(value);
+            const wTempColor = getWaterColor(value);
+            if (wTempColor !== "#EBEFF4") {
+              activeColor = wTempColor;
+              isThreshold = true;
+            }
           }
+
+          const isDark = document.documentElement.classList.contains("dark");
+          const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
 
           chart.setOption({
             series: [
               {
                 data: [{ value }],
                 progress: { itemStyle: { color: activeColor } },
-                pointer: { itemStyle: { color: activeColor } },
-                anchor: { itemStyle: { borderColor: activeColor } },
+                pointer: { itemStyle: { color: pointerColor } },
+                anchor: { itemStyle: { borderColor: pointerColor } },
               },
             ],
           });
@@ -761,20 +790,20 @@ export default function MapsWithHazard() {
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#989898"]],
+                color: [[1, "#EBEFF4"]],
               },
             },
             progress: {
               show: true,
               width: 10,
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#989898" },
             },
             pointer: {
               icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
               length: "60%",
               width: 6,
               offsetCenter: [0, "5%"],
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#000" },
             },
             axisTick: {
               distance: 10,
@@ -798,7 +827,7 @@ export default function MapsWithHazard() {
               size: 18,
               itemStyle: {
                 borderWidth: 4,
-                borderColor: "#EBEFF4",
+                borderColor: "#000",
                 color: "#fff",
               },
             },
@@ -821,19 +850,27 @@ export default function MapsWithHazard() {
           ref(database, `/${buoyCode}/MS5837/WATER_PRESSURE`),
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-            let activeColor = "#EBEFF4";
+            let activeColor = "#989898";
+            let isThreshold = false;
 
             if (s.exists()) {
-              activeColor = getWaterPressureColor(value);
+              const wPressColor = getWaterPressureColor(value);
+              if (wPressColor !== "#EBEFF4") {
+                activeColor = wPressColor;
+                isThreshold = true;
+              }
             }
+
+            const isDark = document.documentElement.classList.contains("dark");
+            const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
 
             chart.setOption({
               series: [
                 {
                   data: [{ value }],
                   progress: { itemStyle: { color: activeColor } },
-                  pointer: { itemStyle: { color: activeColor } },
-                  anchor: { itemStyle: { borderColor: activeColor } },
+                  pointer: { itemStyle: { color: pointerColor } },
+                  anchor: { itemStyle: { borderColor: pointerColor } },
                 },
               ],
             });
@@ -866,20 +903,20 @@ export default function MapsWithHazard() {
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#989898"]],
+                color: [[1, "#EBEFF4"]],
               },
             },
             progress: {
               show: true,
               width: 10,
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#989898" },
             },
             pointer: {
               icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
               length: "60%",
               width: 6,
               offsetCenter: [0, "5%"],
-              itemStyle: { color: "#EBEFF4" },
+              itemStyle: { color: "#000" },
             },
             axisTick: {
               distance: 10,
@@ -903,7 +940,7 @@ export default function MapsWithHazard() {
               size: 18,
               itemStyle: {
                 borderWidth: 4,
-                borderColor: "#EBEFF4",
+                borderColor: "#000",
                 color: "#fff",
               },
             },
@@ -926,19 +963,27 @@ export default function MapsWithHazard() {
           ref(database, `/${buoyCode}/RAIN_GAUGE/FALL_COUNT_MILIMETERS`),
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-            let activeColor = "#EBEFF4"; // Default color
+            let activeColor = "#989898";
+            let isThreshold = false;
 
             if (s.exists()) {
-              activeColor = getRainColor(value);
+              const rColor = getRainColor(value);
+              if (rColor !== "#EBEFF4") {
+                activeColor = rColor;
+                isThreshold = true;
+              }
             }
+
+            const isDark = document.documentElement.classList.contains("dark");
+            const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
 
             chart.setOption({
               series: [
                 {
                   data: [{ value }],
                   progress: { itemStyle: { color: activeColor } },
-                  pointer: { itemStyle: { color: activeColor } },
-                  anchor: { itemStyle: { borderColor: activeColor } },
+                  pointer: { itemStyle: { color: pointerColor } },
+                  anchor: { itemStyle: { borderColor: pointerColor } },
                 },
               ],
             });
@@ -975,7 +1020,7 @@ export default function MapsWithHazard() {
     valueRef: RefObject<HTMLDivElement | null>;
     footerText: string;
   }) => (
-    <div className="flex flex-col p-4 bg-[#dfdfdf] dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
+    <div className="flex flex-col p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md border border-gray-200 dark:border-gray-700">
       <h3 className="text-m font-semibold text-gray-800 dark:text-gray-100 mb-1 text-center">
         {title}
       </h3>

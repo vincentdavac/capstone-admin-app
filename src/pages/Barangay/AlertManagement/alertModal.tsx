@@ -35,49 +35,6 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
     }
   }, [isOpen]);
 
-  const handleSend = async () => {
-    if (!alert) return;
-    setIsSending(true);
-    try {
-      const response = await fetch(`${api_endpoint}/broadcast-monitoring`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          alert_id: alert.id,
-          buoy_code: String(buoyCode),
-          sensor_stype: String(sensor),
-        }),
-      });
-      console.log("testing", sensor);
-
-      if (!response.ok) {
-        throw new Error(`Failed to send alert: ${response.status}`);
-      }
-      const result = await response.json();
-      if (result.reset > 0) {
-        const endPoint = `${api_endpoint}/reset-relay-modal`;
-        setTimeout(async () => {
-          await fetch(endPoint, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ buoy_code: String(buoyCode) }),
-          });
-        }, result.reset * 1000);
-      }
-      onClose();
-    } catch (error) {
-      console.error("Failed to send alert:", error);
-    } finally {
-      setIsSending(false);
-    }
-  };
 
   if (!isOpen || !alert) return null;
 
@@ -170,13 +127,6 @@ const AlertModal = ({ isOpen, alert, onClose }: AlertModalProps) => {
               className="flex-1 px-4 py-3 bg-gray-200 text-gray-800 rounded-xl font-bold hover:bg-gray-300 transition-all active:scale-95 disabled:opacity-50"
             >
               Close
-            </button>
-            <button
-              onClick={handleSend}
-              disabled={isSending}
-              className={`flex-1 px-4 py-3 ${theme.sendBtn} text-white rounded-xl font-bold shadow-md transition-all active:scale-95 disabled:opacity-50`}
-            >
-              {isSending ? "Sending..." : "Send"}
             </button>
           </div>
         </div>

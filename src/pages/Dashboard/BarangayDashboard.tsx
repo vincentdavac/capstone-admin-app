@@ -6,7 +6,7 @@ import DangerLevel from "../../components/dashboard_content/BarangayDangerLevel/
 import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
 import { insertingAlerts } from "../../api_hooks/dashboardHooks";
 import API_BASE_URL from "../../config/coreApi";
-import DisasterFlowChart from "../../components/DisasterFlowChart";
+import DisasterFlowChart from "./DisasterFlowChart";
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }

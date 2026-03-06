@@ -2,28 +2,28 @@ const DisasterFlowChart = () => {
   const StepBox = ({ text }: { text: string }) => (
     <div
       className="
-        min-w-[180px]        /* wider width */
-        h-[100px]            /* taller height */
-        px-6                 /* horizontal padding */
-        py-4                 /* vertical padding */
+        h-[100px]
+        px-6
+        py-4
         flex
         items-center
         justify-center
         text-center
-        rounded-xl          /* more elegant rounding */
+        rounded-xl
         border-2
-        border-[#2C7DA0]    /* medium ocean blue */
-        bg-gradient-to-br from-white to-[#A9D6E5]  /* soft water surface */
-        shadow-xl            
+        border-[#2C7DA0]
+        bg-gradient-to-br from-white to-[#A9D6E5]
+        shadow-xl
         text-gray-800
-        dark:from-gray-800 dark:to-[#01497C]/30  /* deep ocean */
+        dark:from-gray-800 dark:to-[#01497C]/30
         dark:text-white
-        dark:border-[#2C7DA0]/70  /* muted blue */
+        dark:border-[#2C7DA0]/70
         transition-all
         hover:scale-105
         hover:shadow-2xl
-        hover:border-[#01497C]  /* deeper blue */
-        dark:hover:border-[#61A5C2]  /* lighter blue */
+        hover:border-[#01497C]
+        dark:hover:border-[#61A5C2]
+        w-[186.328px]
       "
     >
       {text}

@@ -3,6 +3,7 @@ const DisasterFlowChart = () => {
     <div
       className="
       w-[140px]
+      trunctate
       flex-shrink-0
       h-[60px]
       px-3

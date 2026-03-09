@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import { AlertRow } from "./AlertRow";
 import { Printer } from "lucide-react";
 import AlertChart from "./alertChart";
-import { useState } from "react";
+import { AppContext } from "../../context/AppContext";
+import API_BASE_URL from "../../config/coreApi";
+
 interface RecentAlertsTableProps {
   loading: boolean;
   error: any;
@@ -19,10 +21,14 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
   sensorTypes,
   alertsGet,
 }) => {
+  const { token, user } = useContext(AppContext)!;
+  const barangayId = user?.barangay?.id;
+
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [fromDate, setFromDate] = useState<string>("");
   const [toDate, setToDate] = useState<string>("");
   const [dateError, setDateError] = useState<string>("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   const itemsPerPage = 8;
 
@@ -31,9 +37,7 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
     const from = fromDate ? new Date(fromDate) : null;
     const to = toDate ? new Date(new Date(toDate).getTime() + 59 * 1000) : null;
 
-    if (from && to) {
-      return recordedAt >= from && recordedAt <= to;
-    }
+    if (from && to) return recordedAt >= from && recordedAt <= to;
     if (from) return recordedAt >= from;
     if (to) return recordedAt <= to;
     return true;
@@ -41,16 +45,61 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
 
   const totalPages = Math.ceil(filteredAlerts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentAlerts = filteredAlerts.slice(
-    startIndex,
-    startIndex + itemsPerPage,
-  );
+  const currentAlerts = filteredAlerts.slice(startIndex, startIndex + itemsPerPage);
 
   const validateDates = (from: string, to: string) => {
     if (from && to && new Date(from) > new Date(to)) {
-      setDateError("");
+      setDateError('"From" date must be before "To" date.');
     } else {
       setDateError("");
+    }
+  };
+
+  const handleGenerateReport = async () => {
+    if (!fromDate || !toDate) {
+      setDateError("Please select both From and To dates.");
+      return;
+    }
+    if (new Date(fromDate) > new Date(toDate)) {
+      setDateError('"From" date must be before "To" date.');
+      return;
+    }
+    if (!barangayId) return;
+
+    setIsGenerating(true);
+    try {
+      const params = new URLSearchParams();
+      params.append("barangay_id", String(barangayId));
+      params.append("from", fromDate);
+      params.append("to", toDate);
+
+      const res = await fetch(`${API_BASE_URL}/alert-report?${params.toString()}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/pdf",
+        },
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        setDateError(err.message || "Failed to generate report.");
+        return;
+      }
+
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `alert_report.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error generating report:", error);
+      setDateError("An error occurred while generating the report.");
+    } finally {
+      setIsGenerating(false);
     }
   };
 
@@ -96,12 +145,15 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
                   className="w-56 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:border-blue-500 focus:outline-none dark:border-gray-700 dark:bg-gray-900 dark:text-white"
                 />
               </div>
+
               <button
                 type="button"
-                className="h-[42px] flex items-center gap-2 rounded-lg bg-[#453EFE] px-5 text-sm font-medium text-white hover:bg-blue-700 transition"
+                onClick={handleGenerateReport}
+                disabled={isGenerating || !!dateError}
+                className="h-[42px] flex items-center gap-2 rounded-lg bg-[#453EFE] px-5 text-sm font-medium text-white hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <Printer size={16} />
-                Generate Report
+                {isGenerating ? "Generating..." : "Generate Report"}
               </button>
             </div>
           </div>
@@ -185,9 +237,7 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
             ))}
 
             <button
-              onClick={() =>
-                setCurrentPage(Math.min(totalPages, currentPage + 1))
-              }
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
               className="px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-50"
             >

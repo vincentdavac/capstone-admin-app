@@ -35,7 +35,7 @@ const DashboardCards = () => {
   const [loading, setLoading] = useState(true);
 
   const fetchDashboardStats = async () => {
-    setLoading(true);
+    // setLoading(true);
     try {
       const res = await fetch(`${API_BASE_URL}/barangay/dashboard`, {
         headers: {
@@ -63,7 +63,24 @@ const DashboardCards = () => {
   }, [token]);
 
   if (loading || !stats) {
-    return <div className="p-6 text-gray-500">Loading dashboard…</div>;
+    return (
+      <div className="w-full flex items-start justify-start pl-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700 animate-pulse"
+            >
+              <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-xl mb-4" />
+              <div className="mt-auto space-y-2">
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4" />
+                <div className="h-7 bg-gray-200 dark:bg-gray-700 rounded w-1/3" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
   }
 
   const renderTrend = (stat: DashboardStat) => (

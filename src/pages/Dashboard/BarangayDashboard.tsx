@@ -1,12 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
 import WaterDepthChart from "../../components/Barangay Dashboard/WaterDepthChart";
-import { AppContext } from "../../context/AppContext";
 import DashboardCards from "../../components/dashboard_content/BarangayCards/cards";
 import DangerLevel from "../../components/dashboard_content/BarangayDangerLevel/danger_level";
 import { AlertsContainerRef } from "../../components/Alert/AlertsContainer";
 import { insertingAlerts } from "../../api_hooks/dashboardHooks";
 import API_BASE_URL from "../../config/coreApi";
 import DisasterFlowChart from "./DisasterFlowChart";
+import AlertModal from "../Barangay/AlertManagement/alertModal";
+import { useAlertMonitor } from "../../api_hooks/alertMonitoringHooks";
+import { AppContext } from "../../context/AppContext";
 interface Props {
   alertsRef: React.RefObject<AlertsContainerRef | null>;
 }
@@ -106,6 +108,12 @@ const BarangayDashboardContent = ({ alertsRef }: Props) => {
         }`;
     }
   };
+  const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
+  const { showAlert, currentAlert, handleClose } = useAlertMonitor(
+    buoyCode?.toString() ?? "",
+    5000,
+    buoyId?.toString() ?? "",
+  );
   return (
     <div>
       <DashboardCards />
@@ -142,6 +150,11 @@ const BarangayDashboardContent = ({ alertsRef }: Props) => {
           <DangerLevel alertsRef={alertsRef} />
         </div>
       </div>
+       <AlertModal
+        isOpen={showAlert}
+        alert={currentAlert}
+        onClose={handleClose}
+      />
     </div>
   );
 };

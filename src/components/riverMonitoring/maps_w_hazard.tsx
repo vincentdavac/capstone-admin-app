@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
 import * as echarts from "echarts";
 import { ref, onValue } from "firebase/database";
@@ -12,10 +11,8 @@ interface MapsWithHazardProps {
   showAlert?: boolean;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
   const [sstData, setSST] = useState<number>(0);
-  // const [percentage, setPercentage] = useState(0);
   const gaugeRef = useRef<HTMLDivElement | null>(null);
   const humidityRef = useRef<HTMLDivElement | null>(null);
   const windSpeed = useRef<HTMLDivElement | null>(null);
@@ -61,9 +58,9 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
           detail: { color: textColor },
           splitLine: { lineStyle: { color: subTextColor } },
           axisTick: { lineStyle: { color: subTextColor } },
-          max: dynamicMax !== undefined ? dynamicMax : seriesOptions.max
-        }
-      ]
+          max: dynamicMax !== undefined ? dynamicMax : seriesOptions.max,
+        },
+      ],
     });
   };
 
@@ -78,7 +75,11 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
   useEffect(() => {
     const charts: echarts.ECharts[] = [];
     const unsubscribers: (() => void)[] = [];
-
+    const initChart = (el: HTMLDivElement) => {
+      const existing = echarts.getInstanceByDom(el);
+      if (existing) existing.dispose();
+      return echarts.init(el);
+    };
     const applyStyles = () => {
       const isDark = document.documentElement.classList.contains("dark");
       charts.forEach((chart) => {
@@ -88,26 +89,21 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             ? option.series[0]
             : option.series;
 
-          updateEChartsOptions(
-            chart,
-            seriesData,
-            isDark,
-            undefined
-          );
+          updateEChartsOptions(chart, seriesData, isDark, undefined);
         }
       });
     };
     // 1. Surroundings Temperature (ECharts Gauge)
     if (gaugeRef.current) {
-      const chart = echarts.init(gaugeRef.current);
+      const chart = initChart(gaugeRef.current);
       const GAUGE_MAX = 100;
 
       const getTemperatureColor = (val: number) => {
-        if (val < 27) return "#EBEFF4"; // Green: Below 27
-        if (val <= 32) return "#EBEFF4"; // Green: 27 - 32
-        if (val <= 41) return "#3498db"; // Blue: 33 - 41
-        if (val <= 51) return "#e74c3c"; // Red: 42 - 51
-        return "#e74c3c"; // Red: > 52
+        if (val < 27) return "#EBEFF4";
+        if (val <= 32) return "#EBEFF4";
+        if (val <= 41) return "#3498db";
+        if (val <= 51) return "#e74c3c";
+        return "#e74c3c";
       };
 
       chart.setOption({
@@ -124,20 +120,20 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#EBEFF4"]], 
+                color: [[1, "#EBEFF4"]],
               },
             },
             progress: {
               show: true,
               width: 10,
-              itemStyle: { color: "#989898" }, 
+              itemStyle: { color: "#989898" },
             },
             pointer: {
               icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
               length: "60%",
               width: 6,
               offsetCenter: [0, "5%"],
-              itemStyle: { color: "#000" }, 
+              itemStyle: { color: "#000" },
             },
             axisTick: {
               distance: 10,
@@ -185,7 +181,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
           ref(database, `/${buoyCode}/BME280/SURROUNDING_TEMPERATURE`),
           (s) => {
             const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-            let activeColor = "#989898"; // Default progress color
+            let activeColor = "#989898";
             let isThreshold = false;
 
             if (s.exists()) {
@@ -197,7 +193,11 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             }
 
             const isDark = document.documentElement.classList.contains("dark");
-            const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
+            const pointerColor = isThreshold
+              ? activeColor
+              : isDark
+                ? "#EBEFF4"
+                : "#000000";
 
             chart.setOption({
               series: [
@@ -216,16 +216,15 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
 
     // 2. Humidity (ECharts Gauge)
     if (humidityRef.current) {
-      const chart = echarts.init(humidityRef.current);
+      const chart = initChart(humidityRef.current);
       const GAUGE_MAX = 100;
 
-      // Color logic based STRICTLY on provided text readings
       const getHumidityColor = (val: number) => {
-        if (val < 25) return "#EBEFF4"; // white
-        if (val <= 29) return "#3498db"; // Blue
-        if (val <= 59) return "#EBEFF4"; // Green
-        if (val <= 69) return "#3498db"; // Blue
-        return "#e74c3c"; // Red
+        if (val < 25) return "#EBEFF4";
+        if (val <= 29) return "#3498db";
+        if (val <= 59) return "#EBEFF4";
+        if (val <= 69) return "#3498db";
+        return "#e74c3c";
       };
 
       chart.setOption({
@@ -242,13 +241,13 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#EBEFF4"]], // Background is White
+                color: [[1, "#EBEFF4"]],
               },
             },
             progress: {
               show: true,
               width: 10,
-              itemStyle: { color: "#989898" }, // Progress is Grey
+              itemStyle: { color: "#989898" },
             },
             pointer: {
               icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
@@ -311,7 +310,11 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
           }
 
           const isDark = document.documentElement.classList.contains("dark");
-          const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
+          const pointerColor = isThreshold
+            ? activeColor
+            : isDark
+              ? "#EBEFF4"
+              : "#000000";
 
           chart.setOption({
             series: [
@@ -326,10 +329,11 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
         }),
       );
     }
+
     // 3. Wind Speed
     if (windSpeed.current) {
-      const chart = echarts.init(windSpeed.current);
-      const GAUGE_MAX = 400; 
+      const chart = initChart(windSpeed.current);
+      const GAUGE_MAX = 400;
 
       chart.setOption({
         series: [
@@ -339,7 +343,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             endAngle: -45,
             min: 0,
             max: GAUGE_MAX,
-            splitNumber: 8, 
+            splitNumber: 8,
             radius: "100%",
             center: ["50%", "50%"],
             axisLine: {
@@ -408,12 +412,21 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             let isThreshold = false;
 
             if (s.exists()) {
-              if (value > 61 && value <= 117) { activeColor = "#3498db"; isThreshold = true; }
-              else if (value > 117) { activeColor = "#e74c3c"; isThreshold = true; }
+              if (value > 61 && value <= 117) {
+                activeColor = "#3498db";
+                isThreshold = true;
+              } else if (value > 117) {
+                activeColor = "#e74c3c";
+                isThreshold = true;
+              }
             }
 
             const isDark = document.documentElement.classList.contains("dark");
-            const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
+            const pointerColor = isThreshold
+              ? activeColor
+              : isDark
+                ? "#EBEFF4"
+                : "#000000";
 
             chart.setOption({
               series: [
@@ -432,7 +445,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
 
     // 4. Atmospheric Pressure
     if (atmosphericPressure.current) {
-      const chart = echarts.init(atmosphericPressure.current);
+      const chart = initChart(atmosphericPressure.current);
       const GAUGE_MIN = 900;
       const GAUGE_MAX = 1100;
 
@@ -456,7 +469,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             axisLine: {
               lineStyle: {
                 width: 10,
-                color: [[1, "#EBEFF4"]], 
+                color: [[1, "#EBEFF4"]],
               },
             },
             progress: {
@@ -479,7 +492,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             splitLine: {
               distance: 10,
               length: 15,
-              lineStyle: { color: "#BDBDBD", width: 2 }, 
+              lineStyle: { color: "#BDBDBD", width: 2 },
             },
             axisLabel: {
               distance: 25,
@@ -528,7 +541,11 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             }
 
             const isDark = document.documentElement.classList.contains("dark");
-            const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
+            const pointerColor = isThreshold
+              ? activeColor
+              : isDark
+                ? "#EBEFF4"
+                : "#000000";
 
             chart.setOption({
               series: [
@@ -547,7 +564,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
 
     // 5. Water Level (Dynamic based on River Wall Height)
     if (waterLevel.current) {
-      const chart = echarts.init(waterLevel.current);
+      const chart = initChart(waterLevel.current);
       const configRef = ref(database, `/${buoyCode}/CONFIG/WALL_HEIGHT_FEET`);
       const waterRef = ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_FEET`);
 
@@ -567,7 +584,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
                 splitNumber: 5,
                 radius: "100%",
                 center: ["50%", "50%"],
-                axisLine: { lineStyle: { width: 10, color: [[1, "#EBEFF4"]], } },
+                axisLine: { lineStyle: { width: 10, color: [[1, "#EBEFF4"]] } },
                 progress: {
                   show: true,
                   width: 10,
@@ -630,12 +647,22 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
               let isThreshold = false;
 
               if (waterSnapshot.exists()) {
-                if (percentage > 40 && percentage < 100) { activeColor = "#3498db"; isThreshold = true; }
-                else if (percentage >= 100) { activeColor = "#e74c3c"; isThreshold = true; }
+                if (percentage > 40 && percentage < 100) {
+                  activeColor = "#3498db";
+                  isThreshold = true;
+                } else if (percentage >= 100) {
+                  activeColor = "#e74c3c";
+                  isThreshold = true;
+                }
               }
 
-              const isDark = document.documentElement.classList.contains("dark");
-              const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
+              const isDark =
+                document.documentElement.classList.contains("dark");
+              const pointerColor = isThreshold
+                ? activeColor
+                : isDark
+                  ? "#EBEFF4"
+                  : "#000000";
 
               chart.setOption({
                 series: [
@@ -658,7 +685,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
 
     // 6. Water Temperature
     if (waterTemperature.current) {
-      const chart = echarts.init(waterTemperature.current);
+      const chart = initChart(waterTemperature.current);
       const GAUGE_MAX = 100;
 
       const getWaterColor = (val: number) => {
@@ -700,7 +727,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             axisTick: {
               distance: 10,
               length: 8,
-               lineStyle: { color: "#BDBDBD", width: 1 },
+              lineStyle: { color: "#BDBDBD", width: 1 },
             },
             splitLine: {
               distance: 10,
@@ -753,7 +780,11 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
           }
 
           const isDark = document.documentElement.classList.contains("dark");
-          const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
+          const pointerColor = isThreshold
+            ? activeColor
+            : isDark
+              ? "#EBEFF4"
+              : "#000000";
 
           chart.setOption({
             series: [
@@ -771,7 +802,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
 
     // 7. Water Pressure
     if (waterPressure.current) {
-      const chart = echarts.init(waterPressure.current);
+      const chart = initChart(waterPressure.current);
       const GAUGE_MIN = 0;
       const GAUGE_MAX = 400;
 
@@ -851,41 +882,43 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
 
       charts.push(chart);
       unsubscribers.push(
-        onValue(
-          ref(database, `/${buoyCode}/MS5837/WATER_PRESSURE`),
-          (s) => {
-            const value = s.exists() ? toNumberOrZero(s.val()) : 0;
-            let activeColor = "#989898";
-            let isThreshold = false;
+        onValue(ref(database, `/${buoyCode}/MS5837/WATER_PRESSURE`), (s) => {
+          const value = s.exists() ? toNumberOrZero(s.val()) : 0;
+          let activeColor = "#989898";
+          let isThreshold = false;
 
-            if (s.exists()) {
-              const wPressColor = getWaterPressureColor(value);
-              if (wPressColor !== "#EBEFF4") {
-                activeColor = wPressColor;
-                isThreshold = true;
-              }
+          if (s.exists()) {
+            const wPressColor = getWaterPressureColor(value);
+            if (wPressColor !== "#EBEFF4") {
+              activeColor = wPressColor;
+              isThreshold = true;
             }
+          }
 
-            const isDark = document.documentElement.classList.contains("dark");
-            const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
+          const isDark = document.documentElement.classList.contains("dark");
+          const pointerColor = isThreshold
+            ? activeColor
+            : isDark
+              ? "#EBEFF4"
+              : "#000000";
 
-            chart.setOption({
-              series: [
-                {
-                  data: [{ value }],
-                  progress: { itemStyle: { color: activeColor } },
-                  pointer: { itemStyle: { color: pointerColor } },
-                  anchor: { itemStyle: { borderColor: pointerColor } },
-                },
-              ],
-            });
-          },
-        ),
+          chart.setOption({
+            series: [
+              {
+                data: [{ value }],
+                progress: { itemStyle: { color: activeColor } },
+                pointer: { itemStyle: { color: pointerColor } },
+                anchor: { itemStyle: { borderColor: pointerColor } },
+              },
+            ],
+          });
+        }),
       );
     }
+
     // 8. Rain Gauge
     if (rainGauge.current) {
-      const chart = echarts.init(rainGauge.current);
+      const chart = initChart(rainGauge.current);
       const GAUGE_MAX = 11;
 
       const getRainColor = (val: number) => {
@@ -926,12 +959,12 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             axisTick: {
               distance: 10,
               length: 8,
-              lineStyle: { color: "#BDBDBD", width: 1 }, 
+              lineStyle: { color: "#BDBDBD", width: 1 },
             },
             splitLine: {
               distance: 10,
               length: 15,
-              lineStyle: { color: "#BDBDBD", width: 2 }, 
+              lineStyle: { color: "#BDBDBD", width: 2 },
             },
             axisLabel: {
               distance: 25,
@@ -980,7 +1013,11 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
             }
 
             const isDark = document.documentElement.classList.contains("dark");
-            const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
+            const pointerColor = isThreshold
+              ? activeColor
+              : isDark
+                ? "#EBEFF4"
+                : "#000000";
 
             chart.setOption({
               series: [
@@ -1014,7 +1051,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
       observer.disconnect();
       unsubscribers.forEach((u) => u());
     };
-  }, [sstData, buoyCode]);
+  }, [sstData, buoyCode, showAlert]);
 
   const SensorCard = ({
     title,
@@ -1043,20 +1080,9 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
 
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-900  transition-colors duration-300">
-      {/* Dito ang trick: Huwag i-wrap ang buong grid sa showAlert condition. 
-          Panatilihin itong laging naka-render para hindi ma-dispose ang ECharts instances.
-      */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-4">
-        <SensorCard
-          title="Water Level"
-          valueRef={waterLevel}
-          footerText=""
-        />
-        <SensorCard
-          title="Rainfall Count"
-          valueRef={rainGauge}
-          footerText=""
-        />
+        <SensorCard title="Water Level" valueRef={waterLevel} footerText="" />
+        <SensorCard title="Rainfall Count" valueRef={rainGauge} footerText="" />
         <SensorCard
           title="Surroundings Temperature"
           valueRef={gaugeRef}
@@ -1067,16 +1093,8 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
           valueRef={waterTemperature}
           footerText=""
         />
-        <SensorCard
-          title="Humidity"
-          valueRef={humidityRef}
-          footerText=""
-        />
-        <SensorCard
-          title="Wind Speed"
-          valueRef={windSpeed}
-          footerText=""
-        />
+        <SensorCard title="Humidity" valueRef={humidityRef} footerText="" />
+        <SensorCard title="Wind Speed" valueRef={windSpeed} footerText="" />
         <SensorCard
           title="Atmospheric Pressure"
           valueRef={atmosphericPressure}

@@ -22,7 +22,7 @@ const riverMonitoring = () => {
   return (
     <div className="">
       <SearchBuoy />
-      <MapsWithHazard />
+      <MapsWithHazard showAlert={showAlert} />
       <AlertModal
         isOpen={showAlert}
         alert={currentAlert}

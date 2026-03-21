@@ -8,7 +8,12 @@ import { useContext } from "react";
 import { signInAnonymously } from "firebase/auth";
 import { RefObject } from "@fullcalendar/core/preact.js";
 
-export default function MapsWithHazard() {
+interface MapsWithHazardProps {
+  showAlert?: boolean;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
   const [sstData, setSST] = useState<number>(0);
   // const [percentage, setPercentage] = useState(0);
   const gaugeRef = useRef<HTMLDivElement | null>(null);
@@ -1038,6 +1043,9 @@ export default function MapsWithHazard() {
 
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-900  transition-colors duration-300">
+      {/* Dito ang trick: Huwag i-wrap ang buong grid sa showAlert condition. 
+          Panatilihin itong laging naka-render para hindi ma-dispose ang ECharts instances.
+      */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 pb-4">
         <SensorCard
           title="Water Level"

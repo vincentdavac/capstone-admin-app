@@ -106,7 +106,7 @@ const navItems: NavItem[] = [
   },
   {
     icon: <ManageUsers />,
-    name: "Manage Users",
+    name: "Manage Barangay Residents",
     path: "/barangay/manage-users",
   },
   {

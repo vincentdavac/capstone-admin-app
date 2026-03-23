@@ -14,7 +14,7 @@ const WaterAlertHooks = () => {
       if (!token) return;
       try {
         const res= await getWaterAlert.get(token);
-        setData(res);
+        setData(res.data);
       } catch (error) {
         console.error(error);
       }

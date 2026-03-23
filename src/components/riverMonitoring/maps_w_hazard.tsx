@@ -26,8 +26,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   console.log("Buoy Code:", buoyCode);
   const { data: alertData } = WaterAlertHooks();
-  console.log("thresehold:", alertData);
-
+  console.log("alertData:", alertData);
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
@@ -76,8 +75,15 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
   }, [buoyCode]);
 
   useEffect(() => {
+    if (!alertData) return;
+    const whiteThreshold = toNumberOrZero(alertData?.white_level_alert);
+    const blueThreshold = toNumberOrZero(alertData?.blue_level_alert);
+    const redThreshold = toNumberOrZero(alertData?.red_level_alert);
+    console.log('text: ',redThreshold);
+    
     const charts: echarts.ECharts[] = [];
     const unsubscribers: (() => void)[] = [];
+    if (!alertData) return;
     const initChart = (el: HTMLDivElement) => {
       const existing = echarts.getInstanceByDom(el);
       if (existing) existing.dispose();
@@ -568,14 +574,11 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
         ),
       );
     }
+
     if (waterLevel.current) {
       const chart = initChart(waterLevel.current);
-      const waterRef = ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_FEET`);
       const wallHeight = 15;
-      const whiteLevelAlert = toNumberOrZero(alertData!.white_level_alert);
-      const blueLevelAlert = toNumberOrZero(alertData!.blue_level_alert);
-      const redLevelAlert = toNumberOrZero(alertData!.red_level_alert);
-
+      const waterRef = ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_FEET`);
       chart.setOption({
         series: [
           {
@@ -619,11 +622,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
               show: true,
               showAbove: true,
               size: 18,
-              itemStyle: {
-                borderWidth: 4,
-                borderColor: "#000",
-                color: "#fff",
-              },
+              itemStyle: { borderWidth: 4, borderColor: "#000", color: "#fff" },
             },
             detail: {
               valueAnimation: true,
@@ -643,30 +642,14 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
           const value = waterSnapshot.exists()
             ? toNumberOrZero(waterSnapshot.val())
             : 0;
-
-          let activeColor = "#989898";
-          let isThreshold = false;
-
+          let activeColor = "#EBEFF4";
           if (waterSnapshot.exists()) {
-            if (value >= redLevelAlert) {
-              activeColor = "#e74c3c";
-              isThreshold = true;
-            } else if (value < redLevelAlert) {
-              activeColor = "#3498db";
-              isThreshold = true;
-            } else if (value < blueLevelAlert) {
-              activeColor = "#EBEFF4";
-              isThreshold = true;
-            }
+            if (value >= redThreshold) activeColor = "#e74c3c";
+            else if (value >= blueThreshold) activeColor = "#3498db";
+            else activeColor = "#EBEFF4";
           }
-
           const isDark = document.documentElement.classList.contains("dark");
-          const pointerColor = isThreshold
-            ? activeColor
-            : isDark
-              ? "#EBEFF4"
-              : "#000000";
-
+          const pointerColor = activeColor;
           chart.setOption({
             series: [
               {
@@ -1080,24 +1063,24 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
     </div>
   );
   if (!alertData)
-  return (
-    <div className="p-4 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 min-h-screen">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-4">
-        {[...Array(8)].map((_, i) => (
-          <div
-            key={i}
-            className="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 animate-pulse"
-          >
-            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full w-2/3 mb-8" />
-            <div className="relative flex items-center justify-center">
-              <div className="w-36 h-36 sm:w-44 sm:h-44 border-[12px] border-gray-100 dark:border-gray-700 rounded-full" />
-              <div className="absolute h-6 bg-gray-200 dark:bg-gray-700 rounded w-12" />
+    return (
+      <div className="p-4 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 min-h-screen">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-4">
+          {[...Array(8)].map((_, i) => (
+            <div
+              key={i}
+              className="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 animate-pulse"
+            >
+              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full w-2/3 mb-8" />
+              <div className="relative flex items-center justify-center">
+                <div className="w-36 h-36 sm:w-44 sm:h-44 border-[12px] border-gray-100 dark:border-gray-700 rounded-full" />
+                <div className="absolute h-6 bg-gray-200 dark:bg-gray-700 rounded w-12" />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
-    </div>
-  );
+    );
 
   return (
     <div className="p-4 bg-gray-50 dark:bg-gray-900  transition-colors duration-300">

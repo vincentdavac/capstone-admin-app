@@ -6,6 +6,7 @@ import { AppContext } from "../../context/AppContext";
 import { useContext } from "react";
 import { signInAnonymously } from "firebase/auth";
 import { RefObject } from "@fullcalendar/core/preact.js";
+import WaterAlertHooks from "../../api_hooks/waterAlertHooks";
 
 interface MapsWithHazardProps {
   showAlert?: boolean;
@@ -24,6 +25,8 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
   const { user } = useContext(AppContext)!;
   const buoyCode = user?.barangay?.buoys?.[0]?.buoyCode;
   console.log("Buoy Code:", buoyCode);
+  const { data: alertData } = WaterAlertHooks();
+  console.log("thresehold:", alertData);
 
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -99,11 +102,12 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
       const GAUGE_MAX = 100;
 
       const getTemperatureColor = (val: number) => {
-        if (val < 27) return "#EBEFF4";
-        if (val <= 32) return "#EBEFF4";
-        if (val <= 41) return "#3498db";
-        if (val <= 51) return "#e74c3c";
-        return "#e74c3c";
+        if (val < 26) return "#EBEFF4";
+        if (val >= 27 && val <= 32) return "#3498db";
+        if (val >= 33 && val <= 41) return "#3498db";
+        if (val >= 42 && val <= 51) return "#e74c3c";
+        if (val > 52) return "#e74c3c";
+        return "#EBEFF4";
       };
 
       chart.setOption({
@@ -220,11 +224,12 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
       const GAUGE_MAX = 100;
 
       const getHumidityColor = (val: number) => {
-        if (val < 25) return "#EBEFF4";
-        if (val <= 29) return "#3498db";
-        if (val <= 59) return "#EBEFF4";
-        if (val <= 69) return "#3498db";
-        return "#e74c3c";
+        if (val >= 30 && val <= 59) return "#EBEFF4";
+        if (val >= 25 && val <= 29) return "#3498db";
+        if (val >= 60 && val <= 69) return "#3498db";
+        if (val < 25) return "#e74c3c";
+        if (val > 70) return "#e74c3c";
+        return "#EBEFF4";
       };
 
       chart.setOption({
@@ -450,8 +455,10 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
       const GAUGE_MAX = 1100;
 
       const getPressureColor = (val: number) => {
+        if (val > 1013.2) return "#EBEFF4";
+        if (val >= 1010 && val <= 1012) return "#EBEFF4";
+        if (val >= 1007 && val <= 1009) return "#3498db";
         if (val < 1006) return "#EBEFF4";
-        if (val <= 1009) return "#3498db";
         return "#EBEFF4";
       };
 
@@ -561,138 +568,131 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
         ),
       );
     }
-
-    // 5. Water Level (Dynamic based on River Wall Height)
     if (waterLevel.current) {
       const chart = initChart(waterLevel.current);
-      const configRef = ref(database, `/${buoyCode}/CONFIG/WALL_HEIGHT_FEET`);
       const waterRef = ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_FEET`);
+      const wallHeight = 15;
+      const whiteLevelAlert = toNumberOrZero(alertData!.white_level_alert);
+      const blueLevelAlert = toNumberOrZero(alertData!.blue_level_alert);
+      const redLevelAlert = toNumberOrZero(alertData!.red_level_alert);
+
+      chart.setOption({
+        series: [
+          {
+            type: "gauge",
+            max: wallHeight,
+            startAngle: 225,
+            endAngle: -45,
+            splitNumber: 5,
+            radius: "100%",
+            center: ["50%", "50%"],
+            axisLine: { lineStyle: { width: 10, color: [[1, "#EBEFF4"]] } },
+            progress: {
+              show: true,
+              width: 10,
+              itemStyle: { color: "#989898" },
+            },
+            pointer: {
+              icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
+              length: "60%",
+              width: 6,
+              offsetCenter: [0, "5%"],
+              itemStyle: { color: "#000" },
+            },
+            axisTick: {
+              distance: 10,
+              length: 8,
+              lineStyle: { color: "#BDBDBD", width: 1 },
+            },
+            splitLine: {
+              distance: 10,
+              length: 15,
+              lineStyle: { color: "#BDBDBD", width: 2 },
+            },
+            axisLabel: {
+              distance: 25,
+              color: "#999",
+              fontSize: 11,
+              formatter: "{value} ft",
+            },
+            anchor: {
+              show: true,
+              showAbove: true,
+              size: 18,
+              itemStyle: {
+                borderWidth: 4,
+                borderColor: "#000",
+                color: "#fff",
+              },
+            },
+            detail: {
+              valueAnimation: true,
+              fontSize: 15,
+              fontWeight: "bold",
+              offsetCenter: [0, "85%"],
+              formatter: "{value} ft",
+              color: "#333",
+            },
+            data: [{ value: 0 }],
+          },
+        ],
+      });
 
       unsubscribers.push(
-        onValue(configRef, (configSnapshot) => {
-          const wallHeight = configSnapshot.exists()
-            ? toNumberOrZero(configSnapshot.val())
-            : 15;
+        onValue(waterRef, (waterSnapshot) => {
+          const value = waterSnapshot.exists()
+            ? toNumberOrZero(waterSnapshot.val())
+            : 0;
+
+          let activeColor = "#989898";
+          let isThreshold = false;
+
+          if (waterSnapshot.exists()) {
+            if (value >= redLevelAlert) {
+              activeColor = "#e74c3c";
+              isThreshold = true;
+            } else if (value < redLevelAlert) {
+              activeColor = "#3498db";
+              isThreshold = true;
+            } else if (value < blueLevelAlert) {
+              activeColor = "#EBEFF4";
+              isThreshold = true;
+            }
+          }
+
+          const isDark = document.documentElement.classList.contains("dark");
+          const pointerColor = isThreshold
+            ? activeColor
+            : isDark
+              ? "#EBEFF4"
+              : "#000000";
 
           chart.setOption({
             series: [
               {
-                type: "gauge",
                 max: wallHeight,
-                startAngle: 225,
-                endAngle: -45,
-                splitNumber: 5,
-                radius: "100%",
-                center: ["50%", "50%"],
-                axisLine: { lineStyle: { width: 10, color: [[1, "#EBEFF4"]] } },
-                progress: {
-                  show: true,
-                  width: 10,
-                  itemStyle: { color: "#989898" },
-                },
-                pointer: {
-                  icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
-                  length: "60%",
-                  width: 6,
-                  offsetCenter: [0, "5%"],
-                  itemStyle: { color: "#000" },
-                },
-                axisTick: {
-                  distance: 10,
-                  length: 8,
-                  lineStyle: { color: "#BDBDBD", width: 1 },
-                },
-                splitLine: {
-                  distance: 10,
-                  length: 15,
-                  lineStyle: { color: "#BDBDBD", width: 2 },
-                },
-                axisLabel: {
-                  distance: 25,
-                  color: "#999",
-                  fontSize: 11,
-                  formatter: "{value} ft",
-                },
-                anchor: {
-                  show: true,
-                  showAbove: true,
-                  size: 18,
-                  itemStyle: {
-                    borderWidth: 4,
-                    borderColor: "#000",
-                    color: "#fff",
-                  },
-                },
-                detail: {
-                  valueAnimation: true,
-                  fontSize: 15,
-                  fontWeight: "bold",
-                  offsetCenter: [0, "85%"],
-                  formatter: "{value} ft",
-                  color: "#333",
-                },
-                data: [{ value: 0 }],
+                data: [{ value }],
+                progress: { itemStyle: { color: activeColor } },
+                pointer: { itemStyle: { color: pointerColor } },
+                anchor: { itemStyle: { borderColor: pointerColor } },
               },
             ],
           });
-
-          unsubscribers.push(
-            onValue(waterRef, (waterSnapshot) => {
-              const value = waterSnapshot.exists()
-                ? toNumberOrZero(waterSnapshot.val())
-                : 0;
-
-              const percentage = (value / wallHeight) * 100;
-              let activeColor = "#989898";
-              let isThreshold = false;
-
-              if (waterSnapshot.exists()) {
-                if (percentage > 40 && percentage < 100) {
-                  activeColor = "#3498db";
-                  isThreshold = true;
-                } else if (percentage >= 100) {
-                  activeColor = "#e74c3c";
-                  isThreshold = true;
-                }
-              }
-
-              const isDark =
-                document.documentElement.classList.contains("dark");
-              const pointerColor = isThreshold
-                ? activeColor
-                : isDark
-                  ? "#EBEFF4"
-                  : "#000000";
-
-              chart.setOption({
-                series: [
-                  {
-                    max: wallHeight,
-                    data: [{ value }],
-                    progress: { itemStyle: { color: activeColor } },
-                    pointer: { itemStyle: { color: pointerColor } },
-                    anchor: { itemStyle: { borderColor: pointerColor } },
-                  },
-                ],
-              });
-            }),
-          );
         }),
       );
 
       charts.push(chart);
     }
 
-    // 6. Water Temperature
     if (waterTemperature.current) {
       const chart = initChart(waterTemperature.current);
       const GAUGE_MAX = 100;
-
       const getWaterColor = (val: number) => {
-        if (val < 20) return "#EBEFF4";
-        if (val <= 25) return "#3498db";
-        if (val <= 30) return "#2ecc71";
-        return "#e74c3c";
+        if (val >= 26 && val <= 30) return "#EBEFF4";
+        if (val >= 20 && val <= 25) return "#3498db";
+        if (val < 20) return "#e74c3c";
+        if (val > 30) return "#e74c3c";
+        return "#EBEFF4";
       };
 
       chart.setOption({
@@ -805,11 +805,12 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
       const chart = initChart(waterPressure.current);
       const GAUGE_MIN = 0;
       const GAUGE_MAX = 400;
-
       const getWaterPressureColor = (val: number) => {
         if (val < 100) return "#EBEFF4";
-        if (val <= 200) return "#3498db";
-        return "#e74c3c";
+        if (val >= 100 && val <= 200) return "#3498db";
+        if (val > 200 && val <= 300) return "#e74c3c";
+        if (val > 300) return "#e74c3c";
+        return "#EBEFF4";
       };
 
       chart.setOption({
@@ -922,9 +923,10 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
       const GAUGE_MAX = 11;
 
       const getRainColor = (val: number) => {
-        if (val < 3) return "#EBEFF4";
-        if (val <= 7) return "#3498db";
-        return "#e74c3c";
+        if (val >= 1 && val <= 3) return "#EBEFF4";
+        if (val >= 4 && val <= 8) return "#3498db";
+        if (val > 8) return "#e74c3c";
+        return "#EBEFF4";
       };
 
       chart.setOption({
@@ -1051,7 +1053,7 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
       observer.disconnect();
       unsubscribers.forEach((u) => u());
     };
-  }, [sstData, buoyCode, showAlert]);
+  }, [sstData, buoyCode, showAlert, alertData]);
 
   const SensorCard = ({
     title,
@@ -1074,6 +1076,25 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
         <p className="text-sm text-gray-600 dark:text-gray-400 italic leading-snug">
           {footerText}
         </p>
+      </div>
+    </div>
+  );
+  if (!alertData)
+  return (
+    <div className="p-4 bg-gray-50 dark:bg-gray-900 transition-colors duration-300 min-h-screen">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-4">
+        {[...Array(8)].map((_, i) => (
+          <div
+            key={i}
+            className="flex flex-col items-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 animate-pulse"
+          >
+            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full w-2/3 mb-8" />
+            <div className="relative flex items-center justify-center">
+              <div className="w-36 h-36 sm:w-44 sm:h-44 border-[12px] border-gray-100 dark:border-gray-700 rounded-full" />
+              <div className="absolute h-6 bg-gray-200 dark:bg-gray-700 rounded w-12" />
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

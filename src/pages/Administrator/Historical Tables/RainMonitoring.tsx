@@ -12,7 +12,7 @@ interface BatteryHealthComponentCardProps {
 }
 const RainMonitoring = ({ alertsRef }: BatteryHealthComponentCardProps) => {
   useEffect(() => {
-    document.title = "Wind Speed | X-Stream";
+    document.title = "Rain Monitoring | X-Stream";
   }, []);
   insertingAlerts();
   const { user } = useContext(AppContext)!;
@@ -25,7 +25,7 @@ const RainMonitoring = ({ alertsRef }: BatteryHealthComponentCardProps) => {
   );
   return (
     <>
-      <PageBreadcrumb pageTitle="Rain Sensor" />
+      <PageBreadcrumb pageTitle="Rain Monitoring" />
       <div className="space-y-6">
         <RainMonitoringComponentCard alertsRef={alertsRef} />
         <AlertModal

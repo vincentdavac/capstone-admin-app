@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
-import { ArrowUpIcon, ArrowDownIcon, Buoy, ManageUsers } from "../../icons";
-import { MapPinHouse, Megaphone } from "lucide-react";
+import { Buoy, ManageUsers } from "../../icons";
+import { MapPinHouse, Megaphone, TrendingUp, TrendingDown } from "lucide-react";
 import API_BASE_URL from "../../config/coreApi";
 import { AppContext } from "../../context/AppContext";
 import Badge from "../ui/badge/Badge";
@@ -43,13 +44,9 @@ const DashboardCards = () => {
           Accept: "application/json",
         },
       });
-
       const data = await res.json();
-
       if (res.ok && data.data) {
         setStats(data.data);
-      } else {
-        console.error("Failed to fetch dashboard stats:", data);
       }
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
@@ -62,91 +59,100 @@ const DashboardCards = () => {
     if (token) fetchDashboardStats();
   }, [token]);
 
+  // Modern Skeleton Loader
   if (loading || !stats) {
-    return <div className="p-6 text-gray-500">Loading dashboard…</div>;
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full animate-pulse">
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className="h-[180px] bg-gray-200 dark:bg-gray-700 rounded-2xl"
+          />
+        ))}
+      </div>
+    );
   }
 
-  const renderTrend = (stat: DashboardStat) => (
-    <Badge color={stat.badge_color}>
-      {stat.trend === "up" ? <ArrowUpIcon /> : <ArrowDownIcon />}
-      {stat.percentage_of_total.toFixed(2)}%
-    </Badge>
+  const StatCard = ({
+    title,
+    value,
+    stat,
+    icon: Icon,
+  }: {
+    title: string;
+    value: number | string;
+    stat: DashboardStat;
+    icon: any;
+    subLabel?: string;
+  }) => (
+    <div className="relative overflow-hidden rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-6 shadow-sm transition-all hover:shadow-md">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+            {title}
+          </p>
+          <h4 className="mt-2 text-3xl font-black text-gray-900 dark:text-white">
+            {value}
+          </h4>
+          <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+            Avg: {stat.average_per_week.toFixed(1)}/week
+          </p>
+        </div>
+
+        <div
+          className={`flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-700 shadow-inner`}
+        >
+          <Icon className="size-6 text-indigo-600 dark:text-indigo-400" />
+        </div>
+      </div>
+
+      <div className="mt-6 flex items-center justify-between border-t border-gray-50 dark:border-gray-800 pt-4">
+        <div className="flex items-center gap-1">
+          {stat.trend === "up" ? (
+            <TrendingUp size={16} className="text-emerald-500" />
+          ) : (
+            <TrendingDown size={16} className="text-rose-500" />
+          )}
+          <span
+            className={`text-sm font-bold ${stat.trend === "up" ? "text-emerald-500" : "text-rose-500"}`}
+          >
+            {stat.percentage_of_total.toFixed(1)}%
+          </span>
+        </div>
+        <Badge color={stat.badge_color}>
+          {stat.trend === "up" ? "Gaining" : "Dropping"}
+        </Badge>
+      </div>
+    </div>
   );
 
   return (
-    <div className="w-full flex items-start justify-start pl-1">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full">
-        {/* Registered Users */}
-        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-            <ManageUsers className="size-8 text-gray-800 dark:text-white/90" />
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-lg text-gray-500 dark:text-gray-400">
-                Registered Barangay Users
-              </span>
-              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.users.total}
-              </h4>
-            </div>
-            {renderTrend(stats.users)}
-          </div>
-        </div>
-
-        {/* Barangays */}
-        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-            <MapPinHouse className="size-8 text-gray-800 dark:text-white/90" />
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-lg text-gray-500 dark:text-gray-400">
-                Registered Barangays
-              </span>
-              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.barangays.total}
-              </h4>
-            </div>
-            {renderTrend(stats.barangays)}
-          </div>
-        </div>
-
-        {/* Active Buoys */}
-        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-            <Buoy className="size-8 text-gray-800 dark:text-white/90" />
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-lg text-gray-500 dark:text-gray-400">
-                Active Buoys
-              </span>
-              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.buoys.total}
-              </h4>
-            </div>
-            {renderTrend(stats.buoys)}
-          </div>
-        </div>
-
-        {/* Recent Alerts */}
-        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-            <Megaphone className="size-8 text-gray-800 dark:text-white/90" />
-          </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-lg text-gray-500 dark:text-gray-400">
-                Weekly Barangay Alerts
-              </span>
-              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.recent_alerts.current_week}
-              </h4>
-            </div>
-            {renderTrend(stats.recent_alerts)}
-          </div>
-        </div>
+    <div className="w-full">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
+        <StatCard
+          title="Users"
+          value={stats.users.total}
+          stat={stats.users}
+          icon={ManageUsers}
+        />
+        <StatCard
+          title="Barangays"
+          value={stats.barangays.total}
+          stat={stats.barangays}
+          icon={MapPinHouse}
+        />
+        <StatCard
+          title="Active Buoys"
+          value={stats.buoys.total}
+          stat={stats.buoys}
+          icon={Buoy}
+        />
+        <StatCard
+          title="Weekly Alerts"
+          value={stats.recent_alerts.current_week}
+          stat={stats.recent_alerts}
+          icon={Megaphone}
+        />
       </div>
     </div>
   );

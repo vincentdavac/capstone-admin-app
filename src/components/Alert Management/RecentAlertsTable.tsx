@@ -45,7 +45,10 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
 
   const totalPages = Math.ceil(filteredAlerts.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
-  const currentAlerts = filteredAlerts.slice(startIndex, startIndex + itemsPerPage);
+  const currentAlerts = filteredAlerts.slice(
+    startIndex,
+    startIndex + itemsPerPage,
+  );
 
   const validateDates = (from: string, to: string) => {
     if (from && to && new Date(from) > new Date(to)) {
@@ -73,12 +76,15 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
       params.append("from", fromDate);
       params.append("to", toDate);
 
-      const res = await fetch(`${API_BASE_URL}/alert-report?${params.toString()}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          Accept: "application/pdf",
+      const res = await fetch(
+        `${API_BASE_URL}/alert-report?${params.toString()}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: "application/pdf",
+          },
         },
-      });
+      );
 
       if (!res.ok) {
         const err = await res.json();
@@ -237,7 +243,9 @@ export const RecentAlertsTable: React.FC<RecentAlertsTableProps> = ({
             ))}
 
             <button
-              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages, currentPage + 1))
+              }
               disabled={currentPage === totalPages}
               className="px-3 py-1 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white disabled:opacity-50"
             >

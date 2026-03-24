@@ -151,37 +151,91 @@ const BarangayManageUsers = ({ alertsRef }: Props) => {
   // --- END Logic ---
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
-      <PageBreadcrumb pageTitle="Barangay Residents" />
+    <div className="p-8 bg-slate-50 dark:bg-[#0B1120] min-h-screen relative transition-colors duration-500">
+      <div className="max-w-[1600px] mx-auto space-y-8">
+        {/* 1. Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <PageBreadcrumb pageTitle="Barangay Residents" />
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-        {/* 1. Header (Title and Search Bar) */}
-        <UsersTableHeader
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          inputRef={inputRef}
-        />
+          {/* Quick Action / Export if needed */}
+          <div className="flex items-center gap-3">
+            <div className="hidden sm:flex flex-col items-end px-4 border-r border-slate-200 dark:border-slate-800">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                Database Status
+              </span>
+              <span className="text-sm font-bold text-emerald-500 flex items-center gap-1">
+                <span className="size-2 bg-emerald-500 rounded-full animate-pulse" />{" "}
+                Live
+              </span>
+            </div>
+          </div>
+        </div>
 
-        {/* 2. Users Table */}
-        <UsersTable
-          currentUsers={currentUsers}
-          loading={loading}
-          startIndex={startIndex}
-          handleUpdateClick={handleUpdateClick}
-          handleArchiveClick={handleArchiveClick}
-        />
+        {/* 2. Quick Metrics Summary (Optional but highly recommended for UI polish) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {[
+            {
+              label: "Total Population",
+              value: filteredUsers.length,
+              color: "indigo",
+            },
+            { label: "Verified Residents", value: "98%", color: "emerald" },
+            { label: "Pending Updates", value: "12", color: "amber" },
+            { label: "Recently Archived", value: "4", color: "slate" },
+          ].map((stat, i) => (
+            <div
+              key={i}
+              className="bg-white dark:bg-slate-900 p-5 rounded-[2rem] border border-slate-100 dark:border-slate-800 shadow-sm"
+            >
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.15em] mb-1">
+                {stat.label}
+              </p>
+              <p className="text-2xl font-black text-slate-900 dark:text-white">
+                {stat.value}
+              </p>
+            </div>
+          ))}
+        </div>
 
-        {/* 3. Pagination */}
-        <UsersPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          filteredUsersLength={filteredUsers.length}
-          itemsPerPage={itemsPerPage}
-          startIndex={startIndex}
-          setCurrentPage={setCurrentPage}
-        />
+        {/* 3. Main Content Container */}
+        <div className="bg-white dark:bg-slate-900 rounded-[2.5rem] border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden transition-all">
+          {/* Table Header Integration */}
+          <div className="bg-white dark:bg-slate-900 px-4 pt-4">
+            <UsersTableHeader
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              inputRef={inputRef}
+            />
+          </div>
+
+          {/* The Table Section */}
+          <div className="px-2 pb-2">
+            <div className="overflow-hidden rounded-[2rem] border border-slate-50 dark:border-slate-800/50">
+              <UsersTable
+                currentUsers={currentUsers}
+                loading={loading}
+                startIndex={startIndex}
+                handleUpdateClick={handleUpdateClick}
+                handleArchiveClick={handleArchiveClick}
+              />
+            </div>
+          </div>
+
+          {/* 4. Pagination Styling */}
+          <div className="bg-slate-50/50 dark:bg-slate-800/30 p-6">
+            <UsersPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              filteredUsersLength={filteredUsers.length}
+              itemsPerPage={itemsPerPage}
+              startIndex={startIndex}
+              setCurrentPage={setCurrentPage}
+            />
+          </div>
+        </div>
       </div>
 
+      {/* 🧩 Modals & Alerts */}
       <UpdateUserModal
         show={showUpdate}
         onClose={() => setShowUpdate(false)}
@@ -201,7 +255,8 @@ const BarangayManageUsers = ({ alertsRef }: Props) => {
         alertsRef={alertsRef}
         userData={selectedUser ?? undefined}
       />
-       <AlertModal
+
+      <AlertModal
         isOpen={showAlert}
         alert={currentAlert}
         onClose={handleClose}

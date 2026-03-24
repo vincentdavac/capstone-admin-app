@@ -1,168 +1,134 @@
+import React from "react";
+import { ArrowRight, ArrowLeft, ArrowDown, ShieldAlert } from "lucide-react";
+
 const DisasterFlowChart = () => {
-  const StepBox = ({ text }: { text: string }) => (
+  // Fixed widths for precise alignment math
+  const cardWidth = "w-40"; // 160px
+  const connectorWidth = "w-8"; // 32px
+  // Total row width calculation for the final step alignment:
+  // (4 cards * 160px) + (3 connectors * 32px) = 736px
+  const rowWidth = "w-[736px]";
+
+  const StepBox = ({
+    text,
+    phase,
+  }: {
+    text: string;
+    phase?: "prep" | "action" | "final";
+  }) => {
+    const phaseStyles = {
+      prep: "border-blue-200 bg-blue-50/50 text-blue-900 dark:border-blue-900/30 dark:bg-blue-900/20 dark:text-blue-100",
+      action:
+        "border-amber-200 bg-amber-50/50 text-amber-900 dark:border-amber-900/30 dark:bg-amber-900/20 dark:text-amber-100",
+      final:
+        "border-emerald-200 bg-emerald-50/50 text-emerald-900 dark:border-emerald-900/30 dark:bg-emerald-900/20 dark:text-emerald-100",
+    };
+
+    return (
+      <div
+        className={`
+        ${cardWidth} h-20 px-3 py-2 flex items-center justify-center text-center text-[11px] leading-tight
+        rounded-xl border-2 shadow-sm transition-all hover:scale-105 hover:shadow-md font-bold
+        backdrop-blur-md ${phaseStyles[phase || "prep"]}
+      `}
+      >
+        {text}
+      </div>
+    );
+  };
+
+  const Connector = ({ dir }: { dir: "right" | "left" | "down" }) => (
     <div
-      className="
-      w-[140px]
-      trunctate
-      flex-shrink-0
-      h-[60px]
-      px-3
-      py-1.5
-      flex
-      items-center
-      justify-center
-      text-center
-      text-xs
-      rounded-lg
-      border-2
-      border-[#D9D9D9]
-      bg-white
-      backdrop-blur-lg
-      shadow-sm
-      text-gray-800
-      dark:bg-gray-800
-      dark:text-white
-      dark:border-gray-700
-      transition-all
-      hover:scale-105
-      hover:shadow-md
-      font-bold 
-    "
+      className={`flex items-center justify-center ${connectorWidth} text-slate-400 dark:text-slate-500`}
     >
-      {text}
+      {dir === "right" && <ArrowRight size={18} />}
+      {dir === "left" && <ArrowLeft size={18} />}
+      {dir === "down" && <ArrowDown size={18} />}
     </div>
   );
-  const ArrowLeft = () => (
-    <span className="w-[24px] flex-shrink-0 flex items-center justify-center text-gray-500 dark:text-gray-400 text-xl select-none drop-shadow-sm">
-      ⬅
-    </span>
-  );
-  const ArrowRight = () => (
-    <span className="w-[24px] flex-shrink-0 flex items-center justify-center text-gray-500 dark:text-gray-400 text-xl select-none drop-shadow-sm">
-      ➡
-    </span>
-  );
 
-  const ArrowDown = () => (
-    <span className="text-gray-500 dark:text-gray-400 text-xl select-none drop-shadow-sm">
-      ⬇
-    </span>
-  );
   return (
-    <div
-      className="
-        w-full
-        mx-auto
-        px-4
-        py-4
-        bg-white
-        dark:bg-gray-800
-        backdrop-blur-xl
-        shadow-sm
-        rounded-2xl
-        border
-        border-[#D9D9D9]
-        dark:border-gray-700
-        overflow-x-auto
-        overflow-y-auto
-      "
-      style={{
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-      }}
-    >
-      {/* Header - moved up with reduced padding */}
-      <div className="w-full px-4 pt-3 text-center">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-          Disaster Response Flowchart
+    <div className="w-full max-w-5xl mx-auto p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-x-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-10 gap-4">
+        <h3 className="text-xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
+          <ShieldAlert className="text-red-500" size={24} />
+          Disaster Response Flow
         </h3>
+        <div className="flex gap-4 bg-slate-100 dark:bg-slate-800 p-2 rounded-lg">
+          {["prep", "action", "final"].map((p) => (
+            <span
+              key={p}
+              className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold text-slate-600 dark:text-slate-400"
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  p === "prep"
+                    ? "bg-blue-500"
+                    : p === "action"
+                      ? "bg-amber-500"
+                      : "bg-emerald-500"
+                }`}
+              />
+              {p}
+            </span>
+          ))}
+        </div>
       </div>
 
-      {/* Horizontal rule - moved up with reduced margin */}
-      <hr className="mt-2 mb-4 border-gray-300 dark:border-gray-600" />
-
-      {/* Content with responsive adjustments */}
-      <div className="flex flex-col items-center px-2 sm:px-4">
-        {/* Row 1 */}
-        <div className="flex items-center gap-2">
-          <StepBox text="Report to Operations Center" />
-          <ArrowRight />
-          <StepBox text="Check-in to site & follow protocol" />
-          <ArrowRight />
-          <StepBox text="Secure area & ensure safety" />
-          <ArrowRight />
-          <StepBox text="Brief team on situation" />
+      {/* Flow Container */}
+      <div className="flex flex-col items-center min-w-[800px]">
+        {/* Row 1: Left to Right */}
+        <div className={`flex items-center ${rowWidth}`}>
+          <StepBox phase="prep" text="Report to Operations Center" />
+          <Connector dir="right" />
+          <StepBox phase="prep" text="Check-in to site & follow protocol" />
+          <Connector dir="right" />
+          <StepBox phase="prep" text="Secure area & ensure safety" />
+          <Connector dir="right" />
+          <StepBox phase="prep" text="Brief team on situation" />
         </div>
 
-        {/* ArrowDown under LAST (rightmost) box — mirrors row structure with spacers */}
-        <div className="flex items-center gap-2">
-          <div className="w-[140px] flex-shrink-0" />
-          <div className="w-[24px] flex-shrink-0" />
-          <div className="w-[140px] flex-shrink-0" />
-          <div className="w-[24px] flex-shrink-0" />
-          <div className="w-[140px] flex-shrink-0" />
-          <div className="w-[24px] flex-shrink-0" />
-          <div className="w-[140px] flex-shrink-0 flex justify-center py-1">
-            <ArrowDown />
-          </div>
+        {/* Down Arrow Right (Aligned to center of 4th box) */}
+        <div className={`${rowWidth} flex justify-end pr-16 py-2`}>
+          <Connector dir="down" />
         </div>
 
-        {/* Row 2 */}
-        <div className="flex items-center gap-2">
-          <StepBox text="Conduct triage" />
-          <ArrowLeft />
-          <StepBox text="Coordinate medical treatment" />
-          <ArrowLeft />
-          <StepBox text="Deploy SAR teams" />
-          <ArrowLeft />
-          <StepBox text="Utilize equipment" />
+        {/* Row 2: Right to Left */}
+        <div className={`flex items-center ${rowWidth}`}>
+          <StepBox phase="action" text="Utilize equipment" />
+          <Connector dir="left" />
+          <StepBox phase="action" text="Deploy SAR teams" />
+          <Connector dir="left" />
+          <StepBox phase="action" text="Coordinate medical treatment" />
+          <Connector dir="left" />
+          <StepBox phase="action" text="Conduct triage" />
         </div>
 
-        {/* ArrowDown under FIRST (leftmost) box */}
-        <div className="flex items-center gap-2">
-          <div className="w-[140px] flex-shrink-0 flex justify-center py-1">
-            <ArrowDown />
-          </div>
-          <div className="w-[24px] flex-shrink-0" />
-          <div className="w-[140px] flex-shrink-0" />
-          <div className="w-[24px] flex-shrink-0" />
-          <div className="w-[140px] flex-shrink-0" />
-          <div className="w-[24px] flex-shrink-0" />
-          <div className="w-[140px] flex-shrink-0" />
+        {/* Down Arrow Left (Aligned to center of 1st box) */}
+        <div className={`${rowWidth} flex justify-start pl-16 py-2`}>
+          <Connector dir="down" />
         </div>
 
-        {/* Row 3 */}
-        <div className="flex items-center gap-2">
-          <StepBox text="Transfer victims for treatment" />
-          <ArrowRight />
-          <StepBox text="Coordinate ID" />
-          <ArrowRight />
-          <StepBox text="Report status to command" />
-          <ArrowRight />
-          <StepBox text="Assess need for backup" />
+        {/* Row 3: Left to Right */}
+        <div className={`flex items-center ${rowWidth}`}>
+          <StepBox phase="final" text="Transfer victims for treatment" />
+          <Connector dir="right" />
+          <StepBox phase="final" text="Coordinate ID" />
+          <Connector dir="right" />
+          <StepBox phase="final" text="Report status to command" />
+          <Connector dir="right" />
+          <StepBox phase="final" text="Assess need for backup" />
         </div>
 
-        <div className="flex items-center gap-2">
-          <div className="w-[140px] flex-shrink-0" />
-          <div className="w-[24px] flex-shrink-0" />
-          <div className="w-[140px] flex-shrink-0" />
-          <div className="w-[24px] flex-shrink-0" />
-          <div className="w-[140px] flex-shrink-0" />
-          <div className="w-[24px] flex-shrink-0" />
-          <div className="w-[140px] flex-shrink-0 flex justify-center py-1">
-            <ArrowDown />
-          </div>
+        {/* Down Arrow Right (Aligned to center of 4th box) */}
+        <div className={`${rowWidth} flex justify-end pr-16 py-2`}>
+          <Connector dir="down" />
         </div>
 
-        {/* Final step - positioned directly under Assess need for backup */}
-        <div className="flex items-center gap-2">
-          <div className="w-[140px] flex-shrink-0" />
-          <div className="w-[24px] flex-shrink-0" />
-          <div className="w-[140px] flex-shrink-0" />
-          <div className="w-[24px] flex-shrink-0" />
-          <div className="w-[140px] flex-shrink-0" />
-          <div className="w-[24px] flex-shrink-0" />
-          <StepBox text="Maintain log of all events" />
+        {/* Final Row (Pinned to the end of the row width) */}
+        <div className={`${rowWidth} flex justify-end`}>
+          <StepBox phase="final" text="Maintain log of all events" />
         </div>
       </div>
     </div>

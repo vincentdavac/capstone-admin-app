@@ -1,146 +1,135 @@
+import React from "react";
+import { ArrowRight, ArrowLeft, ArrowDown, ShieldAlert } from "lucide-react";
+
 const DisasterFlowChart = () => {
-  const StepBox = ({ text }: { text: string }) => (
+  // Fixed widths for precise alignment math
+  const cardWidth = "w-40"; // 160px
+  const connectorWidth = "w-8"; // 32px
+  // Total row width calculation for the final step alignment:
+  // (4 cards * 160px) + (3 connectors * 32px) = 736px
+  const rowWidth = "w-[736px]";
+
+  const StepBox = ({
+    text,
+    phase,
+  }: {
+    text: string;
+    phase?: "prep" | "action" | "final";
+  }) => {
+    const phaseStyles = {
+      prep: "border-blue-200 bg-blue-50/50 text-blue-900 dark:border-blue-900/30 dark:bg-blue-900/20 dark:text-blue-100",
+      action:
+        "border-amber-200 bg-amber-50/50 text-amber-900 dark:border-amber-900/30 dark:bg-amber-900/20 dark:text-amber-100",
+      final:
+        "border-emerald-200 bg-emerald-50/50 text-emerald-900 dark:border-emerald-900/30 dark:bg-emerald-900/20 dark:text-emerald-100",
+    };
+
+    return (
+      <div
+        className={`
+        ${cardWidth} h-20 px-3 py-2 flex items-center justify-center text-center text-[11px] leading-tight
+        rounded-xl border-2 shadow-sm transition-all hover:scale-105 hover:shadow-md font-bold
+        backdrop-blur-md ${phaseStyles[phase || "prep"]}
+      `}
+      >
+        {text}
+      </div>
+    );
+  };
+
+  const Connector = ({ dir }: { dir: "right" | "left" | "down" }) => (
     <div
-      className="
-        h-[100px]
-        px-6
-        py-4
-        flex
-        items-center
-        justify-center
-        text-center
-        rounded-xl
-        border-2
-        border-[#2C7DA0]
-        bg-gradient-to-br from-white to-[#A9D6E5]
-        shadow-xl
-        text-gray-800
-        dark:from-gray-800 dark:to-[#01497C]/30
-        dark:text-white
-        dark:border-[#2C7DA0]/70
-        transition-all
-        hover:scale-105
-        hover:shadow-2xl
-        hover:border-[#01497C]
-        dark:hover:border-[#61A5C2]
-        w-[186.328px]
-      "
+      className={`flex items-center justify-center ${connectorWidth} text-slate-400 dark:text-slate-500`}
     >
-      {text}
-    </div>
-  );
-
-  const ArrowRight = () => (
-    <span className="text-[#2C7DA0] dark:text-[#89C2D9] text-3xl select-none drop-shadow-md">
-      ➡
-    </span>
-  );
-
-  const ArrowLeft = () => (
-    <span className="text-[#2C7DA0] dark:text-[#89C2D9] text-3xl select-none drop-shadow-md">
-      ⬅
-    </span>
-  );
-
-  const ArrowDown = ({ align }: { align: "left" | "right" }) => (
-    <div
-      className={`flex w-full ${
-        align === "right" ? "justify-end pr-20" : "justify-start pl-20"
-      }`}
-    >
-      <span className="text-[#2C7DA0] dark:text-[#89C2D9] text-3xl select-none drop-shadow-md">
-        ⬇
-      </span>
+      {dir === "right" && <ArrowRight size={18} />}
+      {dir === "left" && <ArrowLeft size={18} />}
+      {dir === "down" && <ArrowDown size={18} />}
     </div>
   );
 
   return (
-    <div
-      className="
-    w-full
-    max-w-full
-    sm:max-w-[640px]
-    md:max-w-[768px]
-    lg:max-w-[955px]
-    xl:max-w-[1100px]
-    2xl:max-w-[1280px]
-
-    min-h-[60vh]
-    lg:min-h-[700px]
-
-    mx-auto
-    px-3
-    sm:px-4
-    md:px-6
-
-    bg-white
-    dark:bg-gray-800
-
-    backdrop-blur-xl
-    shadow-sm
-    rounded-2xl
-    border
-    border-gray-200
-    dark:border-gray-700
-
-    py-4
-    overflow-x-hidden
-    overflow-y-auto
-  "
-      style={{
-        backdropFilter: "blur(20px)",
-        WebkitBackdropFilter: "blur(20px)",
-      }}
-    >
-      <div className="w-full text-center mb-4">
-        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-          Disaster Response Flowchart
+    <div className="w-full max-w-5xl mx-auto p-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl overflow-x-auto">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-center justify-between mb-10 gap-4">
+        <h3 className="text-xl font-extrabold text-slate-800 dark:text-white flex items-center gap-2">
+          <ShieldAlert className="text-red-500" size={24} />
+          Disaster Response Flow
         </h3>
-      </div>
-      <hr className="w-full border-t border-gray-300 dark:border-gray-600 mb-6" />
-
-      {/* Row 1 */}
-      <div className="flex items-center justify-between gap-4 mb-4">
-        <StepBox text="Report to Operations Center" />
-        <ArrowRight />
-        <StepBox text="Check-in to site & follow protocol" />
-        <ArrowRight />
-        <StepBox text="Secure area & ensure safety of responders" />
-        <ArrowRight />
-        <StepBox text="Brief team on current situation" />
-      </div>
-
-      <ArrowDown align="right" />
-
-      {/* Row 2 */}
-      <div className="flex items-center justify-between gap-4 my-4">
-        <StepBox text="Conduct triage" />
-        <ArrowLeft />
-        <StepBox text="Coordinate medical treatment" />
-        <ArrowLeft />
-        <StepBox text="Deploy SAR teams" />
-        <ArrowLeft />
-        <StepBox text="Utilize response equipment" />
+        <div className="flex gap-4 bg-slate-100 dark:bg-slate-800 p-2 rounded-lg">
+          {["prep", "action", "final"].map((p) => (
+            <span
+              key={p}
+              className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest font-bold text-slate-600 dark:text-slate-400"
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  p === "prep"
+                    ? "bg-blue-500"
+                    : p === "action"
+                      ? "bg-amber-500"
+                      : "bg-emerald-500"
+                }`}
+              />
+              {p}
+            </span>
+          ))}
+        </div>
       </div>
 
-      <ArrowDown align="left" />
+      {/* Flow Container */}
+      <div className="flex flex-col items-center min-w-[800px]">
+        {/* Row 1: Left to Right */}
+        <div className={`flex items-center ${rowWidth}`}>
+          <StepBox phase="prep" text="Report to Operations Center" />
+          <Connector dir="right" />
+          <StepBox phase="prep" text="Check-in to site & follow protocol" />
+          <Connector dir="right" />
+          <StepBox phase="prep" text="Secure area & ensure safety" />
+          <Connector dir="right" />
+          <StepBox phase="prep" text="Brief team on situation" />
+        </div>
 
-      {/* Row 3 */}
-      <div className="flex items-center justify-between gap-4 my-4">
-        <StepBox text="Transfer victims for treatment" />
-        <ArrowRight />
-        <StepBox text="Coordinate cadaver identification" />
-        <ArrowRight />
-        <StepBox text="Report status to command center" />
-        <ArrowRight />
-        <StepBox text="Assess need for backup responders" />
-      </div>
+        {/* Down Arrow Right (Aligned to center of 4th box) */}
+        <div className={`${rowWidth} flex justify-end pr-16 py-2`}>
+          <Connector dir="down" />
+        </div>
 
-      <ArrowDown align="right" />
+        {/* Row 2: Right to Left */}
+        <div className={`flex items-center ${rowWidth}`}>
+          <StepBox phase="action" text="Utilize equipment" />
+          <Connector dir="left" />
+          <StepBox phase="action" text="Deploy SAR teams" />
+          <Connector dir="left" />
+          <StepBox phase="action" text="Coordinate medical treatment" />
+          <Connector dir="left" />
+          <StepBox phase="action" text="Conduct triage" />
+        </div>
 
-      {/* Final step */}
-      <div className="flex justify-end mt-4">
-        <StepBox text="Maintain log of all events" />
+        {/* Down Arrow Left (Aligned to center of 1st box) */}
+        <div className={`${rowWidth} flex justify-start pl-16 py-2`}>
+          <Connector dir="down" />
+        </div>
+
+        {/* Row 3: Left to Right */}
+        <div className={`flex items-center ${rowWidth}`}>
+          <StepBox phase="final" text="Transfer victims for treatment" />
+          <Connector dir="right" />
+          <StepBox phase="final" text="Coordinate ID" />
+          <Connector dir="right" />
+          <StepBox phase="final" text="Report status to command" />
+          <Connector dir="right" />
+          <StepBox phase="final" text="Assess need for backup" />
+        </div>
+
+        {/* Down Arrow Right (Aligned to center of 4th box) */}
+        <div className={`${rowWidth} flex justify-end pr-16 py-2`}>
+          <Connector dir="down" />
+        </div>
+
+        {/* Final Row (Pinned to the end of the row width) */}
+        <div className={`${rowWidth} flex justify-end`}>
+          <StepBox phase="final" text="Maintain log of all events" />
+        </div>
       </div>
     </div>
   );

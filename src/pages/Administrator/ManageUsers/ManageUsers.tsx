@@ -11,6 +11,7 @@ import UsersPagination from "../../../components/Manage User/UsersPagination";
 
 import UpdateUserModal from "./UpdateUserModal";
 import ArchiveUserModal from "./ArchiveUserModal";
+import { Users, UserCheck } from "lucide-react";
 
 interface BuoyData {
   id: number;
@@ -73,14 +74,14 @@ const ManageUsers = ({ alertsRef }: Props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const inputRef = useRef<HTMLInputElement>(
-    null
+    null,
   ) as React.RefObject<HTMLInputElement>;
 
   useEffect(() => {
     document.title = "Manage Users | X-Stream";
   }, []);
 
-  // Helper function to convert string to Pascal Case 
+  // Helper function to convert string to Pascal Case
   const toPascalCase = (str: string | null | undefined) => {
     if (!str) return "";
     return str
@@ -165,42 +166,88 @@ const ManageUsers = ({ alertsRef }: Props) => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const currentUsers = filteredUsers.slice(
     startIndex,
-    startIndex + itemsPerPage
+    startIndex + itemsPerPage,
   );
   // --- END Logic ---
 
   return (
-    <div className="p-6 bg-gray-50 dark:bg-gray-900 min-h-screen relative text-gray-900 dark:text-white">
-      <PageBreadcrumb pageTitle="Manage Users" />
+    <div className="p-4 md:p-8 bg-[#F8FAFC] dark:bg-[#0F172A] min-h-screen relative text-slate-900 dark:text-slate-100">
+      <div className="max-w-[1600px] mx-auto space-y-6">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+          <div>
+            <PageBreadcrumb pageTitle="Manage Users" />
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
+              Maintain and monitor user accounts and registration statuses.
+            </p>
+          </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
-        {/* 1. Header (Title and Search Bar) */}
-        <UsersTableHeader
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          inputRef={inputRef}
-        />
+          {/* Quick Stats Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-3">
+              <div className="p-2 bg-blue-50 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+                <Users size={18} />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase font-bold text-slate-400 leading-none mb-1">
+                  Total
+                </p>
+                <p className="text-lg font-bold leading-none">{users.length}</p>
+              </div>
+            </div>
+            <div className="bg-white dark:bg-slate-800 p-3 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center gap-3">
+              <div className="p-2 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg text-emerald-600 dark:text-emerald-400">
+                <UserCheck size={18} />
+              </div>
+              <div>
+                <p className="text-[10px] uppercase font-bold text-slate-400 leading-none mb-1">
+                  Active
+                </p>
+                <p className="text-lg font-bold leading-none">
+                  {users.filter((u) => u.isActive).length}
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
 
-        {/* 2. Users Table */}
-        <UsersTable
-          currentUsers={currentUsers}
-          loading={loading}
-          startIndex={startIndex}
-          handleUpdateClick={handleUpdateClick}
-          handleArchiveClick={handleArchiveClick}
-        />
+        {/* Table Container Card */}
+        <div className="bg-white dark:bg-slate-800 rounded-[2rem] border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden transition-all duration-300">
+          {/* 1. Header (Search Bar Area) */}
+          <div className="px-6 py-5 border-b border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30">
+            <UsersTableHeader
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              inputRef={inputRef}
+            />
+          </div>
 
-        {/* 3. Pagination */}
-        <UsersPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          filteredUsersLength={filteredUsers.length}
-          itemsPerPage={itemsPerPage}
-          startIndex={startIndex}
-          setCurrentPage={setCurrentPage}
-        />
+          {/* 2. Users Table - Wrapped for better overflow handling */}
+          <div className="relative overflow-hidden">
+            <UsersTable
+              currentUsers={currentUsers}
+              loading={loading}
+              startIndex={startIndex}
+              handleUpdateClick={handleUpdateClick}
+              handleArchiveClick={handleArchiveClick}
+            />
+          </div>
+
+          {/* 3. Pagination Footer */}
+          <div className="px-6 py-5 border-t border-slate-100 dark:border-slate-700/50 bg-slate-50/50 dark:bg-slate-800/30">
+            <UsersPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              filteredUsersLength={filteredUsers.length}
+              itemsPerPage={itemsPerPage}
+              startIndex={startIndex}
+              setCurrentPage={setCurrentPage}
+            />
+          </div>
+        </div>
       </div>
 
+      {/* Modals remain functionally identical */}
       <UpdateUserModal
         show={showUpdate}
         onClose={() => setShowUpdate(false)}

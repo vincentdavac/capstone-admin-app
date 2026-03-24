@@ -91,77 +91,77 @@ const DashboardCards = () => {
   );
 
   return (
-    <div className="w-full flex items-start justify-start pl-1">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 w-full">
+    <div className="w-full px-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full">
         {/* Registered Users */}
-        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-            <ManageUsers className="size-8 text-gray-800 dark:text-white/90" />
+        <div className="group relative rounded-[2rem] bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-100 dark:border-slate-800 transition-all hover:shadow-md hover:-translate-y-1">
+          <div className="flex items-center justify-center w-12 h-12 bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 rounded-2xl mb-6">
+            <ManageUsers className="size-6" />
           </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-lg text-gray-500 dark:text-gray-400">
-                Registered Users
-              </span>
-              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.users.total ?? 0}
+          <div className="flex flex-col space-y-1">
+            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em]">
+              Registered Users
+            </span>
+            <div className="flex items-end justify-between">
+              <h4 className="text-3xl font-black text-slate-900 dark:text-white">
+                {stats.users.total?.toLocaleString() ?? 0}
               </h4>
+              {renderTrend(stats.users)}
             </div>
-            {renderTrend(stats.users)}
           </div>
         </div>
 
         {/* Hotlines */}
-        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-            <Phone className="size-8 text-gray-800 dark:text-white/90" />
+        <div className="group relative rounded-[2rem] bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-100 dark:border-slate-800 transition-all hover:shadow-md hover:-translate-y-1">
+          <div className="flex items-center justify-center w-12 h-12 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 rounded-2xl mb-6">
+            <Phone className="size-6" />
           </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-lg text-gray-500 dark:text-gray-400">
-                Registered Hotlines
-              </span>
-              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.hotlines.total ?? 0}
+          <div className="flex flex-col space-y-1">
+            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em]">
+              Registered Hotlines
+            </span>
+            <div className="flex items-end justify-between">
+              <h4 className="text-3xl font-black text-slate-900 dark:text-white">
+                {stats.hotlines.total?.toLocaleString() ?? 0}
               </h4>
+              {renderTrend(stats.hotlines)}
             </div>
-            {renderTrend(stats.hotlines)}
           </div>
         </div>
 
         {/* Daily Messages */}
-        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-            <MessagesSquare className="size-8 text-gray-800 dark:text-white/90" />
+        <div className="group relative rounded-[2rem] bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-100 dark:border-slate-800 transition-all hover:shadow-md hover:-translate-y-1">
+          <div className="flex items-center justify-center w-12 h-12 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-2xl mb-6">
+            <MessagesSquare className="size-6" />
           </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-lg text-gray-500 dark:text-gray-400">
-                Daily Messages
-              </span>
-              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.messages.current_week ?? 0}
+          <div className="flex flex-col space-y-1">
+            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em]">
+              Daily Messages
+            </span>
+            <div className="flex items-end justify-between">
+              <h4 className="text-3xl font-black text-slate-900 dark:text-white">
+                {stats.messages.current_week?.toLocaleString() ?? 0}
               </h4>
+              {renderTrend(stats.messages)}
             </div>
-            {renderTrend(stats.messages)}
           </div>
         </div>
 
         {/* Alerts */}
-        <div className="rounded-lg border p-6 h-[204px] bg-white dark:bg-gray-800 border-[#D9D9D9] dark:border-gray-700">
-          <div className="flex items-center justify-center w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-xl mb-4">
-            <Megaphone className="size-8 text-gray-800 dark:text-white/90" />
+        <div className="group relative rounded-[2rem] bg-white dark:bg-slate-900 p-6 shadow-sm border border-slate-100 dark:border-slate-800 transition-all hover:shadow-md hover:-translate-y-1">
+          <div className="flex items-center justify-center w-12 h-12 bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 rounded-2xl mb-6">
+            <Megaphone className="size-6" />
           </div>
-          <div className="flex items-end justify-between">
-            <div>
-              <span className="text-lg text-gray-500 dark:text-gray-400">
-                Weekly Alerts
-              </span>
-              <h4 className="mt-2 text-2xl font-bold text-gray-800 dark:text-white">
-                {stats.alerts.current_week ?? 0}
+          <div className="flex flex-col space-y-1">
+            <span className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-[0.15em]">
+              Weekly Alerts
+            </span>
+            <div className="flex items-end justify-between">
+              <h4 className="text-3xl font-black text-slate-900 dark:text-white">
+                {stats.alerts.current_week?.toLocaleString() ?? 0}
               </h4>
+              {renderTrend(stats.alerts)}
             </div>
-            {renderTrend(stats.alerts)}
           </div>
         </div>
       </div>

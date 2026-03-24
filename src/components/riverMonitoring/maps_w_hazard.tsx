@@ -575,92 +575,110 @@ export default function MapsWithHazard({ showAlert }: MapsWithHazardProps) {
       );
     }
 
-    if (waterLevel.current) {
-      const chart = initChart(waterLevel.current);
-      const wallHeight = 15;
+if (waterLevel.current) {
+      const chart = echarts.init(waterLevel.current);
+      const configRef = ref(database, `/${buoyCode}/CONFIG/WALL_HEIGHT_FEET`);
       const waterRef = ref(database, `/${buoyCode}/MS5837/WATER_LEVEL_FEET`);
-      chart.setOption({
-        series: [
-          {
-            type: "gauge",
-            max: wallHeight,
-            startAngle: 225,
-            endAngle: -45,
-            splitNumber: 5,
-            radius: "100%",
-            center: ["50%", "50%"],
-            axisLine: { lineStyle: { width: 10, color: [[1, "#EBEFF4"]] } },
-            progress: {
-              show: true,
-              width: 10,
-              itemStyle: { color: "#989898" },
-            },
-            pointer: {
-              icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
-              length: "60%",
-              width: 6,
-              offsetCenter: [0, "5%"],
-              itemStyle: { color: "#000" },
-            },
-            axisTick: {
-              distance: 10,
-              length: 8,
-              lineStyle: { color: "#BDBDBD", width: 1 },
-            },
-            splitLine: {
-              distance: 10,
-              length: 15,
-              lineStyle: { color: "#BDBDBD", width: 2 },
-            },
-            axisLabel: {
-              distance: 25,
-              color: "#999",
-              fontSize: 11,
-              formatter: "{value} ft",
-            },
-            anchor: {
-              show: true,
-              showAbove: true,
-              size: 18,
-              itemStyle: { borderWidth: 4, borderColor: "#000", color: "#fff" },
-            },
-            detail: {
-              valueAnimation: true,
-              fontSize: 15,
-              fontWeight: "bold",
-              offsetCenter: [0, "85%"],
-              formatter: "{value} ft",
-              color: "#333",
-            },
-            data: [{ value: 0 }],
-          },
-        ],
-      });
 
       unsubscribers.push(
-        onValue(waterRef, (waterSnapshot) => {
-          const value = waterSnapshot.exists()
-            ? toNumberOrZero(waterSnapshot.val())
-            : 0;
-          let activeColor = "#EBEFF4";
-          if (waterSnapshot.exists()) {
-            if (value >= redThreshold) activeColor = "#e74c3c";
-            else if (value >= blueThreshold) activeColor = "#3498db";
-            else activeColor = "#EBEFF4";
-          }
-          const isDark = document.documentElement.classList.contains("dark");
-          const pointerColor = activeColor;
+        onValue(configRef, (configSnapshot) => {
+          const wallHeight = configSnapshot.exists()
+            ? toNumberOrZero(configSnapshot.val())
+            : 15;
+
           chart.setOption({
             series: [
               {
+                type: "gauge",
                 max: wallHeight,
-                data: [{ value }],
-                progress: { itemStyle: { color: activeColor } },
-                pointer: { itemStyle: { color: pointerColor } },
-                anchor: { itemStyle: { borderColor: pointerColor } },
+                startAngle: 225,
+                endAngle: -45,
+                splitNumber: 5,
+                radius: "100%",
+                center: ["50%", "50%"],
+                axisLine: { lineStyle: { width: 10, color: [[1, "#EBEFF4"]], } },
+                progress: {
+                  show: true,
+                  width: 10,
+                  itemStyle: { color: "#989898" },
+                },
+                pointer: {
+                  icon: "path://M12.8,0.7l12,40.1H0.8L12.8,0.7z",
+                  length: "60%",
+                  width: 6,
+                  offsetCenter: [0, "5%"],
+                  itemStyle: { color: "#000" },
+                },
+                axisTick: {
+                  distance: 10,
+                  length: 8,
+                  lineStyle: { color: "#BDBDBD", width: 1 },
+                },
+                splitLine: {
+                  distance: 10,
+                  length: 15,
+                  lineStyle: { color: "#BDBDBD", width: 2 },
+                },
+                axisLabel: {
+                  distance: 25,
+                  color: "#999",
+                  fontSize: 11,
+                  formatter: "{value} ft",
+                },
+                anchor: {
+                  show: true,
+                  showAbove: true,
+                  size: 18,
+                  itemStyle: {
+                    borderWidth: 4,
+                    borderColor: "#000",
+                    color: "#fff",
+                  },
+                },
+                detail: {
+                  valueAnimation: true,
+                  fontSize: 15,
+                  fontWeight: "bold",
+                  offsetCenter: [0, "85%"],
+                  formatter: "{value} ft",
+                  color: "#333",
+                },
+                data: [{ value: 0 }],
               },
             ],
           });
+
+          unsubscribers.push(
+            onValue(waterRef, (waterSnapshot) => {
+              const value = waterSnapshot.exists()
+                ? toNumberOrZero(waterSnapshot.val())
+                : 0;
+
+              const percentage = (value / wallHeight) * 100;
+              let activeColor = "#989898";
+              let isThreshold = false;
+
+              if (waterSnapshot.exists()) {
+                if (percentage > 40 && percentage < 100) { activeColor = "#3498db"; isThreshold = true; }
+                else if (percentage >= 100) { activeColor = "#e74c3c"; isThreshold = true; }
+              }
+
+              const isDark = document.documentElement.classList.contains("dark");
+              const pointerColor = isThreshold ? activeColor : (isDark ? "#EBEFF4" : "#000000");
+
+              chart.setOption({
+                series: [
+                  {
+                    max: wallHeight,
+                    data: [{ value }],
+                    progress: { itemStyle: { color: activeColor } },
+                    pointer: { itemStyle: { color: pointerColor } },
+                    anchor: { itemStyle: { borderColor: pointerColor } },
+                  },
+                ],
+              });
+            }),
+          );
         }),
       );
 

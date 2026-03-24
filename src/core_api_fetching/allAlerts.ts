@@ -1,7 +1,7 @@
 import api_endpoint from "../config/coreApi";
 const allAlert = {
   post: async (config?: RequestInit) => {
-    const url = `${api_endpoint}/v2/all-set-alerts`;
+    const url = `${api_endpoint}/all-set-alerts`;
     try {
       const response = await fetch(url, {
         method: "POST",

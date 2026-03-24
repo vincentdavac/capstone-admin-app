@@ -25,7 +25,7 @@ const RainMonitoring = ({ alertsRef }: BatteryHealthComponentCardProps) => {
   );
   return (
     <>
-      <PageBreadcrumb pageTitle="Wind Speed" />
+      <PageBreadcrumb pageTitle="Rain Sensor" />
       <div className="space-y-6">
         <RainMonitoringComponentCard alertsRef={alertsRef} />
         <AlertModal
